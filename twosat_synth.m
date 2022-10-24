@@ -6,20 +6,20 @@ clear
 %% inputs
 out_fn = 'sim_twosat_rays.mat';
 time = datenum(2019, 9, 21);
-freqs = 2:0.2:20; % 2:0.2:20; % 20;
+freqs = 3:0.2:10; % 2:0.2:20; % 20;
 
 alts = 150:2:900;
-sat_alt = 890;
+sat_alt = 600;
 
-satlats = [26];
-satlons = [280, 290];
+satlats = [55, 58];
+satlons = [280];
 satlons(satlons > 180) = satlons(satlons > 180) - 360;
 [satlatarr, satlonarr] = meshgrid(satlats, satlons);
 satlocs = [satlatarr(:), satlonarr(:), ones(numel(satlatarr), 1) * sat_alt];
 
 % grid
-lats = 24:28;
-lons = 260:2:320;
+lats = 35:2:90;
+lons = 275:5:285;
 lons(lons > 180) = lons(lons > 180) - 360;
 
 elvarr = [-90:5:-20];
@@ -51,10 +51,10 @@ UT = [year month day hour minute];
 
 %% Loop over transmitters
 clear homed_rays
-for s1 = 1:size(satlocs, 1)
+for s1 = 1%:size(satlocs, 1)
     txloc = satlocs(s1, :);
     %% loop over receivers
-    for s2 = 1:size(satlocs, 1)
+    for s2 = 2%1:size(satlocs, 1)
         rxloc = satlocs(s2, :);
 
 
@@ -120,11 +120,11 @@ clf
 
 
 % convert the coodinate frame to curved Earth geometry
-[lon3, lat3, alt3] = meshgrid(lons, lats(3), alts);
+[lon3, lat3, alt3] = meshgrid(lons(2), lats, alts);
 
 CartV = sphcart([(6371 + alt3(:)) * 1E3, deg2rad(lat3(:)), deg2rad(lon3(:))]);
 
-V = iono_en_grid(3, :, :);
+V = iono_en_grid(:, 2, :);
 X = reshape(CartV(:, 1), size(V));
 Y = reshape(CartV(:, 2), size(V));
 Z = reshape(CartV(:, 3), size(V));
