@@ -1,6 +1,6 @@
-function ray = raytrace_3dhome(freq, txloc, rxloc, iono_en_grid, iono_en_grid_5, ...
-    collision_freq, iono_grid_parms, Bx, By, Bz, geomag_grid_parms, OX_mode, ...
-    tol, refractive_ind, nhops)
+function [ray, elvarr, azarr] = raytrace_3dhome(freq, txloc, rxloc, ...
+    iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
+    Bx, By, Bz, geomag_grid_parms, OX_mode, tol, refractive_ind, nhops, maxdist)
 
 %% call raytrace to "global search" the problem
 
@@ -47,13 +47,15 @@ f = @(X)raytrace_err(X, start_ray, rxloc, OX_mode, nhops, tol, ...
     iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
     Bx, By, Bz, geomag_grid_parms, refractive_ind, reflect);
 
-%x0 = [-90, 0];
+% 'MaxFunEvals', 100, 'MaxIter', 100, 
+options = optimset('TolFun', maxdist);
 x0 = [start_ray.initial_elev, start_ray.initial_bearing];
-[X, fval] = fminsearch(f,x0);
+[X, fval] = fminsearch(f,x0, options);
 
-[err, ray] = f(X);
+[err, ray] = f(X); % just to give back the ray
 
-if fval < 10E3
+
+if fval < maxdist
     fprintf('Optimized to %1.1e km from receive location\n', fval/1E3)
         ray.home = true;
 

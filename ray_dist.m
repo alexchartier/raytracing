@@ -57,18 +57,14 @@ loc_xyz = [x, y, z]' .* ones(3, length(ray_xyz));
 dists = sqrt(sum((loc_xyz - ray_xyz) .^2));
 
 id = find(dists == min(dists));
-if id == 1 || id == length(dists)
-    % top or bottom of ray is closest - return out
+if id == 1 
+    % start of ray is closest - return out
     dl = NaN;
     return
 end
 
-% select a point either before or after closest point
-if dists(id - 1) < dists(id + 1)
-    id0 = id - 1;
-else
-    id0 = id + 1;
-end
+% select a point before closest point
+id0 = id - 1;
 
 dl = point_to_line(loc_xyz(:, 1)', ray_xyz(:, id0)', ray_xyz(:, id)');
 
@@ -76,9 +72,7 @@ if dl == 1E6
     dl = NaN;
 end
 
-
 closest_pt = ray_xyz(:, id);
-
 id = id + refloc  - 1;
 
 %% find the group range to the receiver

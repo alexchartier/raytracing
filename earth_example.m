@@ -8,8 +8,8 @@
 space_color = 'k';
 npanels = 180;   % Number of globe panels around the equator deg/panel = 360/npanels
 alpha   = 1; % globe transparency level, 1 = opaque, through 0 = invisible
-%GMST0 = []; % Don't set up rotatable globe (ECEF)
-GMST0 = 4.89496121282306; % Set up a rotatable globe at J2000.0
+GMST0 = []; % Don't set up rotatable globe (ECEF)
+%GMST0 = 4.89496121282306; % Set up a rotatable globe at J2000.0
 
 % Earth texture image
 % Anything imread() will handle, but needs to be a 2:1 unprojected globe

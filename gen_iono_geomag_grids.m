@@ -27,7 +27,7 @@ iono_grid_parms = [lat_start, lat_inc, num_lat, lon_start, lon_inc, num_lon, ...
 
 geomag_grid_parms = iono_grid_parms;
 
-iono_en_grid = permute(D.dene, [3, 2, 1]);
+iono_en_grid = D.dene;
 iono_en_grid_5 = iono_en_grid;
 collision_freq = zeros(size(iono_en_grid));
 Bx = zeros(size(iono_en_grid));
