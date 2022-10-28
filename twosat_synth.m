@@ -34,20 +34,12 @@ blind_range = 30E3; % two-way (e.g. there-and-back range)
 tol = [1e-7 0.01 25];       % ODE solver tolerance and min max stepsizes
 
 
-%% Specify time in PHaRLaP format
-year = str2double(datestr(time, 'yyyy'));
-month = str2double(datestr(time, 'mm'));
-day  = str2double(datestr(time, 'dd'));
-hour = str2double(datestr(time, 'HH'));
-minute = str2double(datestr(time, 'MM'));
-UT = [year month day hour minute];
-
 
 %% Load ionosphere
 
 [iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
     Bx, By, Bz, geomag_grid_parms] = ...
-    gen_iono_geomag_grids(alts, lats, lons, UT, R12);
+    gen_iono_geomag_grids(alts, lats, lons, time, R12);
 
 %% Loop over transmitters
 clear homed_rays

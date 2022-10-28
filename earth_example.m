@@ -18,7 +18,6 @@ GMST0 = []; % Don't set up rotatable globe (ECEF)
 image_file = '1024px-Land_ocean_ice_2048.jpg';
 
 % Mean spherical earth
-
 erad    = 6371008.7714; % equatorial radius (meters)
 prad    = 6371008.7714; % polar radius (meters)
 
@@ -47,12 +46,12 @@ axis vis3d;
 
 [x, y, z] = ellipsoid(0, 0, 0, erad, erad, prad, npanels);
 
-globe = surf(x, y, -z, 'FaceColor', 'none', 'EdgeColor', 0.5*[1 1 1]);
+gl = surf(x, y, -z, 'FaceColor', 'none', 'EdgeColor', 0.5*[1 1 1]);
 
 if ~isempty(GMST0)
     hgx = hgtransform;
     set(hgx,'Matrix', makehgtform('zrotate',GMST0));
-    set(globe,'Parent',hgx);
+    set(gl,'Parent',hgx);
 end
 
 %% Texturemap the globe
@@ -64,7 +63,7 @@ cdata = imread(image_file);
 % Set image as color data (cdata) property, and set face color to indicate
 % a texturemap, which Matlab expects to be in cdata. Turn off the mesh edges.
 
-set(globe, 'FaceColor', 'texturemap', 'CData', cdata, 'FaceAlpha', alpha, 'EdgeColor', 'none');
+set(gl, 'FaceColor', 'texturemap', 'CData', cdata, 'FaceAlpha', alpha, 'EdgeColor', 'none');
 
 
 
