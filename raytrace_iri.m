@@ -15,8 +15,8 @@ lons(lons > 180) = lons(lons > 180) - 360;
 
 % Prop details
 OX_mode = 0;
-maxdist = 1E3;  % meters homing error (max)
-tol = [1e-7 0.01 25];  % ODE solver tolerance and min max stepsizes
+maxdist = 1E2;  % meters homing error (max)
+tol = [1e-8 0.005 5];  % ODE solver tolerance and min max stepsizes
 refractive_ind = 1;  % at the transmitter location (leave as 1 unless transmitting from within a plasma)
 nhops_max = 2;
 freqs = [4.1, 5.1 6.0 6.4 7.2]; 
@@ -61,7 +61,15 @@ end
 
 
 %% Plotting
-plot_rays(txloc, rxloc, links{1}.ray, [0 1 0], 180);
+ct = 0;
+for l = 1:length(links{t}.home)
+    if links{t}.home(l) == 1
+        ct = ct + 1;
+        rays(ct) = links{t}.ray(l);
+    end
+end
+
+plot_rays(txloc, rxloc, rays, [0 1 0], 180);
 
 
 

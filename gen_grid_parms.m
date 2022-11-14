@@ -1,20 +1,14 @@
 function [iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
-    Bx, By, Bz, geomag_grid_parms] = gen_iono_geomag_grids(hts, lats, lons, time, R12)
-%% generate ionospheric, geomagnetic and irregularity grids
+    Bx, By, Bz, geomag_grid_parms] = gen_grid_parms(sami_t)
+%% generate ionospheric, geomagnetic and irregularity grids from SAMI3
 
-% Specify time in PHaRLaP format
-year = str2double(datestr(time, 'yyyy'));
-month = str2double(datestr(time, 'mm'));
-day  = str2double(datestr(time, 'dd'));
-hour = str2double(datestr(time, 'HH'));
-minute = str2double(datestr(time, 'MM'));
-UT = [year month day hour minute];
+% unpack
+hts = sami_t.alt;
+lats = sami_t.lat;
+lons = sami_t.lon;
+iono_en_grid = sami_t.dene;
+iono_en_grid_5 = sami_t.dene;
 
-% geomag
-B_ht_inc = 10;                  % height increment (km)
-B_lat_inc = 1.0;
-B_lon_inc = 1.0;
-doppler_flag = 0;
 
 ht_start = hts(1);          % start height for ionospheric grid (km)
 ht_inc = unique(diff(hts));             % height increment (km)
@@ -26,6 +20,10 @@ lon_start = lons(1);
 lon_inc = uniquetol(diff(lons), 0.001);
 num_lon = length(lons);
 
+% geomag
+B_ht_inc = ht_inc;                  % height increment (km)
+B_lat_inc = lat_inc;
+B_lon_inc = lon_inc;
 
 B_ht_start = ht_start;          % start height for geomagnetic grid (km)
 B_num_ht = ceil(num_ht .* ht_inc ./ B_ht_inc);
@@ -40,15 +38,9 @@ iono_grid_parms = [lat_start, lat_inc, num_lat, lon_start, lon_inc, num_lon, ...
 geomag_grid_parms = [B_lat_start, B_lat_inc, B_num_lat, B_lon_start, ...
     B_lon_inc, B_num_lon, B_ht_start, B_ht_inc, B_num_ht];
 
-tic
-fprintf('Generating ionospheric and geomag grids... ')
-[iono_pf_grid, iono_pf_grid_5, collision_freq, Bx, By, Bz] = ...
-    gen_iono_grid_3d(UT, R12, iono_grid_parms, geomag_grid_parms, doppler_flag);
-toc
-fprintf('\n')
-
-% convert plasma frequency grid to  electron density in electrons/cm^3
-iono_en_grid = iono_pf_grid.^2 / 80.6164e-6;
-iono_en_grid_5 = iono_pf_grid_5.^2 / 80.6164e-6;
+Bx = zeros(size(iono_en_grid));
+By = zeros(size(iono_en_grid));
+Bz = zeros(size(iono_en_grid));
+collision_freq = zeros(size(iono_en_grid));
 
 
