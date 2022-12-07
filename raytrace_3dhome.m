@@ -37,6 +37,13 @@ for r = 1:length(rays)
         ri = r;
     end
 end
+
+if err == 1E12
+    fprintf('No valid rays\n')
+    ray.home = false;
+    return
+end
+
 % fprintf('Located start ray %1.1e km from receive location\n', err / 1E3)
 start_ray = rays(ri);
 
@@ -60,6 +67,6 @@ if fval < maxdist
         ray.home = true;
 
 else
-    fprintf('Failed to home\n', fval)
+    fprintf('Failed to home\n')
     ray.home = false;
 end
