@@ -74,10 +74,11 @@ def load_gps(gps_fn, stime, timestep=dt.timedelta(minutes=60)):
 
 
 def calc_tx_rx_coords(gps, ref_rx_alt_m=0.):
+    """ Determine the transmitter and receiver XYZ coords based on receivers at 0 m alt """
     rx_XYZ_full = []
     tx_XYZ_full = []
     for idx in range(len(gps)):
-        print('Processing %i of %i' % (idx, len(gps)))
+        print('Processing %i of %i' % (idx + 1, len(gps)))
         gps_i = gps.iloc[idx]
         rx_XYZ = np.squeeze(sphcart(ref_rx_alt_m, gps_i['gdlatr'], gps_i['gdlonr']))
         tx_XYZ = get_tx_loc(rx_XYZ, gps_i['azm'], gps_i['elm'], gps_i['gdlatr'], gps_i['gdlonr']) 
@@ -174,6 +175,8 @@ def getGpsData_t(madrigalFile, timeArr, satTypeArr, unixTime):
 
 
 def test_time_read(gps_fn):
+    """ Test out the time read speed to demonstrate initial read is the only slow one """
+    
     gps_fn = os.path.expanduser(gps_fn)
     t = time.time()
     # we only need to do this step once, so that getting data from other sites is faster
@@ -203,6 +206,7 @@ def test_time_read(gps_fn):
 
 
 def test_gps_read(gps_fn):
+    """ Test out the GPS read speed to demonstrate initial read is the only slow one """
     gps_fn = os.path.expanduser(gps_fn)
     t = time.time()
 
@@ -231,6 +235,7 @@ def test_gps_read(gps_fn):
 
 
 def pickle(struct, pkl_fn):
+    """ Pickle write wrapper including filename and directory handling """
     pkl_fn = os.path.abspath(os.path.expanduser(pkl_fn))
     os.makedirs(os.path.dirname(pkl_fn), exist_ok='True')
     with open(pkl_fn, 'wb') as f:
@@ -239,6 +244,7 @@ def pickle(struct, pkl_fn):
 
 
 def unpickle(pkl_fn):
+    """ Pickle read wrapper including filename and directory handling """
     pkl_fn = os.path.abspath(os.path.expanduser(pkl_fn))
     with open(pkl_fn, 'rb') as f:
         struct = pkl.load(f)
@@ -248,7 +254,7 @@ def unpickle(pkl_fn):
 
 
 def gen_sitelist(gps, npts_wanted=100):
-
+    """ Grab all the unique sites in GPS df and pull out npts of them, based on max separation """
     slist_full = get_sitelist(gps)
     all_lats = slist_full['gdlatr'].tolist()
     all_lons = slist_full['gdlonr'].tolist()
@@ -280,6 +286,7 @@ def gen_sitelist(gps, npts_wanted=100):
 
 
 def calc_greatcircle_dists(lat1, lon1, lat2, lon2):
+    """ Great circle distances based on WGS84 ellipsoid """
     pointA = wgs84.GeoPoint(latitude=lat1, longitude=lon1, z=0, degrees=True)
     pointB = wgs84.GeoPoint(latitude=lat2, longitude=lon2, z=0, degrees=True)
     dist = pointA.delta_to(pointB).length
@@ -288,7 +295,7 @@ def calc_greatcircle_dists(lat1, lon1, lat2, lon2):
 
 
 def sphcart(alt, lat, lon, degrees=True):
-    # km, deg to XYZ in m
+    """ spherical (km, deg) to cartesian (m) """
     cart = wgs84.GeoPoint(
         latitude=lat, longitude=lon, z=-alt * 1E3, degrees=degrees,
     ).to_ecef_vector().pvector
@@ -297,8 +304,7 @@ def sphcart(alt, lat, lon, degrees=True):
 
 
 def cartsph(cart, degrees=True):
-    # XYZ (m) to LLA (km/deg)
-
+    """ cartesian (m) to spherical (km, deg) """
     n_EB_E, z_EB = nv.p_EB_E2n_EB_E(cart)
     alt = -z_EB / 1E3 
     lat_EB, lon_EB = nv.n_E2lat_lon(n_EB_E)
@@ -309,15 +315,8 @@ def cartsph(cart, degrees=True):
     return alt, lat, lon
 
 
-def calc_az_el(PRN, tx_XYZ, rx_lla):
-    azm = np.zeros(PRN.shape) * np.nan
-    elv = np.zeros(PRN.shape)
-    for ind, prn in enumerate(PRN):
-        azm[ind], elv[ind] = pymap3d.ecef2aer(*tx_XYZ[ind, :], *rx_lla)[:2]
-    return azm, elv
-
-
 def get_sitelist(gps):
+    """ List of unique sites from GPS df """
     slist = {}
     [slist['sites'], idx] = np.unique(gps['gps_site'], return_index=True)
     for k in 'gdlatr', 'gdlonr':
@@ -327,6 +326,7 @@ def get_sitelist(gps):
 
 
 def test_conversions(tol=1E-3):
+    """ check cartsph and sphcart """
     alt = 6400.
     lat = 20. 
     lon = -20.
@@ -340,25 +340,25 @@ def test_conversions(tol=1E-3):
 
 
 def downsample_to_slist(gps, slist):
-    badidx = []
-    for idx in range(len(gps)):
-        if gps.iloc[idx].gps_site not in slist['sites']:
-            badidx.append(idx)
+    """ Throw out the sites not in slist """
+    goodidx = gps['gps_site'].values == slist['sites'][0]
+    for site in slist['sites']:
+        goodidx += gps['gps_site'].values == site
 
-    gps = gps.drop(gps.index[badidx])
-    print('Downsampled the GPS to include only the sitelist entries - %i' % len(gps))
-    return gps
+    gps_short = gps[goodidx]
+    print('Downsampled the GPS to include only the sitelist entries - %i' % len(gps_short))
+    return gps_short
 
 
 def cleanup(gps):
-    #TODO e.g. remove negatives, maybe index by time, specify min nsats=4
-
+    """ TODO e.g. remove negatives, maybe index by time, specify min nsats=4 """
     neg_vals = gps['los_tec'] < 0
     gps = gps.drop(gps.index[neg_vals])
     return gps
 
 
 def load_and_preproc_mit_gps(gps_fn, slist_pkl_fn, time):
+    """ Run through from MIT GPS input file to short, clean output """
     gps = load_gps(gps_fn, time)
     slist = unpickle(slist_pkl_fn)
     gps_short = downsample_to_slist(gps, slist)
@@ -373,6 +373,7 @@ if __name__ == '__main__':
     stime = dt.datetime(2019, 3, 1, tzinfo=dt.timezone.utc)
     etime = dt.datetime(2019, 3, 2, tzinfo=dt.timezone.utc)
 
+    """
     # Get the GPS preprocessed
     time  = stime
     while time < etime:
@@ -394,7 +395,6 @@ if __name__ == '__main__':
     gps_short = unpickle(gps_pkl_fn_2)
     slist = unpickle(slist_pkl_fn)
 
-    """
     # Calculate the sitelist
     slist = gen_sitelist(gps, 150)
     pickle(slist, slist_pkl_fn)
@@ -408,7 +408,6 @@ if __name__ == '__main__':
     gps_short_XYZ = calc_tx_rx_coords(gps_short)
 
     # clean up the data
-
     gps_short_XYZ = cleanup(gps_short_XYZ)
     
     pickle(gps_short_XYZ, gps_pkl_fn_3)

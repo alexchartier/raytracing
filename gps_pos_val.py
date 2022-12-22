@@ -4,24 +4,13 @@ Calculate the GPS ionospheric positioning error based on files from MIT Haystack
 """
 import numpy as np
 import datetime as dt
-import os
-import pickle
-from nc_utils import ncread_vars, load_nc
-import scipy.spatial
 from scipy.optimize import minimize
 import scipy.interpolate
 import matplotlib.pyplot as plt
-import nvector as nv
-import matplotlib.dates as mdates
-import h5py
 import gps_utils as gu
-import pymap3d as pm
 import pandas as pd
 import nc_utils
 
-wgs84_pm = pm.Ellipsoid('wgs84')
-wgs84 = nv.FrameE(name='WGS84')
-xfmt = mdates.DateFormatter('%m/%d %H:%M')
 
 
 def main(sami_fn, gps_fn, out_fn, slist_fn, time):
@@ -143,7 +132,7 @@ def calc_pos_errs(gps, ref_rx_alt_m=0., l1tec_fac=6.13):
 
 
 def get_pos_err(tx, rx, elv, delays, verbose=False):
-    # Calculate positioning error. Locations are cartesian
+    """ Calculate positioning error. Locations are cartesian """
     assert len(elv) == len(delays), 'number of elv must match number of delays'
     range = np.zeros(delays.shape)
     for ind, delay in enumerate(delays):
@@ -190,7 +179,7 @@ def proc_mod_delays(gps, sami):
 
 
 def calc_pos_err(out):
-    # Calculate positioning errors 
+    """ Calculate positioning errors """
     out['pos_err'] = np.zeros(np.array(out['times']).shape) * np.nan
     for tind, time in enumerate(out['times']): 
         print(time.strftime('Calculating delay for %Y/%b/%d %H:%M'))
@@ -207,9 +196,11 @@ def calc_pos_err(out):
 
 
 def calc_sTEC(tx, rx, mod):
-    # Get the delay on each PRN
-    # tx: nx3 array of ECEF transmitter coords 
-    # rx: nx3 array of ECEF receiver coords 
+    """
+    Get the delay on each PRN
+     tx: nx3 array of ECEF transmitter coords 
+     rx: nx3 array of ECEF receiver coords 
+    """
     npts = tx.shape[0]
     sTEC = np.zeros((npts,))
     for ind in range(npts):
@@ -224,7 +215,7 @@ def sTEC_to_L1_delay(sTEC):
 
 
 def get_slant_TEC(mod, tx, rx):
-    # Get the TEC from the model input file
+    """ Get the TEC from the model input file """
     stepsize = 10E3
     xi = create_raypath(tx, rx, stepsize) 
     assert np.sqrt(np.sum(mod['XYZ'].T ** 2, 1)).max() > np.sqrt(np.sum(xi ** 2, 1)).max(), 'Ray goes above model top'
@@ -251,7 +242,7 @@ def create_raypath(tx_XYZ, rx_XYZ, stepsize=1E3, modtop=8400E3):
 
 
 def load_sami(sami_fn):
-    sami = ncread_vars(sami_fn)
+    sami = nc_utils.ncread_vars(sami_fn)
     ALL = np.meshgrid(sami['alt'], sami['lat'], sami['lon'], indexing='ij')
     for ind, fld in enumerate(ALL):
         ALL[ind] = np.transpose(fld, (1, 2, 0))  # stupid meshgrid...
@@ -266,6 +257,11 @@ def load_sami(sami_fn):
 
 if __name__ == '__main__':
 
+    args = 'globalDownload.py --url=http://cedar.openmadrigal.org/ --outputDir=./  --user_fullname="Alex Chartier" '+\
+        '--user_email=alex.chartier@jhuapl.edu  --user_affiliation=APL --format=hdf5 --inst=8000 --kindat=3505 --startDate=03/01/2019 --endDate=03/02/2019'
+   
+    print("Install madrigalWeb (python3 -m pip install madrigalWeb), then ") 
+    print(args)
     time = dt.datetime(2019, 3, 1, tzinfo=dt.timezone.utc)
     sami_fn_fmt = '~/data/sami3/%Y/sami3_regulargrid_elec_density_%Y%b%d.nc'
     gps_fn_fmt = '~/data/gps/mit_hdf/los_%Y%m%d.001.h5'
