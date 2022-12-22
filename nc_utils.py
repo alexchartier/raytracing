@@ -56,6 +56,7 @@ def write_nc(
     else:
         assert not os.path.isfile(fn), \
         '%s already exists and overwrite set to False. Stopping...' % fn
+    os.makedirs(fn, exist_ok=True)
 
     # Create netCDF file
     try:

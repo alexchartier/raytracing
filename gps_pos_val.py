@@ -7,160 +7,186 @@ import datetime as dt
 import os
 import pickle
 from nc_utils import ncread_vars, load_nc
-import scipy.spatial.qhull as qhull
+import scipy.spatial
 from scipy.optimize import minimize
+import scipy.interpolate
 import matplotlib.pyplot as plt
 import nvector as nv
 import matplotlib.dates as mdates
 import h5py
+import gps_utils as gu
+import pymap3d as pm
+import pandas as pd
+import nc_utils
+
+wgs84_pm = pm.Ellipsoid('wgs84')
 wgs84 = nv.FrameE(name='WGS84')
 xfmt = mdates.DateFormatter('%m/%d %H:%M')
 
 
-def main(sami_fn, gps_fn, out_fn):
+def main(sami_fn, gps_fn, out_fn, slist_fn, time):
 
+    # Load daily
     sami = load_sami(sami_fn)
+    gps = gu.load_and_preproc_mit_gps(gps_fn, slist_fn, time)
 
-    #ds = downsample_hdf5_file(gps_fn)
+    times = np.unique(gps['time'])
 
-    try: 
-        gps = load_preprocessed_gps(preproc_gps_fn)
-    except:
-        gps_full = load_gps(gps_fn)
-        
-        breakpoint()
-        sites = gen_sitelist(gps_full)  # just set it to the 1st one first
-        
-        preproc_gps(gps, sitelist)
-
-
-    # Run through selected sites and calculate position errors
-    rx = {}
-    for site_name, site_fname in sites.items():
-        xyz = np.array([sitef.receiver_x * 1E3, sitef.receiver_y * 1E3, sitef.receiver_z * 1E3])
-        alt, lat, lon = cartsph(xyz)
-        rx[site_name] = {'lla': [lat.tolist(), lon.tolist(), alt.tolist()], 'XYZ': xyz} 
-
-        # data
-        data = proc_obs_delays(times, site_fname)  
-        data = calc_pos_err(data)
-
-        # model
-        modvals = {}
-        in_fn = os.path.join(v, 'prior_reg/%Y%j-%H%M_prior_reg.nc')
-        rxi = rx[site_name]
-        rxi['Lat'], rxi['Lon'], rxi['Alt'] = rxi['lla']
-        mod = proc_mod_delays(
-            times, data['tx'], rxi, data['prn'],
-            in_fname=in_fn, 
-            site_name=site_name, 
-        )
-
-
-def proc_obs_delays(times, site_fname):
-    # Calculate the observed ionospheric positioning error based on observed TEC
-    out = {
-        'delay': [],
-        'sTEC': [],
-        'tx': [],
-        'rx': [],
-        'prn': [],
-        'elv': [],
-        'times': [],
+    pos_errs = {
+        'time': [],
+        'site': [],
+        'lat': [],
+        'lon': [],
+        'raw_pos_err': [],
+        'corr_pos_err': [],
     }
-    for tind, time in enumerate(times):
-        # Load slant TEC each day
-        if ((time.hour == 0) and (time.minute == 0)) or tind == 0:
-            # Load the data at the beginning of the day
-            day = time
-            site_fname_t = time.strftime(site_fname)
-            data = ncread_vars(site_fname_t)
-            params = load_nc(site_fname_t)
-            rx_XYZ = np.array([params.receiver_x, params.receiver_y, params.receiver_z]) * 1E3
-            rx_LLA = cartsph(rx_XYZ)
-            for k, v in data.items():
-                data[k] = np.array(v)
-            secs = (data['times'] - np.floor(data['times'][0])) * 86400
-            if secs.max() > 86400:  # more than a whole day of data - assume it started on previous day
-                secs -= 86400
-            tx_XYZ = np.array([data['x_position'], data['y_position'], data['z_position']]).T * 1E3
-            delays = data['TECData'] / 6.13
-            if data['TECData'].min() < -25:
-                pdb.set_trace()
+    for t in times:
+        time = pd.Timestamp(t)
+        print(time)
+        gps_t = gps.loc[gps['time']==time]
+        sami_tind = sami['datetime'] == time 
+        sami['int'].values = sami['dene0'][sami_tind].flatten()  # set the values for interpolation
 
-        tind = []
-        absd = np.abs(secs - (time - day).total_seconds())
-        tind = absd == absd.min()
-        if absd.min() < 60:  # 'Must be within a minute'
-            out['sTEC'].append(data['TECData'][tind])
-            out['delay'].append(delays[tind])
-        else:
-            out['sTEC'].append(data['TECData'][tind] * np.nan)
-            out['delay'].append(delays[tind] * np.nan)
+        # Calculate model TEC corrections to the data
+        corr_gps_t = proc_mod_delays(gps_t, sami)   
 
-        out['prn'].append(data['satellites'][tind])
-        tx_XYZ_t = tx_XYZ[tind, :]
-        out['tx'].append({'XYZ': tx_XYZ_t})
-        out['rx'].append({'XYZ': rx_XYZ})
-        elv = np.zeros(sum(tind)) * np.nan
-        for ind in range(len(elv)):
-            elv[ind] = pymap3d.ecef2aer(*tx_XYZ_t[ind, :], *rx_LLA)[1]
-        if len(elv) != len(delays[tind]):
-            pdb.set_trace()
-        out['elv'].append(elv)
+        # Run through selected sites and calculate position errors
+        raw_pos_errs_t = calc_pos_errs(gps_t)
+        corr_pos_errs_t = calc_pos_errs(corr_gps_t)
+        for site, raw_pos_err in raw_pos_errs_t.items():
+            corr_pos_err = corr_pos_errs_t[site]
+            siterec = gps_t.loc[gps_t['gps_site'] == site].iloc[0]
+            pos_errs['time'].append(time.timestamp())
+            pos_errs['site'].append(site)
+            pos_errs['lat'].append(siterec['gdlatr'])
+            pos_errs['lon'].append(siterec['gdlonr'])
+            pos_errs['raw_pos_err'].append(raw_pos_err)
+            pos_errs['corr_pos_err'].append(corr_pos_err)
+            
+    for k, v in pos_errs.items():
+        pos_errs[k] = np.array(v)
 
-    out['times'] = times
-
-    return out
+    # Store the data
+    dim_defs = def_dims(pos_errs)
+    var_defs = def_vars()
+    nc_utils.write_nc(out_fn, var_defs, pos_errs, set_header, dim_defs)
 
 
-def proc_mod_delays(
-    times, tx, rx, prn,
-    in_fname='/Users/chartat1/fusionpp_data/sami/prior_reg/%Y%j-%H%M_prior_reg.nc',
-    site_name='aoml',
-):
-    # Calculate slant TEC and delays from the model 
-    out = {
-        'delay': [],
-        'sTEC': [],
-        'tx': [],
-        'rx': [],
-        'prn': [],
-        'elv': [],
-        'azm': [],
-        'times': [],
+def set_header(rootgrp, out_vars):
+    rootgrp.description = 'Raw and corrected ionospheric GPS L1 3D positioning error ' +\
+        'estimates, based on dual-frequency TEC observations and SAMI3 model'
+    return rootgrp
+
+
+def def_dims(out_vars):
+    return {
+        'npts': len(out_vars['time']),
+    }   
+
+
+def def_vars():
+    return { 
+        'time': {
+            'units': 'Seconds since 0:00 UT 1/1/1970',
+            'long_name': "Time",
+            'dims': ('npts'),
+            'type': 'f8',
+        },
+        'site': {
+            'units': 'None',
+            'long_name': "GPS receiver site name",
+            'dims': ('npts'),
+            'type': 'str',
+        },
+        'lat': {
+            'units': 'Degrees',
+            'long_name': "Geographic Latitude",
+            'dims': ('npts'),
+            'type': 'float',
+        },
+        'lon': {
+            'units': 'Degrees',
+            'long_name': "Geographic Longitude",
+            'dims': ('npts'),
+            'type': 'float',
+        },
+        'raw_pos_err': {
+            'units': 'Metres',
+            'long_name': "Ionospheric position error (3D) - uncorrected",
+            'dims': ('npts'),
+            'type': 'float',
+        },
+        'corr_pos_err': {
+            'units': 'Metres',
+            'long_name': "Ionospheric position error (3D) - corrected using SAMI3",
+            'dims': ('npts'),
+            'type': 'float',
+        },
     }
-    for tind, time in enumerate(times): 
-        print('Pre-processing ...')
-        print(time.strftime('%Y/%b/%d %H:%M'))
 
-        # Load model and Delaunay grid
-        mod = ncread_vars(time.strftime(in_fname))
-        if tind == 0:
-            alt, lat, lon = np.meshgrid(mod['alt'], mod['lat'], mod['lon'], indexing='ij')
-            mod_XYZ = sphcart(alt.flatten(), lat.flatten(), lon.flatten())
-            mod_tri = qhull.Delaunay(mod_XYZ.T)
-        mod['XYZ'] = mod_XYZ
-        mod['tri'] = mod_tri
-        mod['dene'] *= 1E6   # cm3 to m3
 
-        # Calculate the delay
-        azm, elv = calc_az_el(prn[tind], tx[tind]['XYZ'], rx['lla'])
-        sTEC = calc_sTEC(tx[tind]['XYZ'], rx['XYZ'], mod) / 1E16
-        delays = sTEC / 6.13 
+def calc_pos_errs(gps, ref_rx_alt_m=0., l1tec_fac=6.13):
+    """ Calculate the ionospheric positioning error based on specified GPS TEC 
+    """
 
-        # Store data
-        out['delay'].append(delays)
-        out['sTEC'].append(sTEC)
-        out['tx'].append(tx[tind])
-        out['rx'].append(rx)
-        out['prn'].append(prn[tind])
-        out['elv'].append(elv)
-        out['azm'].append(azm)
-        out['times'].append(time)
+    sites = np.unique(gps['gps_site'])
+    pos_errs = {}
+    for site in sites:
+        gps_s = gps.loc[gps['gps_site']==site] 
+        delays = gps_s['los_tec'] / l1tec_fac
+        tx_XYZ = np.stack(gps_s['tx_XYZ'].to_numpy())
+        rx_XYZ = gps_s['rx_XYZ'].iloc[0]
+        elm = gps_s['elm'].to_numpy()
+        pos_errs[site] = get_pos_err(tx_XYZ, rx_XYZ, elm, delays)
 
-    out['times'] = np.array(out['times']) 
-    return out
+    return pos_errs
+
+
+def get_pos_err(tx, rx, elv, delays, verbose=False):
+    # Calculate positioning error. Locations are cartesian
+    assert len(elv) == len(delays), 'number of elv must match number of delays'
+    range = np.zeros(delays.shape)
+    for ind, delay in enumerate(delays):
+        range[ind] = np.sqrt(np.sum((tx[ind, :] - rx) ** 2)) + delay
+
+    def cost_func(rx_u):
+        # Cost function based on known transmitters and ranges
+        cost = 0
+        for ind, rg in enumerate(range):
+            cost += (np.sum((rx_u - tx[ind, :]) ** 2) - rg ** 2) ** 2 * elv[ind]
+        return cost
+
+    if np.sum(np.isnan(delays)) > 0:
+        return np.nan 
+
+    res_0 = cost_func(rx)
+    res = minimize(cost_func, rx, method='Powell', options={'ftol':0.01})
+    pos_err = np.sqrt(np.sum((rx - res.x) ** 2))
+  
+    assert pos_err < 50, 'Position error looks too big'
+
+    if verbose:
+        print('delays')
+        print(*['%1.1f m, ' % d for d in delays])
+        print('3D position error: %2.1f m' % pos_err)
+        print('Inversion status: %s' % res.message)
+
+    return pos_err
+
+
+def proc_mod_delays(gps, sami):
+    """ Calculate slant TEC from the model, and subtract off """
+
+    # Calculate the delay
+    tx = np.stack(gps['tx_XYZ'])
+    rx = np.stack(gps['rx_XYZ'])
+    sTEC = calc_sTEC(tx, rx, sami) / 1E16
+
+    # Store
+    corr_gps = gps.copy(deep=True) 
+    corr_gps['los_tec'] -= sTEC
+
+    return corr_gps
 
 
 def calc_pos_err(out):
@@ -180,35 +206,6 @@ def calc_pos_err(out):
     return out
 
 
-def get_pos_err(tx, rx, elv, delays):
-    # Calculate positioning error
-    assert len(elv) == len(delays), 'number of elv must match number of delays'
-    range = np.zeros(delays.shape)
-    for ind, delay in enumerate(delays):
-        range[ind] = np.sqrt(np.sum((tx[ind, :] - rx) ** 2)) + delay
-
-    def cost_func(rx_u):
-        # Cost function based on known transmitters and ranges
-        cost = 0
-        for ind, rg in enumerate(range):
-            cost += (np.sum((rx_u - tx[ind, :]) ** 2) - rg ** 2) ** 2 * elv[ind]
-        return cost
-
-    if np.sum(np.isnan(delays)) > 0:
-        return np.nan 
-    res = minimize(cost_func, rx, method='Powell', options={'ftol':0.01})
-    pos_err = np.sqrt(np.sum((rx - res.x) ** 2))
-  
-    print('delays')
-    print(*['%1.1f m, ' % d for d in delays])
-    if pos_err > 50:
-        pdb.set_trace()
-    print('3D position error: %2.1f m' % pos_err)
-    print('Inversion status: %s' % res.message)
-
-    return pos_err
-
-
 def calc_sTEC(tx, rx, mod):
     # Get the delay on each PRN
     # tx: nx3 array of ECEF transmitter coords 
@@ -216,7 +213,8 @@ def calc_sTEC(tx, rx, mod):
     npts = tx.shape[0]
     sTEC = np.zeros((npts,))
     for ind in range(npts):
-        sTEC[ind] = get_slant_TEC(mod, tx[ind, :].copy(), rx.copy())
+        sTEC[ind] = get_slant_TEC(mod, tx[ind, :].copy(), rx[ind, :].copy())
+
     return sTEC
 
 
@@ -230,25 +228,14 @@ def get_slant_TEC(mod, tx, rx):
     stepsize = 10E3
     xi = create_raypath(tx, rx, stepsize) 
     assert np.sqrt(np.sum(mod['XYZ'].T ** 2, 1)).max() > np.sqrt(np.sum(xi ** 2, 1)).max(), 'Ray goes above model top'
-    ray_ne = interpolate(mod['dene'], mod['tri'], xi)
+
+    ray_ne = mod['int'](xi)
     sTEC = np.sum(ray_ne) * stepsize
     
     return sTEC
 
 
-def interpolate(vals, tri, uvw):
-    d = 3
-    simplex = tri.find_simplex(uvw)
-    vtx = np.take(tri.simplices, simplex, axis=0)
-    temp = np.take(tri.transform, simplex, axis=0)
-    delta = uvw - temp[:, d]
-    bary = np.einsum('njk,nk->nj', temp[:, :d, :], delta)
-    wts = np.hstack((bary, 1 - bary.sum(axis=1, keepdims=True)))
-
-    return np.einsum('nj,nj->n', np.take(vals, vtx), wts)
-
-
-def create_raypath(tx_XYZ, rx_XYZ, stepsize=1E3, modtop=7600E3):
+def create_raypath(tx_XYZ, rx_XYZ, stepsize=1E3, modtop=8400E3):
     xi = [] 
     dist = np.sqrt(np.sum((tx_XYZ - rx_XYZ) ** 2))
     unitv = (tx_XYZ - rx_XYZ) / dist
@@ -263,201 +250,29 @@ def create_raypath(tx_XYZ, rx_XYZ, stepsize=1E3, modtop=7600E3):
     return xi 
 
 
-def get_tx_rx_pos(datacoll_fname, sitename):
-    # Get the satellite and receiver positions from the data collector
-    tx = {}
-    rx = {}
-    PRN = None
-    elv = np.nan
-    datacoll = load_datacollector(datacoll_fname)
-    datacoll['GPS']['sitename'] = np.array([s.lower() for s in datacoll['GPS']['sitename']])
-    siteind = datacoll['GPS']['sitename'] == sitename.lower()
-    if np.sum(siteind) == 0:
-        print('Site %s not found in %s' % (sitename, datacoll_fname))
-        return tx, rx, PRN, elv
-
-    crds = 'Lat', 'Lon', 'Alt'
-    for crd in crds:
-        tx[crd] = datacoll['GPS']['end%s' % crd][siteind].astype(np.float)
-        rx[crd] = datacoll['GPS']['start%s' % crd][siteind].astype(np.float)
-    PRN = datacoll['GPS']['PRN'][siteind].astype(np.float)
-
-    tx['XYZ'] = sphcart(tx['Alt'], tx['Lat'], tx['Lon']).T
-    rx['XYZ'] = sphcart(rx['Alt'], rx['Lat'], rx['Lon']).T
-
-    assert len(np.unique(rx['XYZ'])) == 3, 'Assuming the Rx points are unique'
-    rx['XYZ'] = rx['XYZ'][0, :]
-    for crd in crds:
-        rx[crd] = rx[crd][0]
-
-    npts = tx['XYZ'].shape[0]
-    elv = np.zeros(npts) * np.nan
-    for ind in range(npts):
-        elv[ind] = pymap3d.ecef2aer(*tx['XYZ'][ind, :], rx['Lat'], rx['Lon'], rx['Alt'])[1]
-
-    return tx, rx, PRN, elv
-
-
-def calc_az_el(PRN, tx_XYZ, rx_lla):
-    azm = np.zeros(PRN.shape) * np.nan
-    elv = np.zeros(PRN.shape)
-    for ind, prn in enumerate(PRN):
-        azm[ind], elv[ind] = pymap3d.ecef2aer(*tx_XYZ[ind, :], *rx_lla)[:2]
-    return azm, elv
-
-
-def get_tx_from_sp3(sp3_fname, rx_lla, time):
-    tx, PRN = read_sp3(sp3_fname, time)
-    azm, elv = calc_az_el(PRN, tx['XYZ'], rx_lla)
-    elvind = elv > 0
-    tx['XYZ'] = tx['XYZ'][elvind, :]
-    PRN = PRN[elvind]  
-    return tx, PRN, elv[elvind]
-
-
-def read_sp3(sp3_fname, time):
-    with open(sp3_fname, 'r') as f:
-        txt = f.readlines()
-  
-    PRN = [] 
-    tx = {'XYZ': []}
-    for ind, ln in enumerate(txt):
-        if ln[0] == '*':  # time lines start with *
-            ln_t = [int(l) for l in ln.split()[1:6]]
-            if time == dt.datetime(*ln_t):  # look for matching time
-                ct = 1
-                while ct < 32:
-                    line = txt[ind + ct].split()
-                    if (line[0] == '*') or (line[0] == 'EOF'): # we have reached the next time or end of file
-                        break
-                    if line[0][:2] == 'PG':  # The new format
-                        PRN.append(int(line[0][2:]))
-                        tx['XYZ'].append([float(l) * 1E3 for l in line[1:4]])
-                    else:  # the old format
-                        PRN.append(int(line[1]))
-                        tx['XYZ'].append([float(l) * 1E3 for l in line[2:5]])
-
-                    ct += 1
-            
-    tx['XYZ'] = np.array(tx['XYZ'])
-    PRN = np.array(PRN)
-    assert len(PRN) < 33, 'Only 32 GPS satellites flying'
-    return tx, PRN
-
-
-def sphcart(alt, lat, lon):
-    # km, deg to XYZ in m
-    cart = wgs84.GeoPoint(
-        latitude=lat, longitude=lon, z=-alt * 1E3, degrees=True,
-    ).to_ecef_vector().pvector
-
-    return cart
-
-
-def cartsph(cart):
-    # XYZ (m) to LLA (km/deg)
-
-    n_EB_E, z_EB = nv.p_EB_E2n_EB_E(cart)
-    alt = -z_EB / 1E3
-    lat_EB, lon_EB = nv.n_E2lat_lon(n_EB_E)
-    lat = np.rad2deg(lat_EB)
-    lon = np.rad2deg(lon_EB)
-    
-    return alt, lat, lon
-
-
-def test_conversions(tol=1E-3):
-    alt = 6400.
-    lat = 20.
-    lon = -20.
-
-    cart = sphcart(alt, lat, lon)
-    [alt_out, lat_out, lon_out] = cartsph(cart)
-
-    assert np.abs(alt - alt_out) < tol, 'alt wrong'
-    assert np.abs(lat - lat_out) < tol, 'lat wrong'
-    assert np.abs(lon - lon_out) < tol, 'lon wrong'
-    
-
 def load_sami(sami_fn):
     sami = ncread_vars(sami_fn)
+    ALL = np.meshgrid(sami['alt'], sami['lat'], sami['lon'], indexing='ij')
+    for ind, fld in enumerate(ALL):
+        ALL[ind] = np.transpose(fld, (1, 2, 0))  # stupid meshgrid...
+
+    sami['XYZ'] = gu.sphcart(ALL[0].flatten(), ALL[1].flatten(), ALL[2].flatten())
+    sami['dene0'] *= 1E6
+    sami['int'] = scipy.interpolate.NearestNDInterpolator(sami['XYZ'].T, sami['dene0'][0, :, :, :].flatten())
+    sami['datetime'] = np.array([dt.datetime.utcfromtimestamp(t) for t in sami['time']])
+
     return sami
-
-
-def load_gps(gps_fn):
-    # Read the MIT Haystack GPS file
-    gps_fn = os.path.abspath(os.path.expanduser(gps_fn))
-    hf = h5py.File(gps_fn, 'r')
-    hlay = hf["Data/Table Layout"]
-    keys = hf.keys()
-    if 'gnss_type' in keys:
-        gtype = hlay['gnss_type']
-    else:
-        gtype = None
-    gps = {}  
-    breakpoint()
-    gps['hour'] = hlay['hour'] * 1.0 
-    gps['min'] = hlay['min'] * 1.0 
-    gps['sec'] = hlay['sec'] * 1.0 
-    
-    gps['oprns'] = hlay['sat_id']
-    gps['orlat'] = hlay['gdlatr']
-    gps['orlon'] = hlay['gdlonr']
-    gps['otec']  = hlay['los_tec']
-    gps['odtec'] = hlay['dlos_tec']
-    gps['oazm']  = hlay['azm']
-    gps['oelm']  = hlay['elm']
-    gps['rsite']  = hlay['gps_site']
-    gps['ursite'] = np.unique(gps['rsite'])
-    gps['nsites'] = gps['ursite'].size
-    
-    print("Found %i unique sites" % gps['nsites'])
-    return gps
-
-
-def calc_sitelist(gps):
-    return sitelist
-
-
-def downsample_hdf5_file(in_fname, pts_wanted=1000):
-    #Get length of files and prepare samples
-    source_file = h5py.File(os.path.expanduser(in_fname), "r")
-    dataset = source_file['/Data/Table Layout']
-    indices = np.sort(np.random.choice(dataset.shape[0], int(pts_wanted), replace=False))
-
-    #checking we're extracting a subsample
-    if pts_wanted > dataset.shape[0]:
-        raise ValueError("Can't extract more rows than dataset contains. Dataset has %s rows" % dataset.shape[0] )
-
-    #target_file =  h5py.File(out_fname, "w")
-    for k in source_file.keys():
-        dataset = source_file[k]
-        breakpoint()
-        dataset = dataset[indices,:,:,:]
-    #    dest_dataset = target_file.create_dataset(k, shape=(dataset.shape), dtype=np.float32)
-    #dest_dataset.write_direct(dataset)
-    #target_file.close()
-    source_file.close()
 
 
 if __name__ == '__main__':
 
-    test_conversions()
+    time = dt.datetime(2019, 3, 1, tzinfo=dt.timezone.utc)
+    sami_fn_fmt = '~/data/sami3/%Y/sami3_regulargrid_elec_density_%Y%b%d.nc'
+    gps_fn_fmt = '~/data/gps/mit_hdf/los_%Y%m%d.001.h5'
+    out_fn_fmt = '~/data/gps_pos_errs/pos_errs_%Y%m%d.nc'
+    slist_fn = '~/data/gps/sitelists/global_150.pkl'
 
-    sami_fn = '~/data/sami3/2019/sami3_regulargrid_elec_density_2019Mar01.nc'
-    gps_fn = '~/data/gps/los_20190301.001.h5'
-    out_fn = 'out.nc'
-    main(sami_fn, gps_fn, out_fn)
-
-
-
-
-
-
-
-
-
-
+    main(time.strftime(sami_fn_fmt), time.strftime(gps_fn_fmt), time.strftime(out_fn_fmt), slist_fn, time)
 
 
 
