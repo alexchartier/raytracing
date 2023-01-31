@@ -29,6 +29,7 @@ def main(sami_fn, gps_fn, out_fn, slist_fn, time):
         'raw_pos_err': [],
         'corr_pos_err': [],
     }
+
     for t in times:
         time = pd.Timestamp(t)
         print(time)

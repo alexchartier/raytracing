@@ -9,25 +9,27 @@ import datetime as dt
 import numpy as np
 import pdb 
 import errno
-
+import netCDF4
 
 def load_nc(fname):
     fn = os.path.expanduser(fname)
     if not os.path.isfile(fn):
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), fn)
-    try:
-        from netCDF4 import Dataset
-        return Dataset(fn, 'r', format='NETCDF4')
-    except:
-        import scipy.io.netcdf as nc
-        return nc.netcdf_file(fn, 'r', version=2)
+    #try:
+    #    from netCDF4 import Dataset
+    return netCDF4.Dataset(fn, 'r', format='NETCDF4')
+    #except:
+    #    import scipy.io.netcdf as nc
+    #    return nc.netcdf_file(fn, 'r', version=2)
 
 
 def ncread_vars(fname):
     if isinstance(fname, str):
         fin = load_nc(fname)
-    else:
+    elif isinstance(fname, netCDF4._netCDF4.Dataset):
         fin = fname
+    else:
+        raise ValueError('fname needs to be string or netCDF dataset')
     out = {}
     """
     if hasattr(fin, 'groups'):
