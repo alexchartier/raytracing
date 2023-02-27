@@ -10,6 +10,8 @@ for r = 1:length(rays)
     sph = [rays(r).height(hidx) * 1E3 + Re; deg2rad(rays(r).lat(hidx)); deg2rad(rays(r).lon(hidx))];
     cart = sphcart(sph');
     h3 = plot3(cart(:, 1), cart(:, 2), cart(:, 3), 'm');
+    %h4 = plot3(cart(:, 1), cart(:, 2), cart(:, 3), '.k');
+
     %rotate(h3, rot, ang)
     end
 end

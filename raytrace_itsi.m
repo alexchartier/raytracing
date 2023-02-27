@@ -26,7 +26,7 @@ ids = [];
 min_di = 1E9;
 
 for r = 1:length(rays)
-    [di, close_pt, id] = ray_dist(rays(r), rxloc, true);
+    [di, close_pt, id] = ray_dist(rays(r), rxloc);
     if di < maxdist
         rays(r).close_id = id;
         rays(r).close_pt = close_pt;
@@ -72,7 +72,7 @@ best_ray = best_ray(1);
 
 homed_ray = home_ray(best_ray, rxloc, OX_mode, nhops, tol, ...
     iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
-    Bx, By, Bz, geomag_grid_parms, refractive_ind, true);
+    Bx, By, Bz, geomag_grid_parms, refractive_ind);
 
 
 

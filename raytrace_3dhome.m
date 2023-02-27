@@ -16,8 +16,6 @@ origin_ht = txloc(3);
 % tol(2) = 0.025; % km
 % tol(3) = 25; % km
 
-reflect = true; % false for transionospheric rays
-
 % Set up the search array
 az = azimuth(txloc(1), txloc(2), rxloc(1), rxloc(2));
 azarr = az-3:az+3;
@@ -31,7 +29,7 @@ rays = gs_raytrace(elvarr, azarr, freq, nhops, OX_mode, ...
 %% Identify the closest ray
 err = 1E12;
 for r = 1:length(rays)
-    di = ray_dist(rays(r), rxloc, reflect);
+    di = ray_dist(rays(r), rxloc);
     if di < err
         err = di;
         ri = r;
@@ -52,7 +50,7 @@ start_ray = rays(ri);
 
 f = @(X)raytrace_err(X, start_ray, rxloc, OX_mode, nhops, tol, ...
     iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
-    Bx, By, Bz, geomag_grid_parms, refractive_ind, reflect);
+    Bx, By, Bz, geomag_grid_parms, refractive_ind);
 
 % 'MaxFunEvals', 100, 'MaxIter', 100, 
 options = optimset('TolFun', maxdist);

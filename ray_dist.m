@@ -1,4 +1,4 @@
-function [dl, closest_pt, id, group_path] = ray_dist(ray, loc, reflect)
+function [dl, closest_pt, id, group_path] = ray_dist(ray, loc)
 %% Calculate distance of ray from point
 % ray - structure from raytrace_3d
 % loc - lat (deg), lon (deg), height (km)
@@ -7,6 +7,8 @@ function [dl, closest_pt, id, group_path] = ray_dist(ray, loc, reflect)
 % reflect - if true, reject the pre-reflection part of the ray (should be
 % false for transionospheric rays)
 
+%% Work out if we're reflecting or not
+reflect = test_reflect(ray.height(1), loc(3));
 
 %% Assess distance from ray to RX location
 dl = 1E6;  % Starting ("bad") distance in case it doesn't home

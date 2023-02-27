@@ -1,28 +1,29 @@
 %% twosat_synth.m
-% Simulate two satellite topside sounder mission data
+% Simulate two satellite topside sounder mission data with a groundbased
+% transmitter there too
 
 clear
 
 %% inputs
 out_fn = 'sim_twosat_rays.mat';
 time = datenum(2019, 9, 21);
-freqs = 3:0.2:15; % 2:0.2:20; % 20;
+freqs = 3:0.2:20; % 2:0.2:20; % 20;
 
-alts = 150:2:800;
+alts = 150:2:900;
 sat_alt = 780;
 
-satlats = [18, 20];
-satlons = [114];
+satlats = [18, 30];
+satlons = [118];
 satlons(satlons > 180) = satlons(satlons > 180) - 360;
 [satlatarr, satlonarr] = meshgrid(satlats, satlons);
 satlocs = [satlatarr(:), satlonarr(:), ones(numel(satlatarr), 1) * sat_alt];
 
 % grid
-lats = 15:2:22;
-lons = 112:2:116;
+lats = 0:2:50;
+lons = 116:2:124;
 lons(lons > 180) = lons(lons > 180) - 360;
 
-elvarr = [-90:5:-20];
+elvarr = -90:5:-20;
 azarr = -180:5:180;
 R12 = 100;
 
@@ -31,14 +32,14 @@ OX_mode = 0;
 kp = 3;
 maxdist = 1E5;  % meters from homing
 blind_range = 30E3; % two-way (e.g. there-and-back range)
-tol = [1e-7 0.01 25];       % ODE solver tolerance and min max stepsizes
-
+tol = [1e-7 0.01 15];       % ODE solver tolerance and min max stepsizes
 
 
 %% Load ionosphere
 [iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
     Bx, By, Bz, geomag_grid_parms] = ...
     gen_iono_geomag_grids(alts, lats, lons, time, R12);
+
 
 %% Loop over transmitters
 clear homed_rays
@@ -52,12 +53,16 @@ for s1 = 1%:size(satlocs, 1)
 
         %% Get plasma freq and refractive index at the txloc
         iono_pf_grid = sqrt(80.6 * iono_en_grid ./ 1E6);
-        plasmafreq = interp2(lats, lons, squeeze(iono_pf_grid(:, :, alts == sat_alt))', txloc(1), txloc(2));
+        plasmafreq = interp2(...
+            lats, lons, squeeze(iono_pf_grid(:, :, alts == sat_alt))', ...
+            txloc(1), txloc(2));
         assert(length(plasmafreq) == 1, 'Come back and fix this - make a real interpolator')
 
         iono_pf_prof = nan(size(alts));
         for i = 1:length(alts)
-            iono_pf_prof(i) = interp2(lats, lons, squeeze(iono_pf_grid(:, :, alts == alts(i)))', txloc(1), txloc(2));
+            iono_pf_prof(i) = interp2(...
+                lats, lons, ...
+                squeeze(iono_pf_grid(:, :, alts == alts(i)))', txloc(1), txloc(2));
 
         end
         fprintf('FoF2: %1.2f\n', max(iono_pf_prof))
@@ -78,7 +83,7 @@ for s1 = 1%:size(satlocs, 1)
             % Appleton-Hartree equation to calculate the refractive index for the
             % O and X modes
             refractive_ind = sqrt(1 - plasmafreq .^ 2 ./ freqs(f) .^ 2);
-            
+
             fprintf('Refractive Index: %1.3f \n', refractive_ind)
 
 
@@ -98,21 +103,29 @@ for s1 = 1%:size(satlocs, 1)
 end
 clear raytrace_3d
 
-% save
+%% do the ground ray
+txloc_g = [30, 118, 0];
+freq = 18;
+elvarr = [1:3:90];
+
+ground_ray = ...
+    raytrace_itsi(freq, OX_mode, txloc_g, txloc, iono_en_grid, iono_en_grid_5, ...
+    collision_freq, iono_grid_parms, Bx, By, Bz, geomag_grid_parms, ...
+    elvarr, azarr, maxdist, tol, 1, blind_range);
+
+
+%% save
 homed_rays(1).iono_en_grid = iono_en_grid;
 savestruct(out_fn, homed_rays)
 fprintf("saved homed_rays to %s\n", out_fn)
 
 %% load
-
 homed_rays = loadstruct(out_fn);
 iono_en_grid = homed_rays(1).iono_en_grid;
 
 
-
 %% Plotting ionospheric density slice
 clf
-
 
 % convert the coodinate frame to curved Earth geometry
 [lon3, lat3, alt3] = meshgrid(lons(2), lats, alts);
@@ -148,6 +161,13 @@ for l = 1:size(satlocs, 1)
     plot3(cart(1), cart(2), cart(3), 'ro', 'markersize', 10, 'markerfacecolor', 'r')
 end
 
+% plot the ground ray
+
+sph = [ground_ray.height * 1E3 + Re; deg2rad(ground_ray.lat); deg2rad(ground_ray.lon)];
+cart = sphcart(sph');
+plot3(cart(:, 1), cart(:, 2), cart(:, 3), 'm', 'LineWidth', 5)
+
+
 hold off
 
 %%
@@ -161,13 +181,13 @@ export_fig('~/Downloads/twosat_sim.tif');
 clf
 colormap('cool')
 
-xlimit = [2, 12];
+xlimit = [5, 20];
 ylimit = [0, 3000];
 colorlimit = [-130 -80];
 ct = 0;
 hs = [];
-for s1 = 1:size(homed_rays, 1)
-    for s2 = s1:size(homed_rays, 2)
+for s1 = 1%:size(homed_rays, 1)
+    %for s2 = s1:size(homed_rays, 2)
         ct = ct + 1;
         hs = [hs, subplot(3, 1, ct)];
 
@@ -186,7 +206,7 @@ for s1 = 1:size(homed_rays, 1)
         ylim(ylimit)
         xlim(xlimit)
         ylabel({'Virtual Range (km)'})
-        if ct == 3
+        if ct == 1
             xlabel('Tx Freq (MHz)')
         else
             set(gca, 'XTickLabels', [])
@@ -195,32 +215,32 @@ for s1 = 1:size(homed_rays, 1)
         %legend({'X', 'No B', 'O'})
         % title(sprintf('foF2: %1.1f MHz, hmF2: %1.1f km, S/C alt: %1.1f km', D.fof2(timeidx), D.hmf2(timeidx), alt_iss))
 
-            set(gca,'CLim',colorlimit)
+        set(gca,'CLim',colorlimit)
 
         hold off
 
         grid on
         grid minor
-        
-    end
+
+    %end
 end
 
 
 for ct = 1:length(hs)
-        hp = get(hs(ct),'Position');
-        set(hs(ct), 'Position', [hp(1), hp(2), hp(3) * 0.8, hp(4)])
-        
+    hp = get(hs(ct),'Position');
+    set(hs(ct), 'Position', [hp(1), hp(2), hp(3) * 0.8, hp(4)])
+
 end
 hp3 = get(hs(end),'Position');
- 
-h = colorbar('Position', [hp3(1)+hp3(3)+0.02  hp3(2)+0.05  0.02  hp3(2)+hp3(3)]);
+
+h = colorbar; %('Position', [hp3(1)+hp3(3)+0.02  hp3(2)+0.05  0.02  hp3(2)+hp3(3)]);
 h.Label.String = 'Signal Loss (dB)';
-    set(gcf,'Color','w')
-    set(gca, 'FontSize', 20, 'CLim',colorlimit)
-        %set(h, 'FontSize', 20)
-        
-    set(findall(gcf,'-property','FontName'),'fontsize',18) 
-        
+set(gcf,'Color','w')
+set(gca, 'FontSize', 20, 'CLim',colorlimit)
+%set(h, 'FontSize', 20)
+
+set(findall(gcf,'-property','FontName'),'fontsize',18)
+
 
 
 

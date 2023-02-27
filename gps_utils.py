@@ -4,10 +4,9 @@ import os
 import matplotlib.pyplot as plt
 import h5py
 import datetime as dt
-import pickle as pkl
 import nvector as nv
 import pandas as pd
-import pymap3d as pm
+import nc_utils
 
 wgs84_pm = pm.Ellipsoid('wgs84')
 wgs84 = nv.FrameE(name='WGS84')
@@ -234,25 +233,6 @@ def test_gps_read(gps_fn):
     print('There are %i unique times in the file' % (len(times)))
 
 
-def pickle(struct, pkl_fn):
-    """ Pickle write wrapper including filename and directory handling """
-    pkl_fn = os.path.abspath(os.path.expanduser(pkl_fn))
-    os.makedirs(os.path.dirname(pkl_fn), exist_ok='True')
-    with open(pkl_fn, 'wb') as f:
-        pkl.dump(struct, f)
-    print('Wrote to %s' % pkl_fn)
-
-
-def unpickle(pkl_fn):
-    """ Pickle read wrapper including filename and directory handling """
-    pkl_fn = os.path.abspath(os.path.expanduser(pkl_fn))
-    with open(pkl_fn, 'rb') as f:
-        struct = pkl.load(f)
-    print('Loaded %s' % pkl_fn)
-
-    return struct
-
-
 def gen_sitelist(gps, npts_wanted=100):
     """ Grab all the unique sites in GPS df and pull out npts of them, based on max separation """
     slist_full = get_sitelist(gps)
@@ -360,7 +340,7 @@ def cleanup(gps):
 def load_and_preproc_mit_gps(gps_fn, slist_pkl_fn, time):
     """ Run through from MIT GPS input file to short, clean output """
     gps = load_gps(gps_fn, time)
-    slist = unpickle(slist_pkl_fn)
+    slist = nc_utils.unpickle(slist_pkl_fn)
     gps_short = downsample_to_slist(gps, slist)
     gps_short_XYZ = calc_tx_rx_coords(gps_short)
     return cleanup(gps_short_XYZ)
@@ -380,7 +360,7 @@ if __name__ == '__main__':
         gps_fn = time.strftime(gps_fn_fmt)
         gps_pkl_fn = time.strftime(gps_pkl_fn_fmt)
         gps = load_gps(gps_fn, time)
-        pickle(gps, gps_pkl_fn)
+        nc_utils.pickle(gps, gps_pkl_fn)
         time += dt.timedelta(days=1)
 
     """ #Load pkls instead
@@ -391,18 +371,18 @@ if __name__ == '__main__':
     gps_pkl_fn = stime.strftime(gps_pkl_fn_fmt)
     gps_pkl_fn_2 = stime.strftime(gps_pkl_fn_fmt_2)
     gps_pkl_fn_3 = stime.strftime(gps_pkl_fn_fmt_3)
-    gps = unpickle(gps_pkl_fn)
-    gps_short = unpickle(gps_pkl_fn_2)
-    slist = unpickle(slist_pkl_fn)
+    gps = nc_utils.unpickle(gps_pkl_fn)
+    gps_short = nc_utils.unpickle(gps_pkl_fn_2)
+    slist = nc_utils.unpickle(slist_pkl_fn)
 
     # Calculate the sitelist
     slist = gen_sitelist(gps, 150)
-    pickle(slist, slist_pkl_fn)
+    nc_utils.pickle(slist, slist_pkl_fn)
     
 
     # Downsample the GPS to the sitelist, and calculate coordinates 
     gps_short = downsample_to_slist(gps, slist)
-    pickle(gps, gps_pkl_fn_2)
+    nc_utils.pickle(gps, gps_pkl_fn_2)
    
     # Calculate the XYZ coordinates 
     gps_short_XYZ = calc_tx_rx_coords(gps_short)
@@ -410,7 +390,7 @@ if __name__ == '__main__':
     # clean up the data
     gps_short_XYZ = cleanup(gps_short_XYZ)
     
-    pickle(gps_short_XYZ, gps_pkl_fn_3)
+    nc_utils.pickle(gps_short_XYZ, gps_pkl_fn_3)
 
 
 

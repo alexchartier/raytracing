@@ -227,7 +227,7 @@ def get_slant_TEC(mod, tx, rx):
     return sTEC
 
 
-def create_raypath(tx_XYZ, rx_XYZ, stepsize=1E3, modtop=8400E3):
+def create_raypath(tx_XYZ, rx_XYZ, stepsize=1E3, modtop=9400E3):
     xi = [] 
     dist = np.sqrt(np.sum((tx_XYZ - rx_XYZ) ** 2))
     unitv = (tx_XYZ - rx_XYZ) / dist

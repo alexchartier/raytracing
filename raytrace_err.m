@@ -40,6 +40,6 @@ else
 end
 
 %%  Find minimum distance from raypath to receiver location
-[err, closest_pt, id] = ray_dist(ray, rxloc, reflect);
+[err, closest_pt, id] = ray_dist(ray, rxloc);
 %fprintf('Error: %1.1f \n', err)
 
