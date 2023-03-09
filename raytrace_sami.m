@@ -10,7 +10,7 @@ function raytrace_sami(year, month, day, hours, sami_fn, wspr_fn, out_fn_fmt, va
 % day = 23; 
 % hours = 0:23;
 % sami_fn = 'sami3_regulargrid_elec_density_2014May23.nc';
-% wspr_fn = 'wsprspots-2014-05.csv';
+% wspr_fn = 'data/wspr/wsprspots-2014-05.csv';
 % out_fn_fmt = 'links_{yyyymmmdd-HHMM}.nc';
 % 
 % % Optional (w. defaults):
@@ -53,7 +53,8 @@ times = datetime(year, month, day, hours, 0, 0);
 
 
 %% Load ionosphere from SAMI3 and monthly links from WSPR
-sami = load_sami(sami_fn);
+sami_vars = {'alt', 'lat', 'lon', 'dene0', 'time'};
+sami = load_sami(sami_fn, sami_vars);
 wspr = load_wspr_csv(wspr_fn, min(times), max(times), fmin, fmax, ...
     snrmin, distmin, distmax);
 
@@ -108,7 +109,7 @@ end
 
 
 
-
+% 
 % %% Plotting
 % rotang = -30;
 % 

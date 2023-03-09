@@ -19,7 +19,7 @@ def main(
     timestep=dt.timedelta(minutes=2),
     mlat_cutoff=60.,
     pot_fname_fmt='/Users/chartat1/pymix/data/pot_sami_cond/mar19/ampere_mix_%04d-%02d-%02dT%02d-%02d-%02dZ.nc',
-    plot_fname_fmt='/Users/chartat1/pymix/plots/ampere_mix_%04d-%02d-%02dT%02d-%02d-%02dZ.png',
+    plot_fname_fmt='./plots/ampere_mix_%04d-%02d-%02dT%02d-%02d-%02dZ.png',
     dl_dmsp=False,
     sats = ['f16', 'f17', 'f18'],  # looks like mag not working on F15
     dmsp_dec_rate=10,
@@ -99,19 +99,20 @@ def main(
             yticks = 90 - np.rad2deg(ax.get_yticks())
             ax.set_yticklabels(['%1.0f' % y for y in yticks])
             cb = plt.colorbar(im, ax=ax)
-
-            """ Quiver ion drift plot """
-            x, y = pol2cart_vec(rad, theta, vi_N[::-1, :], -vi_E[::-1, :])
-            ax.quiver(theta, rad, x, y)
-            
-            """ Quiver DMSP ion drift plot """
-            rad = np.deg2rad(90) - np.deg2rad(dmsp[sat]['mlat'][tidx])
-            theta = np.deg2rad(dmsp[sat]['mlong'][tidx])
-            vi_N, vi_E = brng_mag_to_N_E(
-                np.deg2rad(dmsp[sat]['vi_dirn_MAG'][tidx]), dmsp[sat]['vi_mag'][tidx],
-            )
-            x, y = pol2cart_vec(rad, theta, -vi_N, vi_E)
-            ax.quiver(theta, rad, x, y, color='m')
+        
+            if None:
+                """ Quiver ion drift plot """
+                x, y = pol2cart_vec(rad, theta, vi_N[::-1, :], -vi_E[::-1, :])
+                ax.quiver(theta, rad, x, y)
+                
+                """ Quiver DMSP ion drift plot """
+                rad = np.deg2rad(90) - np.deg2rad(dmsp[sat]['mlat'][tidx])
+                theta = np.deg2rad(dmsp[sat]['mlong'][tidx])
+                vi_N, vi_E = brng_mag_to_N_E(
+                    np.deg2rad(dmsp[sat]['vi_dirn_MAG'][tidx]), dmsp[sat]['vi_mag'][tidx],
+                )
+                x, y = pol2cart_vec(rad, theta, -vi_N, vi_E)
+                ax.quiver(theta, rad, x, y, color='m')
 
             """ Plot local noon dot """
             noon_glon = local_noon(time)  
@@ -125,7 +126,7 @@ def main(
 
             ax.set_rmax(np.deg2rad(90 - latlim))
             plt.savefig(plot_fname)
-            print('Saved to %s' % plot_fname)
+            print('******************************* Saved to %s' % plot_fname)
 
 
         time += timestep 
@@ -306,7 +307,6 @@ def calc_mix_efld(pot):
     """
     mix = {}
     pot_w = wrap(pot)
-    breakpoint()
 
     mix['En'], mix['Ee'], mix['glat'], mix['glon'] = calc_efield(
         pot_w['Potential'] * 1E3,  # kV -> V

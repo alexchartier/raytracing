@@ -11,7 +11,7 @@ edit the startup.m to set paths
 
 """
 
-def main(time, sami_fn, wspr_fn, out_fn_fmt, hrs=np.arange(22, 24)):
+def main(time, sami_fn, wspr_fn, out_fn_fmt, hrs=np.arange(0, 24)):
 
     year = time.year
     month = time.month

@@ -24,39 +24,23 @@ def main():
     step = dt.timedelta(days=1)
     slist_fn = 'ionosonde_classifier/lowell_iono_list.txt' 
     iono_data_fn_fmt = '~/data/ionosonde/iono_data_%Y%b%d.pkl'
-    pkl_fn = 'mar_iono_val_data.pkl'
+    out_fn_fmt = 'iono_%s_val.nc'
     mod_fn_fmt = '~/data/sami3/2019/sami3_regulargrid_ancillary_%Y%b%d.nc'
     class_fn = 'ionosonde_classifier/classifier_final.sav'
     dl_iono_data = False
 
-    #preproc_data(sday, eday, step, slist_fn, iono_data_fn_fmt, mod_fn_fmt, class_fn, pkl_fn, dl_iono_data=True)
-    analyze(pkl_fn)
-
-
-
-def analyze(pkl_fn):
-    iono_data = nc_utils.unpickle(pkl_fn) 
-
-    # station-by station bias and RMSE
-    error_stats = {}
+    iono_data = nc_utils.unpickle('mar_iono_val_data.pkl')
+    global_atts = global_atts_define()
+    metadata = metadata_define()
     for station, data in iono_data.items():
-        breakpoint()
-        error_stats[station] = {
-            'RMSE': [], 
-            'bias':[], 
-            'max': [], 
-            'min':[], 
-        }
+        nc_fname = out_fn_fmt % station
+        nc_utils.write_netcdf_from_df(iono_data[station], metadata, global_atts, nc_fname)
 
-    # Error vs latitude 
-
-    # Error vs LT
-
-    # Example plot
+    preproc_data(sday, eday, step, slist_fn, iono_data_fn_fmt, mod_fn_fmt, class_fn, out_fn_fmt, dl_iono_data=dl_iono_data)
 
 
 def preproc_data(
-    sday, eday, step, slist_fn, iono_data_fn_fmt, mod_fn_fmt, class_fn, out_fn,
+    sday, eday, step, slist_fn, iono_data_fn_fmt, mod_fn_fmt, class_fn, out_fn_fmt,
     dl_iono_data=True,
 ):
     """ 
@@ -118,13 +102,39 @@ def preproc_data(
             print(station)
             iono_data[station] = calc_nmf2_errs(sami, data)
 
-    """ calculate the LTs for each point """
+    """ calculate the LTs for each point and save out"""
+    global_atts = global_atts_define()
+    metadata = metadata_define()
     for station, data in iono_data.items():
         iono_data[station]['lt'] = coord_utils.calc_lt(data.index, data['lon'])
+        nc_fname = out_fn_fmt % station
+        nc_utils.write_netcdf_from_df(iono_data[station], metadata, global_atts, nc_fname)
 
-    # save out
-    nc_utils.pickle(iono_data, out_fname)
 
+def global_atts_define():
+    return {
+        'Conventions':'CF-1.6', 
+        'title':'Ionosonde validation of SAMI3 with ML data classification', 
+        'summary':'Data generated',
+    }   
+
+
+def metadata_define():
+    return {
+        'POSIXtime': {'units':'Seconds', 'long_name':'POSIX time (seconds since 1/1/1970)'},
+        'station_id' : {'units':'None', 'long_name':'Station identifier'},
+        'lat': {'units':'degrees', 'long_name':'Latitude'},
+        'lon': {'units':'degrees', 'long_name':'Longitude'},
+        'cs': {'units':'None', 'long_name':'Confidence score'},
+        'foF2': {'units':'MHz', 'long_name':'F2-layer Critical frequency'},
+        'hmF2': {'units':'km', 'long_name':'F2-layer peak height'},
+        'foE'    : {'units':'MHz', 'long_name':'E-layer critical frequency'},
+        'foEs': {'units':'MHz', 'long_name':'Sporadic E-layer critical frequency'},
+        'qualflag': {'units':'None', 'long_name':'Machine-learning quality flag'},
+        'nmF2': {'units':'El. m-3', 'long_name':'F2-layer peak density'},
+        'nmF2_sami': {'units':'El. m-3', 'long_name':'F2-layer peak density from SAMI3'},
+        'lt': {'units':'hours', 'long_name':'Local time'},
+    }
 
 
 def calc_nmf2_errs(sami, data):

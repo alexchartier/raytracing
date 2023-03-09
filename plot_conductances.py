@@ -22,8 +22,6 @@ def main(
     vals_i = griddata(pts, vals, (xi.flatten(), yi.flatten()), )
     vals_ig = vals_i.reshape((len(lons_i), len(lats_i)))
 
-
-
     fig, ax = plt.subplots(1, 1,subplot_kw={'projection': 'polar'})
 
     latind = lats_i > 40

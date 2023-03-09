@@ -103,7 +103,7 @@ for s1 = 1%:size(satlocs, 1)
 end
 clear raytrace_3d
 
-%% do the ground ray
+%% do the ground-to-space ray
 txloc_g = [30, 118, 0];
 freq = 18;
 elvarr = [1:3:90];
@@ -113,6 +113,17 @@ ground_ray = ...
     collision_freq, iono_grid_parms, Bx, By, Bz, geomag_grid_parms, ...
     elvarr, azarr, maxdist, tol, 1, blind_range);
 
+
+%% do the ground-to-ground ray
+txloc_g2 = [20, 120, 0];
+rxloc_g2 = [25, 120, 0];
+freq = 3;
+elvarr = [1:3:90];
+
+ground_ray_2 = ...
+    raytrace_itsi(freq, OX_mode, txloc_g2, rxloc_g2, iono_en_grid, iono_en_grid_5, ...
+    collision_freq, iono_grid_parms, Bx, By, Bz, geomag_grid_parms, ...
+    elvarr, azarr, maxdist, tol, 1, blind_range);
 
 %% save
 homed_rays(1).iono_en_grid = iono_en_grid;
@@ -161,11 +172,17 @@ for l = 1:size(satlocs, 1)
     plot3(cart(1), cart(2), cart(3), 'ro', 'markersize', 10, 'markerfacecolor', 'r')
 end
 
-% plot the ground ray
+% plot the ground-to-space ray
 
 sph = [ground_ray.height * 1E3 + Re; deg2rad(ground_ray.lat); deg2rad(ground_ray.lon)];
 cart = sphcart(sph');
 plot3(cart(:, 1), cart(:, 2), cart(:, 3), 'm', 'LineWidth', 5)
+
+% plot the ground-to-ground ray
+
+sph = [ground_ray_2.height * 1E3 + Re; deg2rad(ground_ray_2.lat); deg2rad(ground_ray_2.lon)];
+cart = sphcart(sph');
+plot3(cart(:, 1), cart(:, 2), cart(:, 3), 'y', 'LineWidth', 5)
 
 
 hold off

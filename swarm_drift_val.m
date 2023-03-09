@@ -22,17 +22,7 @@ time = Times(20);
 %% Load MIX potential 
 close
 pot_fname = filename(pot_fname_fmt, time);
-mix = [];
-
-keys = {'Potential', 'Geographic Latitude', 'Geographic Longitude', 'MLAT (AACGM)', 'MLON (AACGM)'};
-
-for k = keys
-    outname = regexprep(k{1}, ' ', '_');
-    outname = regexprep(outname, '(', '');
-    outname = regexprep(outname, ')', '');
-    mix.(outname) = double(ncread(pot_fname, k{1}));
-    mix.(outname) = mix.(outname)(2:end, :); 
-end
+mix = load_mix(pot_fname);
 [mix.efld_N_Mag, mix.efld_E_Mag] = spherical_gradient(...
     ref_rad, mix.MLAT_AACGM, mix.MLON_AACGM, mix.Potential);
 
