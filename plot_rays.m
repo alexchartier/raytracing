@@ -1,7 +1,10 @@
 function plot_rays(txloc, rxloc, rays) %, rot, ang)
 %%
+% plot_rays(txloc, rxloc, rays)
+
 % earth_example
 % rotate(gl, rot, ang)
+
 hold on
 Re = 6371E3; 
 for r = 1:length(rays)

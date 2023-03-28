@@ -153,7 +153,7 @@ def get_pos_err(tx, rx, elv, delays, verbose=False):
     res = minimize(cost_func, rx, method='Powell', options={'ftol':0.01})
     pos_err = np.sqrt(np.sum((rx - res.x) ** 2))
   
-    assert pos_err < 1E3, 'Position error looks too big: %1.1f' % pos_err
+    assert pos_err < 50, 'Position error looks too big: %1.1f' % pos_err
 
     if verbose:
         print('delays')

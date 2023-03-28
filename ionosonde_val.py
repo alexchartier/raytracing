@@ -4,6 +4,7 @@ import os
 import datetime as dt
 import pickle
 import bisect
+import scipy.stats
 from scipy.interpolate import interp2d
 import matplotlib.pyplot as plt
 import nc_utils
@@ -17,31 +18,9 @@ authors: Alex T Chartier & Glenn Sugar
 Johns Hopkins University Applied Physics Laboratory
 """
 
-def main():
-
-    sday = dt.datetime(2019, 3, 1)
-    eday = dt.datetime(2019, 4, 1)
-    step = dt.timedelta(days=1)
-    slist_fn = 'ionosonde_classifier/lowell_iono_list.txt' 
-    iono_data_fn_fmt = '~/data/ionosonde/iono_data_%Y%b%d.pkl'
-    out_fn_fmt = 'iono_%s_val.nc'
-    mod_fn_fmt = '~/data/sami3/2019/sami3_regulargrid_ancillary_%Y%b%d.nc'
-    class_fn = 'ionosonde_classifier/classifier_final.sav'
-    dl_iono_data = False
-
-    iono_data = nc_utils.unpickle('mar_iono_val_data.pkl')
-    global_atts = global_atts_define()
-    metadata = metadata_define()
-    for station, data in iono_data.items():
-        nc_fname = out_fn_fmt % station
-        nc_utils.write_netcdf_from_df(iono_data[station], metadata, global_atts, nc_fname)
-
-    preproc_data(sday, eday, step, slist_fn, iono_data_fn_fmt, mod_fn_fmt, class_fn, out_fn_fmt, dl_iono_data=dl_iono_data)
-
-
-def preproc_data(
-    sday, eday, step, slist_fn, iono_data_fn_fmt, mod_fn_fmt, class_fn, out_fn_fmt,
-    dl_iono_data=True,
+def main(
+    sday, eday, step, slist_fn, iono_data_fn_fmt, mod_fn_fmt, class_fn, 
+    out_fn_fmt, dl_iono_data,
 ):
     """ 
     Validate the SAMI3 model against autoscaled, ML-cleaned ionosonde NmF2 data
@@ -65,6 +44,12 @@ def preproc_data(
     """ Clean up the ionosonde data using ML. Use the full set because the classifier requires a window of data.  """ 
     # combine all the files together into one
     iono_data = combine_preproc_files(sday, eday, step, iono_data_fn_fmt) 
+
+    # kick out data from ionosondes that are not in the sitelist
+    iono_sites = list(iono_data)
+    for k in iono_sites:
+        if k not in slist:
+            iono_data.pop(k)
 
     # Load in the scaler and classifier
     [scaler, classifiers, betas] = nc_utils.unpickle(class_fn)
@@ -203,7 +188,7 @@ def clean_ionosonde_data(iono_data, scaler, classifier,
             continue
 
         # Generate the feature vector for the data point
-        feature_vector = utils.make_feature_vector(
+        feature_vector = make_feature_vector(
             times_julian[start_idx:end_idx], 
             np.array(iono_data_t['foF2'], dtype=float), 
             slope=True,
@@ -277,13 +262,12 @@ def plot_station(nmf2_data, station):
     plt.show()
 
 
-
-def find_closest_tidx(tlist, time, dtmin=dt.timedelta(minutes=5)):
+def find_closest_tidx(tlist, time, dtmin=dt.timedelta(minutes=10)):
     """ return the index of the closest time in tlist to time """
-    idx1 = bisect.bisect_left(tlist, time)
+    idx1 = bisect.bisect_left(tlist, time) - 1
     idx2 = bisect.bisect_right(tlist, time)
 
-    if idx1 >= (len(tlist) - 1):
+    if idx2 >= (len(tlist) - 1):
         idx1 = len(tlist) - 1
         idx2 = len(tlist) - 1
 
@@ -300,9 +284,7 @@ def find_closest_tidx(tlist, time, dtmin=dt.timedelta(minutes=5)):
     else:
         idx = idx2
 
-
     return idx
-    
 
 
 def dl_ionosonde_data(
@@ -318,7 +300,7 @@ def dl_ionosonde_data(
     if type(station_ids) is str:
         station_ids = [station_ids]
     for station_id in station_ids:
-        data[station_id] = utils.get_iono_params(station_id, params, stime, etime) 
+        data[station_id] = get_iono_params(station_id, params, stime, etime) 
 
     with open(out_fn, 'wb') as f:
         pickle.dump(data, f)
@@ -519,4 +501,18 @@ def make_feature_vector(times_julianday, fof2_artist, fof2_filtered=None, slope=
 
 
 if __name__ == '__main__':
-    main()
+    
+    sday = dt.datetime(2019, 3, 1)
+    eday = dt.datetime(2019, 4, 1)
+    step = dt.timedelta(days=1)
+    slist_fn = 'ionosonde_classifier/lowell_iono_list.txt'
+    iono_data_fn_fmt = '~/data/ionosonde/iono_data_%Y%b%d.pkl'
+    out_fn_fmt = 'data/ionosonde_val/iono_%s_val.nc'
+    mod_fn_fmt = '~/data/sami3/2019/sami3_regulargrid_ancillary_%Y%b%d.nc'
+    class_fn = 'ionosonde_classifier/classifier_final.sav'
+    dl_iono_data = False
+
+    main(
+        sday, eday, step, slist_fn, iono_data_fn_fmt, mod_fn_fmt, class_fn, 
+        out_fn_fmt, dl_iono_data,
+    )

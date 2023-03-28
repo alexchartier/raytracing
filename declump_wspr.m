@@ -1,7 +1,7 @@
 function wspr_out = declump_wspr(wspr_t, npts_wanted)
-%% Example inputs
-% times = datenum(2014, 5, 23, 0:24, 0, 0);
-% wspr_fn = 'wsprspots-2014-05.csv';
+%% % Example inputs
+% times = datenum(2019, 3, 15, 0:1, 0, 0);
+% wspr_fn = 'data/wspr/wsprspots-2019-03.csv';
 % fmin = 2;
 % fmax = 30;
 % snrmin = -25;
@@ -25,6 +25,8 @@ function wspr_out = declump_wspr(wspr_t, npts_wanted)
 % 
 % 
 % %%
+% 
+% 
 % hold on
 % scatter(wspr_t.lonI, wspr_t.latI, 'b')
 % scatter(wspr_out.lonI, wspr_out.latI, '.k')
@@ -62,6 +64,24 @@ else
     end
 end
   
+
+%%
+clf
+
+hold on
+m_proj('Miller Cylindrical', 'latitude', [-80 80], 'longitude', [-180, 180])
+
+m_scatter(wspr_t.lonI, wspr_t.latI, 'b')
+m_scatter(wspr_out.lonI, wspr_out.latI, '.m')
+
+
+    m_grid('color', 'k', 'FontSize', 20)
+    m_coast('color', 'k');
+% xlim([-180, 180])
+% ylim([-90, 90])
+hold off
+
+legend({"", "WSPR link midpoint", 'Selected by declumping algorithm'}, 'FontSize', 20)
 
 
 

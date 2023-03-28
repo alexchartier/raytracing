@@ -1,13 +1,12 @@
 %% load file
 fname = 'data/wspr/2019-Mar-15-2200.nc';
-data = read_netcdf(fname)
+links = read_netcdf(fname);
 
 %% Plotting
-rotang = -30;
 
-txloc = links{2}.txlocs;
-rxloc = links{2}.rxlocs;
-home = links{2}.home;
+txloc = links.txlocs;
+rxloc = links.rxlocs;
+home = links.home;
 
 latI_bad = [];
 lonI_bad = [];
@@ -26,17 +25,17 @@ for l = 1:length(home)
     end
 end
 
-rotang = -30;
+
 earth_example
 % Plot the links
 CartL = sphcart([64E5 * ones(size(latI_bad)), deg2rad(latI_bad), deg2rad(lonI_bad)]);
 h3 = plot3(CartL(:, 1), CartL(:, 2), CartL(:, 3), '-r', 'LineWidth', 3);
-rotate(h3, [0 0 1], rotang);
 
 
 CartL = sphcart([64E5 * ones(size(latI_good)), deg2rad(latI_good), deg2rad(lonI_good)]);
 h3 = plot3(CartL(:, 1), CartL(:, 2), CartL(:, 3), '-g', 'LineWidth', 3);
-rotate(h3, [0 0 1], rotang);
 %CartL = sphcart([64E5 * ones(size(latI_f)), deg2rad(latI_f), deg2rad(lonI_f)]);
 
-rotate(globe, [0 0 1], rotang)
+
+legend({'', 'link not predicted by SAMI', 'link predicted by SAMI'})
+set(gca,'FontSize', 30)

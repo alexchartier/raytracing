@@ -6,6 +6,7 @@ import h5py
 import datetime as dt
 import nvector as nv
 import pandas as pd
+import pymap3d as pm
 import nc_utils
 
 wgs84_pm = pm.Ellipsoid('wgs84')
@@ -346,6 +347,26 @@ def load_and_preproc_mit_gps(gps_fn, slist_pkl_fn, time):
     return cleanup(gps_short_XYZ)
 
 
+def write_sitelists(gps, slist, slist_fn, slist_fn_short):
+    
+    # write the full sitelist
+    idx = np.unique(gps['gps_site'], return_index='True')
+    unique_gps = gps.iloc[idx[1]]
+    unique_gps = unique_gps.drop(['time', 'sat_id', 'los_tec', 'dlos_tec', 'azm', 'elm'], axis=1)
+    unique_gps_str = unique_gps.to_string(header=False, index=False)
+    with open(slist_fn, 'w') as f:
+        f.write(unique_gps_str)
+
+
+    # write the short sitelist
+    del slist['XYZ']
+    del slist['LLA']
+    gps_short = pd.DataFrame(slist)
+    gps_str = gps_short.to_string(header=False, index=False)
+    with open(slist_fn_short, 'w') as f:
+        f.write(gps_str)
+
+
 if __name__ == '__main__':
     gps_fn_fmt = '~/data/gps/mit_hdf/los_%Y%m%d.001.h5'
     slist_pkl_fn = '~/data/gps/sitelists/global_150.pkl'
@@ -374,6 +395,9 @@ if __name__ == '__main__':
     gps = nc_utils.unpickle(gps_pkl_fn)
     gps_short = nc_utils.unpickle(gps_pkl_fn_2)
     slist = nc_utils.unpickle(slist_pkl_fn)
+
+    # write some info for matlab to plot
+    write_sitelists(gps, slist, 'data/gps/sitelist.txt', 'data/gps/sitelist_150.txt')
 
     # Calculate the sitelist
     slist = gen_sitelist(gps, 150)
