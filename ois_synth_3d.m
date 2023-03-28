@@ -3,17 +3,19 @@
 %% Set inputs
 sami_fn = 'sami3_regulargrid_elec_density_2014May23.nc';
 out_fn = 'sim_ois_rays.mat';
-time = datenum(2014, 5, 23, 9, 0, 0);
+time = datenum(2014, 5, 23, 1, 0, 0);
 alts = 90:2:450;
 OX_mode = 0;
 maxdist = 5E3;
 tol = [1e-7 0.01 25];
 refractive_ind = 1;
 nhops = 1;
-freqs = 2:0.2:20;
+freqs = 2:0.1:20;
 
-txloc = [-23.66, 144.14, 0];
+txloc = [62.3, -145.3, 0];  % NOME
+% txloc = [-23.66, 144.14, 0];  % JORN 
 rxloc = [64.5, -165.4, 0];
+
 
 %% Load ionosphere from SAMI3
 sami_vars = {'alt', 'lat', 'lon', 'dene0', 'time'};
@@ -63,7 +65,7 @@ for r = 1:length(rays)
 
         sph = [ray.height * 1E3 + Re; deg2rad(ray.lat); deg2rad(ray.lon)];
         cart = sphcart(sph');
-        plot3(cart(:, 1), cart(:, 2), cart(:, 3), 'm')
+        plot3(cart(:, 1), cart(:, 2), cart(:, 3), 'w')
     end
 end
 
@@ -103,7 +105,6 @@ ylabel({'Virtual Range (km)'})
 %legend({'X', 'No B', 'O'})
 % title(sprintf('foF2: %1.1f MHz, hmF2: %1.1f km, S/C alt: %1.1f km', D.fof2(timeidx), D.hmf2(timeidx), alt_iss))
 
-set(gca,'CLim',colorlimit, 'FontSize', 20)
 
 hold off
 

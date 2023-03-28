@@ -59,7 +59,7 @@ loc_xyz = [x, y, z]' .* ones(3, length(ray_xyz));
 dists = sqrt(sum((loc_xyz - ray_xyz) .^2));
 
 id = find(dists == min(dists));
-if id == 1 
+if id == 1
     % start of ray is closest - return out
     dl = NaN;
     return
@@ -75,11 +75,16 @@ if dl == 1E6
 end
 
 closest_pt = ray_xyz(:, id);
-id = id + refloc  - 1;
 
-%% find the group range to the receiver
-group_path = interp1(ray.height(id-1:end), ray.group_range(id -1:end), loc(3));
-
+%% check the point really is close (point-to-line looks at an infinite line)
+if sqrt(sum((closest_pt - loc_xyz(:, 1)).^2)) > 1E6
+    dl = NaN;
+    group_path = NaN;
+else
+    id = id + refloc  - 1;
+    %% find the group range to the receiver
+    group_path = interp1(ray.height(id-1:end), ray.group_range(id -1:end), loc(3));
+end
 
 
 
