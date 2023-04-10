@@ -11,7 +11,7 @@ edit the startup.m to set paths
 
 """
 
-def main(stime, etime, sami_fn_fmt, wspr_fn_fmt, out_fn_fmt,hrs=[1, 2]): #hrs=np.arange(0, 24)):
+def main(stime, etime, sami_fn_fmt, wspr_fn_fmt, hrs=np.arange(0, 24)):
 
     time = stime
 
