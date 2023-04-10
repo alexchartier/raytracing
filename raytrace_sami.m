@@ -107,7 +107,7 @@ for t = 1:length(times)
     struct2nc(links, filename(out_fn_fmt, times(t)), 'netcdf4_classic');
 end
 
-
+exit
 
 % 
 % %% Plotting

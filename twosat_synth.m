@@ -5,24 +5,24 @@ clear
 
 %% inputs
 out_fn = 'sim_twosat_rays.mat';
-time = datenum(2019, 9, 21);
-freqs = 3:0.2:15; % 2:0.2:20; % 20;
+time = datenum(2019, 9, 21, 0, 0, 0);
+freqs = 3:0.1:15; % 2:0.2:20; % 20;
 
 alts = 150:2:800;
-sat_alt = 780;
+sat_alt = 600;
 
-satlats = [18, 20];
-satlons = [114];
+satlats = [47, 52];
+satlons = [-75];
 satlons(satlons > 180) = satlons(satlons > 180) - 360;
 [satlatarr, satlonarr] = meshgrid(satlats, satlons);
 satlocs = [satlatarr(:), satlonarr(:), ones(numel(satlatarr), 1) * sat_alt];
 
 % grid
-lats = 15:2:22;
-lons = 112:2:116;
+lats = 30:2:65;
+lons = -80:2:-70;
 lons(lons > 180) = lons(lons > 180) - 360;
 
-elvarr = [-90:5:-20];
+elvarr = [-90:5:-30];
 azarr = -180:5:180;
 R12 = 100;
 
@@ -158,7 +158,7 @@ export_fig('~/Downloads/twosat_sim.tif');
 
 %% Plotting 2 - ionogram plot
 
-clf
+figure
 colormap('cool')
 
 xlimit = [2, 12];
@@ -169,7 +169,7 @@ hs = [];
 for s1 = 1:size(homed_rays, 1)
     for s2 = s1:size(homed_rays, 2)
         ct = ct + 1;
-        hs = [hs, subplot(3, 1, ct)];
+        hs = [hs, subplot(size(homed_rays, 2), 1, ct)];
 
         rays = squeeze(homed_rays(s1, s2, :));
         hold on
@@ -186,7 +186,7 @@ for s1 = 1:size(homed_rays, 1)
         ylim(ylimit)
         xlim(xlimit)
         ylabel({'Virtual Range (km)'})
-        if ct == 3
+        if ct == size(homed_rays, 2)
             xlabel('Tx Freq (MHz)')
         else
             set(gca, 'XTickLabels', [])
