@@ -66,22 +66,22 @@ end
   
 
 %%
-clf
-
-hold on
-m_proj('Miller Cylindrical', 'latitude', [-80 80], 'longitude', [-180, 180])
-
-m_scatter(wspr_t.lonI, wspr_t.latI, 'b')
-m_scatter(wspr_out.lonI, wspr_out.latI, '.m')
-
-
-    m_grid('color', 'k', 'FontSize', 20)
-    m_coast('color', 'k');
-% xlim([-180, 180])
-% ylim([-90, 90])
-hold off
-
-legend({"", "WSPR link midpoint", 'Selected by declumping algorithm'}, 'FontSize', 20)
+%    clf
+%
+%    hold on
+%    m_proj('Miller Cylindrical', 'latitude', [-80 80], 'longitude', [-180, 180])
+%
+%    m_scatter(wspr_t.lonI, wspr_t.latI, 'b')
+%    m_scatter(wspr_out.lonI, wspr_out.latI, '.m')
+%
+%
+%        m_grid('color', 'k', 'FontSize', 20)
+%        m_coast('color', 'k');
+%    % xlim([-180, 180])
+%    % ylim([-90, 90])
+%    hold off
+%
+%    legend({"", "WSPR link midpoint", 'Selected by declumping algorithm'}, 'FontSize', 20)
 
 
 
