@@ -82,8 +82,27 @@ end
 
 
 
-%% plot
 
+%% day/night comparison
+dayi = data_full.lt > 6 & data_full.lt < 18;
+nighti = ~dayi;
+highlati = abs(data_full.lat) > 60;
+midlati = abs(data_full.lat) < 60| abs(data_full.lat) > 30;
+lowlati = abs(data_full.lat) < 30;
+
+errpct = 100 * (1 - data_full.corr_pos_err ./ data_full.raw_pos_err);
+
+daypct = median(errpct(dayi));
+nightpct = median(errpct(nighti));
+    
+highpct = median(errpct(highlati));
+midpct = median(errpct(midlati));
+lowpct = median(errpct(lowlati));
+
+
+
+%% plot
+clf
 fs = 22;
 
 subplot(2, 1, 1)
@@ -92,8 +111,13 @@ bar(ll, laterrs(:, 1:2:3))
 xlabel('Latitude (deg)')
 ylabel('Median 3D GPS position error (m)')
 legend({"Uncorrected", "Corrected by SAMI3"})
-text(-80, 4.5, sprintf('Overall median & max raw err: %1.1f & %1.1f m', median(data_full.raw_pos_err), max(data_full.raw_pos_err)), "FontSize", fs)
-text(-80, 4, sprintf('Overall median & max corr. err: %1.1f & %1.1f m', median(data_full.corr_pos_err), max(data_full.corr_pos_err)), "FontSize", fs)
+text(-80, 4.5, sprintf('Overall median & max raw err: %1.1f & %1.1f m\nOverall median & max corr. err: %1.1f & %1.1f m',...
+    median(data_full.raw_pos_err), max(data_full.raw_pos_err),  ...
+    median(data_full.corr_pos_err), max(data_full.corr_pos_err)), ...
+    "FontSize", fs)
+text(-80, 3, sprintf('> 60 deg: %1.1f%% improvement \n30 - 60 deg: %1.1f%% improvement\n< 30 deg: %1.1f%% improvement\n', ...
+    highpct, midpct, lowpct), "FontSize", fs ...
+    )
 
 set(gca, 'FontSize', fs)
 
@@ -106,6 +130,9 @@ bar(hh, lterrs(:, 1:2:3))
 xlabel('Local Time (hour)')
 ylabel('Median 3D GPS position error (m)')
 legend({"Uncorrected", "Corrected by SAMI3"})
+text(1, 4, sprintf('6 - 18 LT: %1.1f%% improvement \n18 - 6 LT: %1.1f%% improvement\n', ...
+    daypct, nightpct), "FontSize", fs ...
+    )
 
 set(gca, 'FontSize', fs)
 

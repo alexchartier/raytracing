@@ -5,12 +5,12 @@ function raytrace_sami(year, month, day, hours, sami_fn, wspr_fn, out_fn_fmt, va
 % 
 % % Example inputs
 % % Required
-% year = 2014;
-% month = 5;
+% year = 2019;
+% month = 3;
 % day = 23; 
-% hours = 0:23;
-% sami_fn = 'sami3_regulargrid_elec_density_2014May23.nc';
-% wspr_fn = 'data/wspr/wsprspots-2014-05.csv';
+% hours = 0:1;
+% sami_fn = '~/data/sami3/2019/sami3_regulargrid_elec_density_2019Mar23.nc';
+% wspr_fn = 'data/wspr/wsprspots-2019-03.csv';
 % out_fn_fmt = 'links_{yyyymmmdd-HHMM}.nc';
 % 
 % % Optional (w. defaults):

@@ -39,6 +39,19 @@ data_full.lt = lt;
 
 data_full.errs = data_full.nmF2_sami - data_full.nmF2;
 
+
+%% band median vals
+dayi = lt > 6 & lt < 18;
+nighti = ~dayi;
+lowi = abs(data_full.lat) < 30;
+highi = ~lowi;
+
+daymed = median(data_full.errs(dayi)) ./1E11;
+nightmed = median(data_full.errs(nighti)) ./1E11;
+lowmed = median(data_full.errs(lowi))./1E11;
+highmed = median(data_full.errs(highi))./1E11;
+
+
 %% box-whisker plots
 clf
 % Lat
@@ -61,9 +74,14 @@ set(gca, 'FontSize', 24)
 grid on
 grid minor
 
-text(50, -9E11, sprintf(...
+text(50, 0.8E12, sprintf(...
     'Overall NmF2 errors\nMedian: %1.1f x10^{11} el. m^{-3}\nMin: %1.1f x10^{11} el. m^{-3}\nMax: %1.1f x10^{11} el. m^{-3}\n', ...
     median(data_full.errs)/1E11, min(data_full.errs)/1E11, max(data_full.errs)/1E11), "FontSize", fs)
+
+text(50, -9E11, sprintf(...
+    '< 30 deg: %1.1f x10^{11} el. m^{-3}\n> 30 deg: %1.1f x10^{11} el. m^{-3}', ...
+    lowmed, highmed), "FontSize", fs)
+
 
 % LT
 subplot(2, 1, 2)
@@ -83,7 +101,9 @@ plot(ltbins, zeros(size(ltbins)), '-k')
 set(gca, 'FontSize', 24)
 grid on
 grid minor
-
+text(18.5, -11E11, sprintf(...
+    '6 - 18 LT: %1.1f x10^{11} el. m^{-3}\n18 - 6 LT: %1.1f x10^{11} el. m^{-3}', ...
+    daymed, nightmed), "FontSize", fs)
 
 
 
