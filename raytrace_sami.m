@@ -1,4 +1,4 @@
-function raytrace_sami(year, month, day, hours, sami_fn, wspr_fn, out_fn_fmt, varargin)
+function raytrace_sami(year, month, day, hours, sami_fn, wspr_fn, out_fn_fmt, wspr_out_fn_fmt, varargin)
 % Function to raytrace through the SAMI3 model and compare against WSPR 
 % reported links. Monthy WSPR csv files are available here: 
 % http://www.wsprnet.org/drupal/downloads
@@ -12,6 +12,7 @@ function raytrace_sami(year, month, day, hours, sami_fn, wspr_fn, out_fn_fmt, va
 % sami_fn = '~/data/sami3/2019/sami3_regulargrid_elec_density_2019Mar23.nc';
 % wspr_fn = 'data/wspr/wsprspots-2019-03.csv';
 % out_fn_fmt = 'links_{yyyymmmdd-HHMM}.nc';
+% wspr_out_fn_fmt = 'wspr_{yyyymmmdd-HHMM}.mat';
 % 
 % % Optional (w. defaults):
 % % Grid altitudes
@@ -52,24 +53,25 @@ varargparse(varargin, params, defaults);
 times = datetime(year, month, day, hours, 0, 0);
 
 
-%% Load ionosphere from SAMI3 and monthly links from WSPR
+%% Load ionosphere from SAMI3 
 sami_vars = {'alt', 'lat', 'lon', 'dene0', 'time'};
 sami = load_sami(sami_fn, sami_vars);
-wspr = load_wspr_csv(wspr_fn, min(times), max(times), fmin, fmax, ...
-    snrmin, distmin, distmax);
 
 
-%% loop over times
+
+%% loop over times and save out the relevant WSPR links
 for t = 1:length(times)
     time = times(t);
     disp(time)
-    links = [];
 
-    %% Get ionosphere at time t from SAMI3 into PHaRLAP format
-    sami_t = interp_sami(sami, alts, time);
-    [iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
-        Bx, By, Bz, geomag_grid_parms] = gen_grid_parms(sami_t);
-
+    wspr_out_fn = filename(wspr_out_fn_fmt, time);
+    if isfile(wspr_out_fn)  % skip the load if you already have the file
+        continue
+    elseif ~exist('wspr', 'var')
+           % load monthly links from WSPR
+           wspr = load_wspr_csv(wspr_fn, min(times), max(times), fmin, fmax, ...
+               snrmin, distmin, distmax);
+    end
 
     %% Get WSPR data close to the right time
     wspr_ti = abs(wspr.times - datenum(time)) < 5/60/24;
@@ -78,9 +80,29 @@ for t = 1:length(times)
     for k = 1:numel(fn)
         wspr_t.(fn{k}) = wspr.(fn{k})(wspr_ti);
     end
-
     wspr_out = declump_wspr(wspr_t, npts_wanted);
 
+    %% save out
+    savestruct(wspr_out_fn, wspr_out)
+
+end
+
+
+%% loop a second time and process the links
+for t = 1:length(times)
+    time = times(t);
+    disp(time)
+    links = [];
+
+
+    %% Get ionosphere at time t from SAMI3 into PHaRLAP format
+    sami_t = interp_sami(sami, alts, time);
+    [iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
+        Bx, By, Bz, geomag_grid_parms] = gen_grid_parms(sami_t);
+
+    %% Load WSPR
+    wspr_out_fn = filename(wspr_out_fn_fmt, time);
+    wspr_out = loadstruct(wspr_out_fn);
     txlocs = [wspr_out.txlat; wspr_out.txlon; ones([1, length(wspr_out.times)])]';
     rxlocs = [wspr_out.rxlat; wspr_out.rxlon; ones([1, length(wspr_out.times)])]';
     freqs = wspr_out.freq;
@@ -96,7 +118,9 @@ for t = 1:length(times)
         
         
     %% Raytrace
+    fid = fopen('linkn.txt', 'w');
     for l = 1:nlinks
+        fprintf(fid, '%i\n', l);
         [ray, elvarr, azarr] = raytrace_3dhome(freqs(l), txlocs(l, :), rxlocs(l, :), ...
             iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
             Bx, By, Bz, geomag_grid_parms, OX_mode, tol, refractive_ind, nhops, maxdist);
