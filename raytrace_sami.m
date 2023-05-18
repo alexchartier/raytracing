@@ -100,6 +100,7 @@ for t = 1:length(times)
     [iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
         Bx, By, Bz, geomag_grid_parms] = gen_grid_parms(sami_t);
 
+
     %% Load WSPR
     wspr_out_fn = filename(wspr_out_fn_fmt, time);
     wspr_out = loadstruct(wspr_out_fn);
@@ -120,8 +121,9 @@ for t = 1:length(times)
     %% Raytrace
     fid = fopen('linkn.txt', 'w');
     for l = 1:nlinks
-        fprintf(fid, '%i\n', l);
-        [ray, elvarr, azarr] = raytrace_3dhome(freqs(l), txlocs(l, :), rxlocs(l, :), ...
+        fprintf(fid, '%i\n', l)
+%         pause(1)
+        [ray, ~, ~] = raytrace_3dhome(freqs(l), txlocs(l, :), rxlocs(l, :), ...
             iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
             Bx, By, Bz, geomag_grid_parms, OX_mode, tol, refractive_ind, nhops, maxdist);
         links.ray{l} = ray;
