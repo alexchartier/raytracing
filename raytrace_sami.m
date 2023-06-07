@@ -94,7 +94,13 @@ for t = 1:length(times)
     disp(time)
     links = [];
 
+    out_fn = filename(out_fn_fmt, times(t));
+    if isfile(out_fn)
+        fprintf('%s exists - skipping \n', out_fn)
+        continue
+    end
 
+    
     %% Get ionosphere at time t from SAMI3 into PHaRLAP format
     sami_t = interp_sami(sami, alts, time);
     [iono_en_grid, iono_en_grid_5, collision_freq, iono_grid_parms, ...
@@ -130,7 +136,7 @@ for t = 1:length(times)
         links.home(l) = ray.home;
     end
 
-    struct2nc(links, filename(out_fn_fmt, times(t)), 'netcdf4_classic');
+    struct2nc(links, out_fn, 'netcdf4_classic');
 end
 
 exit
