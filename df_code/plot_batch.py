@@ -17,7 +17,7 @@ import nvector as nv
 import my_utils
 import electromagnetic as em 
 
-from utildf import graph, units, constants
+import graph
 
 #_______________________________________________________________________________
 

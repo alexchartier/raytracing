@@ -157,11 +157,12 @@ def get_exb_drift_velocity(E:dict,B0:dict,Bu:dict,lat:np.ndarray,lon:np.ndarray,
     ph_max = np.max(phi) 
 
     # get En, Ee at the interpolation point (theta_i,phi_i)
-    # FIXME: What to do about extrapolation??
-    if( (theta_i<th_min or theta_i>th_max ) or 
-        ( phi_i<ph_min or phi_i>ph_max ) ):
-        print("WARNING: glat range: th_min = {0:.5f}, th_max = {1:.5f}, th_i = {2:.5f}".format(th_min,th_max,theta_i[0])) 
-        print("WARNING: glon range: ph_min = {0:.5f}, ph_max = {1:.5f}, ph_i = {2:.5f}".format(ph_min,ph_max,phi_i[0]  ))
+    if( (theta_i.any()<th_min or theta_i.any()>th_max ) or 
+        ( phi_i.any()<ph_min or phi_i.any()>ph_max ) ):
+        # print("WARNING: glat range: th_min = {0:.5f}, th_max = {1:.5f}, th_i = {2:.5f}".format(th_min,th_max,theta_i[0])) 
+        # print("WARNING: glon range: ph_min = {0:.5f}, ph_max = {1:.5f}, ph_i = {2:.5f}".format(ph_min,ph_max,phi_i[0]  ))
+        print("WARNING: glat range: th_min = {0:.5f}, th_max = {1:.5f}, th_i out of range!".format(th_min,th_max)) 
+        print("WARNING: glon range: ph_min = {0:.5f}, ph_max = {1:.5f}, ph_i out of range".format(ph_min,ph_max))
         print("Setting En = Ee = 0!") 
         En = 0
         Ee = 0 
@@ -175,7 +176,7 @@ def get_exb_drift_velocity(E:dict,B0:dict,Bu:dict,lat:np.ndarray,lon:np.ndarray,
 
     # get magnitude and direction 
     v_ion_mag = np.squeeze( np.sqrt( np.power(v_ion_e,2.) + np.power(v_ion_n,2.) ) )
-    if(v_ion_n!=0):
+    if(v_ion_n.any()!=0):
         v_ion_dir = np.squeeze( np.rad2deg( np.arctan(v_ion_e/v_ion_n) ) ) 
     else:
         v_ion_dir = 0  

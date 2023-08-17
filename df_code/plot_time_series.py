@@ -21,7 +21,8 @@ import nvector as nv
 import my_utils
 import electromagnetic as em 
 
-from utildf import algorithm, constants, graph, math_util, units
+import math_util, graph 
+# from utildf import algorithm, constants, graph, math_util, units
 
 #_______________________________________________________________________________
 
@@ -29,7 +30,7 @@ if __name__=='__main__':
 
     debug = True 
 
-    graph.setGraphParameters(fontSize=16)
+    # graph.setGraphParameters(fontSize=16)
 
     # settings 
     # format is year, month, day, hr, min, sec 
