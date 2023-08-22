@@ -30,7 +30,7 @@ if __name__=='__main__':
 
     debug = True 
 
-    # graph.setGraphParameters(fontSize=16)
+    graph.setGraphParameters(fontSize=16)
 
     # settings 
     # format is year, month, day, hr, min, sec 
@@ -40,23 +40,31 @@ if __name__=='__main__':
     time_step       = timedelta(minutes=2) 
     b_is_up         = True    # is B assumed to have only up component (in ENU coordinates)    
     z               = 350E+3  # height for calculations [m] 
-
+    # plot limits 
     y_min           = -500 
     y_max           =  500 
 
+    # get north magnetic pole location in geographic coordinates 
+    fpath       = my_utils.get_file_path(start_time)
+    data        = my_utils.read_file(fpath)
+    np_idx      = data['MLAT (AACGM)'] == 90 
+    np_latlon   = [ data['Geographic Latitude'][np_idx][0], data['Geographic Longitude'][np_idx][0] ]
+    
     # load DMSP data
     sat_id      = 15
     time_dmsp   = datetime(2019,3,1,0,0,0)  
     inpath_dmsp = my_utils.get_file_path(time_dmsp,'DMSP',sat_id)
     dmsp        = my_utils.read_file(inpath_dmsp)
-    print(dmsp) 
+    dmsp        = my_utils.process_dmsp(dmsp,mlat_cut=60,np_latlon=np_latlon) 
+
+    # prepare for plotting 
 
     t_dmsp    = np.array( dmsp['timestamps'] ) 
-    glat_dmsp = np.array( dmsp['gdlat'] )
-    glon_dmsp = np.array( dmsp['glon'] )
+    glat_dmsp = np.array( dmsp['gdlat']      )
+    glon_dmsp = np.array( dmsp['glon']       )
     v_u_dmsp  = np.array( dmsp['vert_ion_v'] ) # FIXME: this is up!  
     v_e_dmsp  = np.array( dmsp['hor_ion_v']  )
-    z_dmsp    = np.array( dmsp['gdalt'] )*1E+3 # convert from km to m  
+    z_dmsp    = np.array( dmsp['gdalt']      )*1E+3 # convert from km to m  
 
     # remove NaNs 
     good_idx = np.argwhere(~np.isnan(v_u_dmsp)) 
@@ -123,11 +131,6 @@ if __name__=='__main__':
         E_dict = em.calculate_E_mix(data,z)
         En     = E_dict['En'][1:,:].flatten() 
         Ee     = E_dict['Ee'][1:,:].flatten() 
-        # test: choose a fixed glat, glon
-        # glat   = E_dict['glat']                 
-        # glon   = E_dict['glon']
-        # glat   = [glat[0,0]] 
-        # glon   = [glon[0,0]] 
         # get the DMSP satellite position based on timestamp  
         # ts     = datetime.timestamp(time)
         glat   = math_util.linearInterp(time,t_dmsp,glat_dmsp) 
