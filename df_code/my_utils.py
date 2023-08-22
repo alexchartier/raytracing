@@ -56,16 +56,12 @@ def process_dmsp(dmsp:dict,mlat_cut:float,np_latlon=None):
     # calculate velocity direction
     dmsp['vi_mag'] = dmsp['hor_ion_v']
     vi_mag = np.array(dmsp['vi_mag']) 
-    # pop off last element (why?) 
-    # time,lat,lon,alt,vi_mag = time[:-1],lat[:-1],lon[:-1],alt[:-1],vi_mag[:-1] 
-    dmsp['vi_dirn_geo']  = calculate_velocity_direction(lat,lon,time,bearings,vi_mag)
+    dmsp['vi_dirn_geo']  = calculate_velocity_direction(lat[:-1],lon[:-1],time[:-1],bearings,vi_mag[:-1]) # FIXME: why do we have to remove an element here?
     dmsp['vi_mag_model'] = np.ones(len(dmsp))*np.nan
-    print(len(dmsp['vi_dirn_geo'])) 
-    print(len(dmsp['vi_dirn_MAG'])) 
     # conversion to MAG drift directions if north pole is specified  
     if np_latlon is not None: 
         np_bearing = calculate_bearings(lat,lon,alt,np.ones(lat.shape)*np_latlon[0],np.ones(lat.shape)*np_latlon[1])
-        dmsp['vi_dirn_MAG'] = dmsp['vi_dirn_geo'] + np_bearings[:-1]
+        dmsp['vi_dirn_MAG'] = dmsp['vi_dirn_geo'] + np_bearing[:-1]
     return dmsp 
 #_______________________________________________________________________________
 def bearing_magnitude_to_North_East(vi_dir:np.array,vi_mag:np.array):
@@ -101,8 +97,9 @@ def calculate_velocity_direction(lat:np.array,lon:np.array,time:np.array,bearing
     print('vel_dir = {0}'.format(vel_dir.shape))
     ephem_df      = pvlib.solarposition.get_solarposition(time,lat,lon)
     print('ephem_df = {0}'.format(ephem_df.shape))  
-    solaz         = ephem_df['azimuth'][:-1] 
-    print('solaz = {0}'.format(solaz.shape))  
+    solaz         = ephem_df['azimuth']# [:-1] 
+    print('solaz = {0}'.format(solaz.shape)) 
+    print('bearing = {0}'.format(bearing.shape))  
     bearing_solaz = zero_360(bearing-solaz)
     print('bearing_solaz = {0}'.format(bearing_solaz.shape))  
     bearing_90    = zero_360(bearing+90)  
