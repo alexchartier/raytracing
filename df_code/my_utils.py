@@ -49,9 +49,7 @@ def filter_data(data:dict,var_name:str,var:np.array):
 #_______________________________________________________________________________
 def process_dmsp(dmsp:dict,mlat_cut:float,np_latlon=None): 
     # some preprocessing steps for DMSP data
-    pprint.pprint(dmsp) 
     dmsp        = filter_data(dmsp,'mlat',np.array([mlat_cut]))
-    pprint.pprint(dmsp) 
     # FIXME: another way to cut on data. This doesn't work because of masked arrays...  
     # dmsp        = dmsp[(dmsp['mlat']>mlat_cut)&np.isfinite(dmsp['hor_ion_v'])] 
     # calculate bearings
