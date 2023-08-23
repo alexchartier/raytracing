@@ -156,19 +156,21 @@ def get_exb_drift_velocity(E:dict,B0:dict,Bu:dict,lat:np.ndarray,lon:np.ndarray,
     ph_min = np.min(phi) 
     ph_max = np.max(phi) 
 
-    # get En, Ee at the interpolation point (theta_i,phi_i)
-    if( (theta_i.any()<th_min or theta_i.any()>th_max ) or 
-        ( phi_i.any()<ph_min or phi_i.any()>ph_max ) ):
-        # print("WARNING: glat range: th_min = {0:.5f}, th_max = {1:.5f}, th_i = {2:.5f}".format(th_min,th_max,theta_i[0])) 
-        # print("WARNING: glon range: ph_min = {0:.5f}, ph_max = {1:.5f}, ph_i = {2:.5f}".format(ph_min,ph_max,phi_i[0]  ))
-        print("WARNING: glat range: th_min = {0:.5f}, th_max = {1:.5f}, th_i out of range!".format(th_min,th_max)) 
-        print("WARNING: glon range: ph_min = {0:.5f}, ph_max = {1:.5f}, ph_i out of range".format(ph_min,ph_max))
-        print("Setting En = Ee = 0!") 
-        En = 0
-        Ee = 0 
-    else:
-        En = En_interp_obj(theta_i,phi_i,grid=False)  
-        Ee = Ee_interp_obj(theta_i,phi_i,grid=False) 
+    # # get En, Ee at the interpolation point (theta_i,phi_i)
+    # if( (theta_i.any()<th_min or theta_i.any()>th_max ) or 
+    #     ( phi_i.any()<ph_min or phi_i.any()>ph_max ) ):
+    #     # print("WARNING: glat range: th_min = {0:.5f}, th_max = {1:.5f}, th_i = {2:.5f}".format(th_min,th_max,theta_i[0])) 
+    #     # print("WARNING: glon range: ph_min = {0:.5f}, ph_max = {1:.5f}, ph_i = {2:.5f}".format(ph_min,ph_max,phi_i[0]  ))
+    #     print("WARNING: glat range: th_min = {0:.5f}, th_max = {1:.5f}, th_i out of range!".format(th_min,th_max)) 
+    #     print("WARNING: glon range: ph_min = {0:.5f}, ph_max = {1:.5f}, ph_i out of range".format(ph_min,ph_max))
+    #     print("Setting En = Ee = 0!") 
+    #     En = 0
+    #     Ee = 0 
+    # else:
+    #     En = En_interp_obj(theta_i,phi_i,grid=False)  
+    #     Ee = Ee_interp_obj(theta_i,phi_i,grid=False) 
+    En = En_interp_obj(theta_i,phi_i,grid=False)  
+    Ee = Ee_interp_obj(theta_i,phi_i,grid=False) 
 
     # calculate the ion drift vector
     v_ion_e =       En*Bu/(B0*B0) 

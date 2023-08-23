@@ -34,7 +34,8 @@ import graph
 
 if __name__=='__main__':
 
-    debug = False
+    debug     = False
+    plot_dmsp = True 
 
     graph.setGraphParameters(fontSize=15)
 
@@ -76,28 +77,29 @@ if __name__=='__main__':
     if debug:
         print("mean v_ion = {0:.3E} m/s".format(np.mean(v_ion_mag))) 
 
-    # load DMSP data
-    sat_id      = 15
-    inpath_dmsp = my_utils.get_file_path(time,'DMSP',sat_id)
-    dmsp        = my_utils.read_file(inpath_dmsp)
-    dmsp        = my_utils.process_dmsp(dmsp,mlat_cut=60,np_latlon=np_latlon)
-
-    # compute ion drift in (N,E,U) and prepare for quiver plot  
-    mlat_dmsp           = np.deg2rad(90) - np.deg2rad(dmsp['mlat'])
-    mlon_dmsp           = np.deg2rad(dmsp['mlong'])
-    radius_dmsp,theta_dmsp = my_utils.get_radius_and_theta(np.unique(mlat_dmsp),np.unique(mlon_dmsp)) 
-    # radius_dmsp         = np.deg2rad(90) - np.deg2rad(dmsp['mlat']) 
-    # theta_dmsp          = np.deg2rad(dmsp['mlong']) 
-    vi_n_dmsp,vi_e_dmsp = my_utils.bearing_magnitude_to_North_East(np.deg2rad(dmsp['vi_dirn_MAG']),dmsp['vi_mag']) 
-    print('vi_n_dmsp = {0}, vi_e_dmsp = {1}'.format(vi_n_dmsp.shape,vi_e_dmsp.shape))  
-    x_dmsp,y_dmsp       = my_utils.pol2cart_vec(radius_dmsp,theta_dmsp,-vi_n_dmsp,vi_e_dmsp)
-    print('x_dmsp    = {0}, y_dmsp    = {1}'.format(x_dmsp.shape,y_dmsp.shape))  
+    if plot_dmsp:
+        # load DMSP data
+        sat_id      = 15
+        inpath_dmsp = my_utils.get_file_path(time,'DMSP',sat_id)
+        dmsp        = my_utils.read_file(inpath_dmsp)
+        dmsp        = my_utils.process_dmsp(dmsp,mlat_cut=60,np_latlon=np_latlon)
+        # compute ion drift in (N,E,U) and prepare for quiver plot  
+        # mlat_dmsp           = np.deg2rad(90) - np.deg2rad(dmsp['mlat'])
+        # mlon_dmsp           = np.deg2rad(dmsp['mlong'])
+        # radius_dmsp,theta_dmsp = my_utils.get_radius_and_theta(np.unique(mlat_dmsp),np.unique(mlon_dmsp)) 
+        radius_dmsp         = np.deg2rad(90) - np.deg2rad(dmsp['mlat'][:-1]) 
+        theta_dmsp          = np.deg2rad(dmsp['mlong'][:-1]) 
+        vi_n_dmsp,vi_e_dmsp = my_utils.bearing_magnitude_to_North_East(np.deg2rad(dmsp['vi_dirn_MAG']),dmsp['vi_mag']) 
+        print('vi_n_dmsp = {0}, vi_e_dmsp = {1}'.format(vi_n_dmsp.shape,vi_e_dmsp.shape))  
+        x_dmsp,y_dmsp       = my_utils.pol2cart_vec(radius_dmsp,theta_dmsp,-vi_n_dmsp,vi_e_dmsp)
+        print('x_dmsp    = {0}, y_dmsp    = {1}'.format(x_dmsp.shape,y_dmsp.shape))  
 
     # make a plot 
     fig,ax = plt.subplots(1,1,subplot_kw={'projection':'polar'})
 
     # get (magnetic) radius and theta 
     radius,theta = my_utils.get_radius_and_theta(np.unique(data['MLAT (AACGM)']),np.unique(data['MLON (AACGM)']))
+    print('radius = {0}, theta = {1}'.format(radius.shape,theta.shape)) 
 
     levels = np.linspace(V_min,V_max,N_div) 
     im     = ax.contourf(theta,radius,data['Potential'][::-1,:-1],levels=levels) 
@@ -106,14 +108,18 @@ if __name__=='__main__':
     cbar = plt.colorbar(im,ax=ax)
     cbar.set_label('Electric Potential [kV]') 
 
-    # quiver ion drift plot 
-    # our values 
+    # quiver ion drift plot [our values] 
     x,y = my_utils.pol2cart_vec(radius,theta,v_ion_n[::-1,:],-v_ion_e[::-1,:]) 
-    ax.quiver(theta,radius,x,y) 
-    # DMSP
-    # guessing we need a mesh grid for the plot? 
-    th_dmsp,r_dmsp = np.meshgrid(theta_dmsp,radius_dmsp)  
-    ax.quiver(th_dmsp,r_dmsp,x_dmsp,y_dmsp,color='m') 
+    # print('x = {0}, y = {1}'.format(x.shape,y.shape)) 
+    th,rd = np.meshgrid(theta,radius) 
+    # print('th = {0}, rd = {1}'.format(th.shape,rd.shape)) 
+    ax.quiver(th,rd,x,y,color='black') 
+    
+    if plot_dmsp:
+        # guessing we need a mesh grid for the plot? 
+        # th_dmsp,rd_dmsp = np.meshgrid(theta_dmsp,radius_dmsp) 
+        print('theta_dmsp = {0}, radius_dmsp = {1}, x_dmsp = {2}, y_dmsp = {3}'.format(theta_dmsp.shape,radius_dmsp.shape,x_dmsp.shape,y_dmsp.shape))  
+        ax.quiver(theta_dmsp,radius_dmsp,x_dmsp,y_dmsp,color='m') 
 
     # local noon dot 
     noon_glon = my_utils.local_noon(time) 
@@ -124,7 +130,8 @@ if __name__=='__main__':
     ax.set_rmax(np.deg2rad(90-noon_lat_offset))
     ax.set_title(time.ctime())  
 
-    plt.savefig(outpath)
-    print('Figure saved to: {0}'.format(outpath)) 
-    plt.close()
+    plt.show()
+    # plt.savefig(outpath)
+    # print('Figure saved to: {0}'.format(outpath)) 
+    # plt.close()
 
