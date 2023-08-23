@@ -3,6 +3,7 @@
 import os
 import errno
 import netCDF4
+import pprint
 import pvlib 
 import scipy
 import numpy as np 
@@ -43,21 +44,30 @@ def filter_data(data:dict,var_name:str,var:np.array):
                     out[k] += [vv] 
                 else: 
                     out[k]  = [vv] 
-    print("{0}/{1} events passed the cut {2} in range {3}".format(cntr,N,var_name,var))  
+    print("[filter_data]: {0}/{1} events passed the cut {2} in range {3}".format(cntr,N,var_name,var))  
     return out 
 #_______________________________________________________________________________
 def process_dmsp(dmsp:dict,mlat_cut:float,np_latlon=None): 
     # some preprocessing steps for DMSP data
-    dmsp        = filter_data(dmsp,'mlat',np.array([mlat_cut])) 
+    pprint.pprint(dmsp) 
+    dmsp        = filter_data(dmsp,'mlat',np.array([mlat_cut]))
+    pprint.pprint(dmsp) 
+    # FIXME: another way to cut on data. This doesn't work because of masked arrays...  
+    # dmsp        = dmsp[(dmsp['mlat']>mlat_cut)&np.isfinite(dmsp['hor_ion_v'])] 
     # calculate bearings
+    # note: dimension of output array bearings is 1 less than the inputs since
+    # we're taking a difference of the input arrays 
     time        = np.array(dmsp['timestamps']) 
     lat,lon,alt = np.array(dmsp['gdlat']), np.array(dmsp['glon']), np.array(dmsp['gdalt']) 
     bearings    = calculate_bearings(lat[:-1],lon[:-1],alt[:-1],lat[1:],lon[1:])
     # calculate velocity direction
     dmsp['vi_mag'] = dmsp['hor_ion_v']
     vi_mag = np.array(dmsp['vi_mag']) 
-    dmsp['vi_dirn_geo']  = calculate_velocity_direction(lat[:-1],lon[:-1],time[:-1],bearings,vi_mag[:-1]) # FIXME: why do we have to remove an element here?
+    dmsp['vi_dirn_geo']  = calculate_velocity_direction(lat[:-1],lon[:-1],time[:-1],bearings,vi_mag[:-1]) 
     dmsp['vi_mag_model'] = np.ones(len(dmsp))*np.nan
+    # adjust vi_mag length; since we'll use it with vi_dirn_MAG to get v_ion in (N,E,U)
+    # they must have the same length 
+    dmsp['vi_mag'] = vi_mag[:-1] 
     # conversion to MAG drift directions if north pole is specified  
     if np_latlon is not None: 
         np_bearing = calculate_bearings(lat,lon,alt,np.ones(lat.shape)*np_latlon[0],np.ones(lat.shape)*np_latlon[1])
@@ -65,7 +75,12 @@ def process_dmsp(dmsp:dict,mlat_cut:float,np_latlon=None):
     return dmsp 
 #_______________________________________________________________________________
 def bearing_magnitude_to_North_East(vi_dir:np.array,vi_mag:np.array):
-    # convert vector magnitude and direction to (N,E) components 
+    # convert vector magnitude and direction to (N,E) components
+    ND = len(vi_dir)
+    NM = len(vi_mag)  
+    if(ND!=NM):
+        msg = 'len(vi_dir) = {0}, len(vi_mag) = {1}'.format(ND,NM)
+        raise ValueError(msg)
     vi_N = np.cos(vi_dir)*vi_mag 
     vi_E = np.sin(vi_dir)*vi_mag 
     return vi_N,vi_E 
@@ -87,25 +102,12 @@ def calculate_velocity_direction(lat:np.array,lon:np.array,time:np.array,bearing
     # DMSP horizontal ion drifts provided as follows: 
     # hor_ion_v = horizontal ion velocity (positive = sunward) [m/s] 
     # Here, we determine the direction
-    # FIXME: the line where we get bearing_solaz ends up with 1 less element than all previous entries, 
-    #        and hence can't carry on with the calculation.  
-    print('time = {0}'.format(time.shape))  
-    print('lat = {0}'.format(lat.shape))  
-    print('lon = {0}'.format(lon.shape))  
-    print('vel = {0}'.format(vel.shape))  
     vel_dir       = np.zeros(vel.shape)
-    print('vel_dir = {0}'.format(vel_dir.shape))
     ephem_df      = pvlib.solarposition.get_solarposition(time,lat,lon)
-    print('ephem_df = {0}'.format(ephem_df.shape))  
     solaz         = ephem_df['azimuth']# [:-1] 
-    print('solaz = {0}'.format(solaz.shape)) 
-    print('bearing = {0}'.format(bearing.shape))  
     bearing_solaz = zero_360(bearing-solaz)
-    print('bearing_solaz = {0}'.format(bearing_solaz.shape))  
     bearing_90    = zero_360(bearing+90)  
-    print('bearing_90 = {0}'.format(bearing_90.shape))  
     bearing_270   = zero_360(bearing-90) 
-    print('bearing_270 = {0}'.format(bearing_270.shape))  
 
     # case A: sun on the right, positive velocity 
     id = (bearing_solaz<180) & (vel>=0)
@@ -135,7 +137,13 @@ def enu2ecef(lat_deg:float,lon_deg:float,q_enu:np.array):
 #_______________________________________________________________________________
 def pol2cart_vec(radius:np.ndarray,theta:np.ndarray,dr:np.ndarray,dt:np.ndarray): 
     '''matplotlib polar quiver'''
-    # FIXME: Not implemented properly... 
+    # FIXME: Not implemented properly...
+    # NDR = len(dr)
+    # NDT = len(dt)  
+    # NTH = len(theta)  
+    # if(NDR!=NDT or NTH!=NDR or NTH!=NDT):
+    #     msg = 'dr = {0}, dt = {1}, theta = {2}'.format(dr.shape,dt.shape,theta.shape)
+    #     raise ValueError(msg)
     x = dr*np.cos(theta) - dt*np.sin(theta) 
     y = dr*np.sin(theta) + dt*np.cos(theta) 
     return x,y
