@@ -84,11 +84,7 @@ if __name__=='__main__':
         dmsp        = my_utils.read_file(inpath_dmsp)
         dmsp        = my_utils.process_dmsp(dmsp,mlat_cut=60,np_latlon=np_latlon)
         # compute ion drift in (N,E,U) and prepare for quiver plot  
-        # mlat_dmsp           = np.deg2rad(90) - np.deg2rad(dmsp['mlat'])
-        # mlon_dmsp           = np.deg2rad(dmsp['mlong'])
-        # radius_dmsp,theta_dmsp = my_utils.get_radius_and_theta(np.unique(mlat_dmsp),np.unique(mlon_dmsp)) 
-        radius_dmsp         = np.deg2rad(90) - np.deg2rad(dmsp['mlat'][:-1]) 
-        theta_dmsp          = np.deg2rad(dmsp['mlong'][:-1]) 
+        radius_dmsp,theta_dmsp = my_utils.get_radius_and_theta(dmsp['mlat'][:-1],dmsp['mlong'][:-1]) 
         vi_n_dmsp,vi_e_dmsp = my_utils.bearing_magnitude_to_North_East(np.deg2rad(dmsp['vi_dirn_MAG']),dmsp['vi_mag']) 
         print('vi_n_dmsp = {0}, vi_e_dmsp = {1}'.format(vi_n_dmsp.shape,vi_e_dmsp.shape))  
         x_dmsp,y_dmsp       = my_utils.pol2cart_vec(radius_dmsp,theta_dmsp,-vi_n_dmsp,vi_e_dmsp)
