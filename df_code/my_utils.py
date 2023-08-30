@@ -8,6 +8,8 @@ import pvlib
 import scipy
 import numpy as np 
 import nvector as nv 
+import pysat
+import pysatMadrigal as pysatMad
 from datetime import datetime 
 
 #_______________________________________________________________________________
@@ -50,7 +52,8 @@ def filter_data(data:dict,var_name:str,var:np.array):
 def process_dmsp(dmsp:dict,mlat_cut:float,np_latlon=None): 
     # some preprocessing steps for DMSP data
     dmsp        = filter_data(dmsp,'mlat',np.array([mlat_cut]))
-    # FIXME: another way to cut on data. This doesn't work because of masked arrays...  
+    # FIXME: another way to cut on data. This doesn't work because of masked arrays... 
+    # breakpoint() 
     # dmsp        = dmsp[(dmsp['mlat']>mlat_cut)&np.isfinite(dmsp['hor_ion_v'])] 
     # calculate bearings
     # note: dimension of output array bearings is 1 less than the inputs since
@@ -71,6 +74,48 @@ def process_dmsp(dmsp:dict,mlat_cut:float,np_latlon=None):
         np_bearing = calculate_bearings(lat,lon,alt,np.ones(lat.shape)*np_latlon[0],np.ones(lat.shape)*np_latlon[1])
         dmsp['vi_dirn_MAG'] = dmsp['vi_dirn_geo'] + np_bearing[:-1]
     return dmsp 
+#_______________________________________________________________________________
+def load_dmsp_2(sat,stime,etime,dl_dmsp=False,usr='AlexChartier',pw='alex.chartier@jhuapl.edu'):
+    """ Load DMSP data using pysatMadrigal. Optionally download """
+    # Create PySat instrument
+    dmsp = pysat.Instrument(
+        inst_module=pysatMad.instruments.dmsp_ivm,
+        inst_id=sat,
+        clean_level='clean',
+    )
+    if dl_dmsp:
+        dmsp.download(stime,etime,user=usr,password=pw)
+
+    dmsp.load(date=stime)
+    if dmsp.data.empty:
+        print('No data for %s on %s' % (sat, stime.strftime('%Y %b %d %H:%M')))
+        return []
+
+    return dmsp
+#_______________________________________________________________________________
+def process_dmsp_2(dmsp,dec_rate=1,mlat_cutoff=60,np_latlon=None):
+    """ Process DMSP """
+    assert mlat_cutoff > 0, 'SH filtering not implemented yet'
+    try:
+        dmsp_vals = dmsp.data[::dec_rate] # decimate
+    except:
+        return []
+    dmsp_vals  = dmsp_vals[(dmsp_vals['mlat'] > mlat_cutoff) & np.isfinite(dmsp_vals['hor_ion_v'])]
+    dmsp_times = dmsp_vals.index
+    lats, lons, alts = dmsp_vals['gdlat'], dmsp_vals['glon'], dmsp_vals['gdalt']
+    brng      = calculate_bearings(lats[:-1], lons[:-1], alts[:-1], lats[1:], lons[1:])
+    dmsp_vals = dmsp_vals[:-1]
+    dmsp_vals['vi_mag']       = dmsp_vals['hor_ion_v']
+    dmsp_vals['vi_dirn_geo']  = calculate_velocity_direction(lats[:-1],lons[:-1],dmsp_times[:-1],brng,dmsp_vals['vi_mag'])
+    dmsp_vals['vi_mag_model'] = np.ones(len(dmsp_vals)) * np.nan
+
+    # add conversion to MAG drift directions if north pole is provided
+    if np_latlon:
+        np_bearings = calculate_bearings(lats, lons, alts,
+            np.ones(lats.shape) * np_latlon[0], np.ones(lats.shape) * np_latlon[1])
+        dmsp_vals['vi_dirn_MAG'] = dmsp_vals['vi_dirn_geo'] + np_bearings[:-1]
+
+    return dmsp_vals
 #_______________________________________________________________________________
 def bearing_magnitude_to_North_East(vi_dir:np.array,vi_mag:np.array):
     # convert vector magnitude and direction to (N,E) components
@@ -96,10 +141,17 @@ def calculate_bearings(lat:np.array,lon:np.array,alt:np.array,latbs:np.array,lon
         bearing_deg[idx] = p_AB_N.azimuth_deg 
     return bearing_deg 
 #_______________________________________________________________________________
-def calculate_velocity_direction(lat:np.array,lon:np.array,time:np.array,bearing:np.array,vel:np.array): 
+def calculate_velocity_direction(lat:np.array,lon:np.array,time:np.array,bearing:np.array,vel:np.array,debug=False): 
     # DMSP horizontal ion drifts provided as follows: 
     # hor_ion_v = horizontal ion velocity (positive = sunward) [m/s] 
     # Here, we determine the direction
+    if debug:
+        print('lat: {0}'.format(lat.shape))
+        print('lon: {0}'.format(lon.shape))
+        print('time: {0}'.format(time.shape))
+        print('bearing: {0}'.format(bearing.shape))
+        print('vel: {0}'.format(vel.shape))
+
     vel_dir       = np.zeros(vel.shape)
     ephem_df      = pvlib.solarposition.get_solarposition(time,lat,lon)
     solaz         = ephem_df['azimuth']# [:-1] 
@@ -197,7 +249,8 @@ def get_file_path(time:datetime,type_name:str='ampere',sat_id:int=0):
     month_list = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     month_str  = month_list[time.month-1]
     if type_name=='ampere': 
-        prefix    = './data/pymix_{0:04d}{1}{2:02d}'.format(time.year,month_str,time.day)
+        # prefix    = './data/pymix_{0:04d}{1}{2:02d}'.format(time.year,month_str,time.day)
+        prefix    = './data/pymix/{0}{1}'.format(month_str.lower(),time.year-2000)
         file_name = 'ampere_mix_{0:04d}-{1:02d}-{2:02d}T{3:02d}-{4:02d}-{5:02d}Z.nc'.format(time.year,time.month,time.day,time.hour,time.minute,time.second)
     elif type_name=='DMSP' or type_name=='dmsp': 
         prefix    = './data/dmsp' 
