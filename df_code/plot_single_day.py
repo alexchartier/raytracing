@@ -6,19 +6,13 @@
 #   and overlays a quiver plot on those computed from the potential maps  
 # - Save the plot to a file 
 # FIXME
-# 1. Can make a quiver plot; but seeing effectively multiple trajectories 
-#    for the DMSP data.  Not consistent with expectations. 
-#    Next Steps: [focus on timestamp 2019-03-02T11-16-00Z]  
+# 1. Quiver plot for DMSP and our data [focus on timestamp 2019-03-02T11-16-00Z]  
 #    a. [DONE] Compute a test path for what the satellite path should look like (c.f., figure 4 in paper).
 #       Extract (r,th) and make a quiver plot. Is this close to what we have in our data?  
 #    b. [DONE] Divide DMSP data up into small time steps (~10 min) and make the quiver plot. 
 #       Choose the time step based on getting a full path over the northern hemisphere.    
-#    c. Compute the model ion drift velo at the DMSP trajectory; use median time of that 
+#    c. [DONE] Compute the model ion drift velo at the DMSP trajectory; use median time of that 
 #       trajectory when evaluating our model.  Better to stay in the DMSP coordinates.   
-# 2. DMSP data has intrinsically np.MaskedArrays in the dictionary, which makes 
-#    applying cuts on them a bit cumbersome; these data were previously downloaded 
-#    from cedar.openmadrigal.org.  Trying to use pysatMadrigal, the data is _always_ empty. 
-#    Not sure if this is correlated to issue #1. 
 
 import os
 from datetime import datetime, timedelta
@@ -55,12 +49,12 @@ if __name__=='__main__':
     # format is year, month, day, hr, min, sec 
     # time = datetime(2019,3,1,0,10,0)
     time = datetime(2019,3,2,11,16,0)
-    b_is_up         = True    # is B assumed to have only up component (in ENU coordinates)    
-    z               = 350E+3  # height for calculations [m] 
-    noon_lat_offset = 55.     # radius at which to plot the noon dot 
-    N_div           =  10     # bin size for contour plot color bar axis  
-    V_min           = -90    # electric potential limit for color bar axis [kV]  
-    V_max           =  45    # electric potential limit for color bar axis [kV]   
+    b_is_up         = True     # is B assumed to have only up component (in ENU coordinates)    
+    z0              = -780E+3  # height for calculations [m] 
+    noon_lat_offset = 55.      # radius at which to plot the noon dot 
+    N_div           =  10      # bin size for contour plot color bar axis  
+    V_min           = -90      # electric potential limit for color bar axis [kV]  
+    V_max           =  45      # electric potential limit for color bar axis [kV]   
 
     # load data
     fpath   = my_utils.get_file_path(time) 
@@ -70,26 +64,6 @@ if __name__=='__main__':
     np_idx      = data['MLAT (AACGM)'] == 90
     np_latlon   = [ data['Geographic Latitude'][np_idx][0], data['Geographic Longitude'][np_idx][0] ]
 
-    # compute the E field 
-    E_dict = em.calculate_E_mix(data,z)
-    En     = E_dict['En'][1:,:].flatten() 
-    Ee     = E_dict['Ee'][1:,:].flatten() 
-    # get the magnetic field 
-    B0,Be,Bn,Bu = em.get_B(E_dict['glat'],E_dict['glon'],time,z,b_is_up)
-    if debug: 
-        print("mean Ee = {0:.3E} V/m".format(np.mean(Ee)))
-        print("mean En = {0:.3E} V/m".format(np.mean(En)))
-        print("mean B0 = {0:.3E} T".format(np.mean(B0)))  
-        print("mean Be = {0:.3E} T".format(np.mean(Be)))  
-        print("mean Bn = {0:.3E} T".format(np.mean(Bn)))  
-        print("mean Bu = {0:.3E} T".format(np.mean(Bu)))  
-
-    # compute ion drift velocity 
-    v_ion_mag,v_ion_dir,v_ion_e,v_ion_n = em.get_exb_drift_velocity(E_dict,B0,Bu,E_dict['glat'],E_dict['glon'])
-
-    if debug:
-        print("mean v_ion = {0:.3E} m/s".format(np.mean(v_ion_mag))) 
-
     # make a plot 
     fig,ax = plt.subplots(1,1,subplot_kw={'projection':'polar'})
 
@@ -97,22 +71,13 @@ if __name__=='__main__':
     radius,theta = my_utils.get_radius_and_theta(np.unique(data['MLAT (AACGM)']),np.unique(data['MLON (AACGM)']))
     print('radius = {0}, theta = {1}'.format(radius.shape,theta.shape)) 
 
+    # plot the electric potential 
     levels = np.linspace(V_min,V_max,N_div) 
     im     = ax.contourf(theta,radius,data['Potential'][::-1,:-1],levels=levels) 
     yticks = 90 - np.rad2deg(ax.get_yticks()) 
     ax.set_yticklabels(['%.0f' % y for y in yticks])  
     cbar = plt.colorbar(im,ax=ax)
     cbar.set_label('Electric Potential [kV]') 
-
-    # quiver ion drift plot [our values] 
-    if plot_map_quiver:
-        x,y = my_utils.pol2cart_vec(radius,theta,v_ion_n[::-1,:],-v_ion_e[::-1,:]) 
-        th,rd = np.meshgrid(theta,radius) 
-        print('x = {0}, y = {1}'.format(x.shape,y.shape)) 
-        print('th = {0}, rd = {1}'.format(th.shape,rd.shape)) 
-        ax.quiver(th,rd,x,y,color='blue',width=width) 
-
-    sat_str = ''
     
     fig2 = plt.figure() 
     ax2  = fig2.add_subplot(projection='3d') 
@@ -122,6 +87,7 @@ if __name__=='__main__':
     if plot_dmsp:
         # load DMSP data
         dmsp = {} 
+        sat_str = ''
         for sat in sats:
             print("--------------------")  
             print("Loading DMSP data for satellite {0}...".format(sat)) 
@@ -161,12 +127,16 @@ if __name__=='__main__':
                 for i in range(len(yy)):
                     tt_ns[i] = datetime(yy[i],mm[i],dd[i],hh[i],MIN[i],sec[i]).timestamp()
                 tt_mean = np.mean(tt_ns)
-                time_mean = datetime.fromtimestamp(tt_mean)  
+                time_mean = datetime.fromtimestamp(tt_mean) 
+                z0 = np.mean(alt) # FIXME: do we evaluate at mean altitude?  
                 print('tt:   {0}'.format(tt_ns.shape)) 
                 print('glat: {0}'.format(glat.shape))
                 print('glon: {0}'.format(glon.shape))
                 print('alt:  {0}'.format(alt.shape) )
                 print('mean time: {0}'.format(time_mean))  
+                E_dict = em.calculate_E_mix(data,z0)
+                En     = E_dict['En'][1:,:].flatten() 
+                Ee     = E_dict['Ee'][1:,:].flatten() 
                 # compute magnetic field  
                 B0,Be,Bn,Bu = em.get_B(glat,glon,time_mean,alt,b_is_up)
                 # compute ion drift velocity 
@@ -181,35 +151,11 @@ if __name__=='__main__':
                 theta = np.deg2rad(mlon)
                 x,y   = my_utils.pol2cart_vec(rad,theta,v_ion_n,-v_ion_e)
                 ax.quiver(theta,rad,x,y,color='black',width=width)
-                ax2.scatter(glat,glon,v_ion_n)
-                ax2.scatter(glat,glon,vi_N)
-                ax3.scatter(glat,glon,v_ion_e)
-                ax3.scatter(glat,glon,vi_E)
+                ax2.scatter(glat,glon,v_ion_n,label='ExB' )
+                ax2.scatter(glat,glon,vi_N   ,label='DMSP')
+                ax3.scatter(glat,glon,v_ion_e,label='ExB' )
+                ax3.scatter(glat,glon,vi_E   ,label='DMSP')
                 print("--> Done!") 
- 
-        # inpath_dmsp = my_utils.get_file_path(time,'DMSP',sat_id)
-        # dmsp        = my_utils.read_file(inpath_dmsp)
-        # dmsp        = my_utils.process_dmsp(dmsp,mlat_cut=60,np_latlon=np_latlon)
-        # # compute ion drift in (N,E,U) and prepare for quiver plot  
-        # radius_dmsp,theta_dmsp = my_utils.get_radius_and_theta(dmsp['mlat'][:-1],dmsp['mlong'][:-1]) 
-        # vi_n_dmsp,vi_e_dmsp = my_utils.bearing_magnitude_to_North_East(np.deg2rad(dmsp['vi_dirn_MAG']),dmsp['vi_mag']) 
-        # print('vi_n_dmsp = {0}, vi_e_dmsp = {1}'.format(vi_n_dmsp.shape,vi_e_dmsp.shape))  
-        # x_dmsp,y_dmsp       = my_utils.pol2cart_vec(radius_dmsp,theta_dmsp,-vi_n_dmsp,vi_e_dmsp)
-        # print('x_dmsp    = {0}, y_dmsp    = {1}'.format(x_dmsp.shape,y_dmsp.shape))  
-    
-    # if plot_dmsp:
-    #     # guessing we need a mesh grid for the plot? 
-    #     # th_dmsp,rd_dmsp = np.meshgrid(theta_dmsp,radius_dmsp) 
-    #     print('theta_dmsp = {0}, radius_dmsp = {1}, x_dmsp = {2}, y_dmsp = {3}'.format(theta_dmsp.shape,radius_dmsp.shape,x_dmsp.shape,y_dmsp.shape))  
-    #     ax.quiver(theta_dmsp,radius_dmsp,x_dmsp,y_dmsp,color='m') 
-    #     # dummy curve
-    #     # my_lat = np.array([61. ,70. ,80. ,90. ,80.,70. ,61, ])
-    #     # my_lon = np.array([315.,300.,270.,240.,210,180.,150.])
-    #     # my_vin = np.array([1.  ,1.  ,1.  ,1.  ,1. ,1.  ,1.  ])
-    #     # my_vie = np.array([1.  ,1.  ,1.  ,1.  ,1. ,1.  ,1.  ])
-    #     # my_rad,my_th = my_utils.get_radius_and_theta(my_lat,my_lon)
-    #     # my_x,my_y    = my_utils.pol2cart_vec(my_rad,my_th,my_vin,my_vie) 
-    #     # ax.quiver(my_th,my_rad,my_x,my_y,color='tab:orange') 
 
     # local noon dot 
     noon_glon = my_utils.local_noon(time) 
@@ -222,13 +168,17 @@ if __name__=='__main__':
     title = '{0} {1}'.format(sat_str,time.ctime())
     ax.set_title(title)  
 
+    fig2.suptitle('North Component')
     ax2.set_xlabel('GLAT [deg]')
     ax2.set_ylabel('GLON [deg]')
     ax2.set_zlabel(r'$v_{ion}^{n}$ [m/s]')
+    ax2.legend(loc='best')
 
+    fig3.suptitle('East Component')
     ax3.set_xlabel('GLAT [deg]')
     ax3.set_ylabel('GLON [deg]')
     ax3.set_zlabel(r'$v_{ion}^{e}$ [m/s]')
+    ax3.legend(loc='best')
 
     plt.show()
     # plt.savefig(outpath)
