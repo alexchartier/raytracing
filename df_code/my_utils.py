@@ -102,20 +102,21 @@ def process_dmsp_2(dmsp,dec_rate=1,mlat_cutoff=60,np_latlon=None):
         return []
     dmsp_vals  = dmsp_vals[(dmsp_vals['mlat'] > mlat_cutoff) & np.isfinite(dmsp_vals['hor_ion_v'])]
     dmsp_times = dmsp_vals.index
-    lats, lons, alts = dmsp_vals['gdlat'], dmsp_vals['glon'], dmsp_vals['gdalt']
+    lats,lons,alts = dmsp_vals['gdlat'], dmsp_vals['glon'], dmsp_vals['gdalt']
     brng      = calculate_bearings(lats[:-1], lons[:-1], alts[:-1], lats[1:], lons[1:])
     dmsp_vals = dmsp_vals[:-1]
+    # add new keys to the dictionary 
     dmsp_vals['vi_mag']       = dmsp_vals['hor_ion_v']
     dmsp_vals['vi_dirn_geo']  = calculate_velocity_direction(lats[:-1],lons[:-1],dmsp_times[:-1],brng,dmsp_vals['vi_mag'])
     dmsp_vals['vi_mag_model'] = np.ones(len(dmsp_vals)) * np.nan
-
+    dmsp_vals['bearings']     = brng  
     # add conversion to MAG drift directions if north pole is provided
     if np_latlon:
         np_bearings = calculate_bearings(lats, lons, alts,
             np.ones(lats.shape) * np_latlon[0], np.ones(lats.shape) * np_latlon[1])
         dmsp_vals['vi_dirn_MAG'] = dmsp_vals['vi_dirn_geo'] + np_bearings[:-1]
 
-    return dmsp_vals
+    return dmsp_vals # also return the bearings 
 #_______________________________________________________________________________
 def bearing_magnitude_to_North_East(vi_dir:np.array,vi_mag:np.array):
     # convert vector magnitude and direction to (N,E) components
@@ -174,6 +175,34 @@ def calculate_velocity_direction(lat:np.array,lon:np.array,time:np.array,bearing
 
     return vel_dir
 #_______________________________________________________________________________
+def bearing_to_xy_comp(bearing:np.array): 
+    # convert bearing angle to (x,y) angular components 
+    NB = len(bearing) 
+    x  = np.zeros(NB) 
+    y  = np.zeros(NB)
+    th = np.zeros(NB)
+    for i in range(len(bearing)):
+        bb = bearing[i]
+        if bb<0:
+            bb += 360. 
+        # find vector angle 
+        if bb>0 and bb<=90:
+            # NE quadrant 
+            theta = 90. - bb 
+        elif bb>90 and bb<=180:
+            # SE quadrant  
+            theta = 360 - (bearing[i]-90.)
+        elif bb>180 and bb<=270: 
+            # SW quadrant
+            theta = 270. - bb 
+        elif bb>270 and bb<=360: 
+            # NW quadrant   
+            theta = 180 - (270.-bb) 
+        x[i]  = np.cos(theta)
+        y[i]  = np.sin(theta) 
+        th[i] = theta  
+    return x,y,th
+#_______________________________________________________________________________
 def enu2ecef(lat_deg:float,lon_deg:float,q_enu:np.array):
     # convert vector q in the East-North-Up system to that in the  
     # Earth-Centered Earth-Fixed (ECEF) system
@@ -186,7 +215,7 @@ def enu2ecef(lat_deg:float,lon_deg:float,q_enu:np.array):
     return q_ecef
 #_______________________________________________________________________________
 def pol2cart_vec(radius:np.ndarray,theta:np.ndarray,dr:np.ndarray,dt:np.ndarray): 
-    '''matplotlib polar quiver'''
+    '''for matplotlib polar quiver'''
     # FIXME: Not implemented properly...
     # NDR = len(dr)
     # NDT = len(dt)  
@@ -195,7 +224,7 @@ def pol2cart_vec(radius:np.ndarray,theta:np.ndarray,dr:np.ndarray,dt:np.ndarray)
     #     msg = 'dr = {0}, dt = {1}, theta = {2}'.format(dr.shape,dt.shape,theta.shape)
     #     raise ValueError(msg)
     x = dr*np.cos(theta) - dt*np.sin(theta) 
-    y = dr*np.sin(theta) + dt*np.cos(theta) 
+    y = dr*np.sin(theta) + dt*np.cos(theta)
     return x,y
 #_______________________________________________________________________________
 def mag_to_E_N(vi_mag:np.ndarray,vi_dir:np.ndarray):
