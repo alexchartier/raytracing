@@ -5,10 +5,13 @@
 # - Loads DMSP data for the same day and computes the ion drift velocity 
 #   and overlays a quiver plot on those computed from the potential maps  
 # - Save the plot to a file 
+# Abbreviations
+# SLT = Satellite local time 
+# MLT = Magnetic local time 
 # FIXME
 # 1. Show that the bearings are perpendicular to the velocities measured by the satellite
 #    a. Plot the satellite bearing angles on the quiver plot.  Likely need to convert bearing 
-#       angles into equivalent magnetic (lat,lon) angles...   
+#       angles into equivalent magnetic (lat,lon) angles...  
 #    b. Come up with a 'dot product' type evaluation to show they are perpendicular?  
 # 2. Plot the satellite and our ion drift velocities in ECEF coordinates for an easier comparison 
 #    a. Use nvector for the transformation  
@@ -124,15 +127,15 @@ if __name__=='__main__':
                 # print(dmsp[sat].keys()) 
                 # print(dmsp[sat]) 
                 # DMSP position; have to extract it from the pandas dataframe and convert to np arrays 
-                yy   = dmsp[sat]['year'][tidx].to_frame().loc[:,'year'].to_numpy() 
-                mm   = dmsp[sat]['month'][tidx].to_frame().loc[:,'month'].to_numpy() 
-                dd   = dmsp[sat]['day'][tidx].to_frame().loc[:,'day'].to_numpy() 
-                hh   = dmsp[sat]['hour'][tidx].to_frame().loc[:,'hour'].to_numpy() 
-                MIN  = dmsp[sat]['min'][tidx].to_frame().loc[:,'min'].to_numpy() 
-                sec  = dmsp[sat]['sec'][tidx].to_frame().loc[:,'sec'].to_numpy() 
-                glat = dmsp[sat]['gdlat'][tidx].to_frame().loc[:,'gdlat'].to_numpy() 
-                glon = dmsp[sat]['glon'][tidx].to_frame().loc[:,'glon'].to_numpy() 
-                alt  = dmsp[sat]['gdalt'][tidx].to_frame().loc[:,'gdalt'].to_numpy()*1E+3 # convert to meters
+                yy          = dmsp[sat]['year'][tidx].to_frame().loc[:,'year'].to_numpy() 
+                mm          = dmsp[sat]['month'][tidx].to_frame().loc[:,'month'].to_numpy() 
+                dd          = dmsp[sat]['day'][tidx].to_frame().loc[:,'day'].to_numpy() 
+                hh          = dmsp[sat]['hour'][tidx].to_frame().loc[:,'hour'].to_numpy() 
+                MIN         = dmsp[sat]['min'][tidx].to_frame().loc[:,'min'].to_numpy() 
+                sec         = dmsp[sat]['sec'][tidx].to_frame().loc[:,'sec'].to_numpy() 
+                glat        = dmsp[sat]['gdlat'][tidx].to_frame().loc[:,'gdlat'].to_numpy() 
+                glon        = dmsp[sat]['glon'][tidx].to_frame().loc[:,'glon'].to_numpy() 
+                alt         = dmsp[sat]['gdalt'][tidx].to_frame().loc[:,'gdalt'].to_numpy()*1E+3 # convert to meters
                 bearings    = dmsp[sat]['bearings'][tidx].to_frame().loc[:,'bearings'].to_numpy()  
                 vi_dirn_geo = dmsp[sat]['vi_dirn_geo'][tidx].to_frame().loc[:,'vi_dirn_geo'].to_numpy()
                 # use average time 
@@ -148,21 +151,24 @@ if __name__=='__main__':
                 mblat  = np.zeros(len(bearings)) 
                 mbrngs = np.zeros(len(bearings)) 
                 for i in range(len(bearings)):
-                    mlat,mlon,malt = aacgmv2.get_aacgm_coord(glat[i],bearings[i],alt[i]/1E+3,time_mean)
+                    # get magnetic lat, lon, and local time (MLT) 
+                    # expects positive altitudes in km 
+                    mlat,mlon,mlt = aacgmv2.get_aacgm_coord(glat[i],bearings[i],alt[i]/1E+3,time_mean) 
                     mblat[i]  = mlat 
                     mbrngs[i] = mlon
-                ax.plot(np.deg2rad(bearings),rad,color='black' ,markersize=6)      # plot the bearings in GEOGRAPHIC coordinates
-                ax.plot(np.deg2rad(mbrngs)  ,np.deg2rad(mblat),color='magenta',markersize=6) # plot the bearings in MAGNETIC coordinates
+                    print('glat = {0:.2f}, mlat = {1:.2f}, glon = {2:.2f}, mlon = {3:.2f}'.format(glat[i],mlat,bearings[i],mlat))
+                ax.plot(np.deg2rad(bearings),rad,color='black' ,markersize=6)                # plot the bearings in GEOGRAPHIC coordinates
+                ax.plot(np.deg2rad(mbrngs)  ,np.deg2rad(90)-np.deg2rad(mblat),color='magenta',markersize=6) # plot the bearings in MAGNETIC coordinates
                 # for i in range(len(bearings)):
                 #     print("bearing = {0:.2f} deg, theta = {1:.2f} deg, r = {2:.2f}, x = {3:.2f}, y = {4:.2f}".format(bearings[i],thb[i],rb[i],xb[i],yb[i]))  
                 # make a plot of bearing angles vs vi_dirn_geo (should be perp.) 
                 # ax4.plot(bearings,vi_dirn_geo)  
                 z0 = (-1)*np.mean(alt) # -780 km is about the height of the satellite (- => nvector expects depth; -depth => above surface)  
-                print('tt:   {0}'.format(tt_ns.shape)) 
-                print('glat: {0}'.format(glat.shape))
-                print('glon: {0}'.format(glon.shape))
-                print('alt:  {0}'.format(alt.shape) )
-                print('bearings:  {0}'.format(bearings.shape) )
+                # print('tt:   {0}'.format(tt_ns.shape)) 
+                # print('glat: {0}'.format(glat.shape))
+                # print('glon: {0}'.format(glon.shape))
+                # print('alt:  {0}'.format(alt.shape) )
+                # print('bearings:  {0}'.format(bearings.shape) )
                 print('mean time: {0}'.format(time_mean))  
                 E_dict = em.calculate_E_mix(data,z0)
                 En     = E_dict['En'][1:,:].flatten() 

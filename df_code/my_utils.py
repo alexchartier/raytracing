@@ -203,6 +203,22 @@ def bearing_to_xy_comp(bearing:np.array):
         th[i] = theta  
     return x,y,th
 #_______________________________________________________________________________
+def geodetic_latlonz_to_ecef(lat:np.array,lon:np.array,z:np.array,deg=True):
+    # convert geodetic (lat,lon,z) to ECEF (x,y,z) using nvector  
+    wgs84  = nv.FrameE(name='WGS84') 
+    N      = len(lat)
+    x_ecef = np.zeros(N) 
+    y_ecef = np.zeros(N) 
+    z_ecef = np.zeros(N) 
+    for i in range(N): 
+        p         = wgs84.GeoPoint(latitude=lat[i],longitude=lon[i],z=z[i],degrees=deg) 
+        p_ecef    = p.to_ecef_vector()
+        pv        = p_ecef.ravel().to_list()  
+        x_ecef[i] = pv[0]  
+        y_ecef[i] = pv[1]  
+        z_ecef[i] = pv[2] 
+    return x_ecef,y_ecef,z_ecef 
+#_______________________________________________________________________________
 def enu2ecef(lat_deg:float,lon_deg:float,q_enu:np.array):
     # convert vector q in the East-North-Up system to that in the  
     # Earth-Centered Earth-Fixed (ECEF) system
