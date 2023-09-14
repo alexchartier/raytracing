@@ -60,7 +60,7 @@ if __name__=='__main__':
     XYZ   = np.zeros((N, 3))
     UVW   = np.zeros((N, 3))
     UVWR  = np.zeros((N, 3))
-    UVWR2 = np.zeros((N, 3))
+    # UVWR2 = np.zeros((N, 3))
     for i in range(N):
         p  = wgs84.GeoPoint(latitude=lat[i],longitude=lon[i],z=z[i],degrees=deg)
         p2 = wgs84.GeoPoint(latitude=lat[i+1],longitude=lon[i+1],z=z[i+1],degrees=deg)
@@ -68,13 +68,13 @@ if __name__=='__main__':
         # note: can effectively turn this into a bearing angle by calling .azimuth_deg
         brng      = p.delta_to(p2)     
         # rotate the vector
-        frame_B   = nv.FrameB(brng.to_nvector(),yaw=90,pitch=0,roll=0,degrees=deg)  
-        p_brng_B  = frame_B.Pvector(np.r_[1,0,0].reshape((-1,1))) # argument is a unit vector along the x axis 
-        # wrong way
-        brng_ecef = brng.to_ecef_vector() 
-        temp      = brng_ecef.pvector[:].flatten()
-        temp_r    = Mz.dot(temp)
-        brng_ecef_rot_wrong = nv.FrameE(name='WGS84').ECEFvector(temp_r)     
+        frame_B   = nv.FrameB(brng.to_nvector(),yaw=270,pitch=0,roll=0,degrees=deg)  
+        p_brng_B  = frame_B.Pvector(np.r_[1,0,0].reshape((-1,1))) # argument is a unit vector along the x axis (along axis of vehicle)  
+        # wrong way (as an example) 
+        # brng_ecef = brng.to_ecef_vector() 
+        # temp      = brng_ecef.pvector[:].flatten()
+        # temp_r    = Mz.dot(temp)
+        # brng_ecef_rot_wrong = nv.FrameE(name='WGS84').ECEFvector(temp_r)     
         # convert to ECEF frame 
         p_ecef        = p.to_ecef_vector()
         brng_ecef     = brng.to_ecef_vector()
@@ -83,13 +83,13 @@ if __name__=='__main__':
         XYZ[i,:]  = p_ecef.pvector[:].flatten()
         UVW[i,:]  = brng_ecef.pvector[:].flatten()
         UVWR[i,:] = brng_ecef_rot.pvector[:].flatten()
-        UVWR2[i,:] = brng_ecef_rot_wrong.pvector[:].flatten()
+        # UVWR2[i,:] = brng_ecef_rot_wrong.pvector[:].flatten()
  
     # breakpoint()
     ax = plt.figure().add_subplot(projection='3d')
     ax.quiver(*XYZ.T,*UVW.T)
-    ax.quiver(*XYZ.T,*UVWR.T,color='red')
-    ax.quiver(*XYZ.T,*UVWR2.T,color='green')
+    ax.quiver(*XYZ.T,*UVWR.T,color='green')
+    # ax.quiver(*XYZ.T,*UVWR2.T,color='red')
 
     ax.set_xlabel('x') 
     ax.set_ylabel('y') 
