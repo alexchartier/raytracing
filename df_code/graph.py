@@ -1,7 +1,7 @@
 # module for graph settings in matplotlib 
 import matplotlib as mpl
 #_______________________________________________________________________________
-def setGraphParameters(fontSize=17,typeFace='Helvetica',marker='.',markerSize=12,
+def setGraphParameters(fontSize=17,typeFace='Helvetica',marker='.',markerSize=8,
                       lineWidth=2,lineStyle='-',cycleEnable=False):
    # set standard configuration for plot appearance
    # marker reduction for markers that are not a circle

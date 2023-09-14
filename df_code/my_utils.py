@@ -203,21 +203,43 @@ def bearing_to_xy_comp(bearing:np.array):
         th[i] = theta  
     return x,y,th
 #_______________________________________________________________________________
-def geodetic_latlonz_to_ecef(lat:np.array,lon:np.array,z:np.array,deg=True):
-    # convert geodetic (lat,lon,z) to ECEF (x,y,z) using nvector  
-    wgs84  = nv.FrameE(name='WGS84') 
-    N      = len(lat)
-    x_ecef = np.zeros(N) 
-    y_ecef = np.zeros(N) 
-    z_ecef = np.zeros(N) 
-    for i in range(N): 
-        p         = wgs84.GeoPoint(latitude=lat[i],longitude=lon[i],z=z[i],degrees=deg) 
+def geodetic_latlonz_to_ecef(lat:np.array,lon:np.array,z:np.array,deg=True,scale='m'):
+    # convert geodetic (lat,lon,z) to ECEF (x,y,z) using nvector
+    sf = 1.
+    if scale=='km': 
+        sf = 1e-3 
+    wgs84 = nv.FrameE(name='WGS84')
+    N = len(lat) - 1
+    XYZ = np.zeros((N, 3))
+    UVW = np.zeros((N, 3))
+    for i in range(N):
+        p  = wgs84.GeoPoint(latitude=lat[i]  ,longitude=lon[i]  ,z=z[i]  ,degrees=deg)
+        p2 = wgs84.GeoPoint(latitude=lat[i+1],longitude=lon[i+1],z=z[i+1],degrees=deg)
+        # compute the relative distance to the next (lat,lon,z) point
+        brng      = p.delta_to(p2)     # can effectively turn this into a bearing angle by calling .azimuth_deg
+        # convert to ECEF frame
         p_ecef    = p.to_ecef_vector()
-        pv        = p_ecef.ravel().to_list()  
-        x_ecef[i] = pv[0]  
-        y_ecef[i] = pv[1]  
-        z_ecef[i] = pv[2] 
-    return x_ecef,y_ecef,z_ecef 
+        brng_ecef = brng.to_ecef_vector()
+        # fill the output
+        XYZ[i, :] = sf*p_ecef.pvector[:].flatten()      # starting point of vector (x0,y0,z0)  
+        UVW[i, :] = sf*brng_ecef.pvector[:].flatten()   # magnitude of components/direction of vector (u,v,w) 
+    return XYZ,UVW
+# #_______________________________________________________________________________
+# def geodetic_latlonz_to_ecef(lat:np.array,lon:np.array,z:np.array,deg=True):
+#     # convert geodetic (lat,lon,z) to ECEF (x,y,z) using nvector  
+#     wgs84  = nv.FrameE(name='WGS84') 
+#     N      = len(lat)
+#     x_ecef = np.zeros(N) 
+#     y_ecef = np.zeros(N) 
+#     z_ecef = np.zeros(N) 
+#     for i in range(N): 
+#         p         = wgs84.GeoPoint(latitude=lat[i],longitude=lon[i],z=z[i],degrees=deg) 
+#         p_ecef    = p.to_ecef_vector()
+#         pv        = p_ecef.pvector.ravel().tolist()  
+#         x_ecef[i] = pv[0]  
+#         y_ecef[i] = pv[1]  
+#         z_ecef[i] = pv[2] 
+#     return x_ecef,y_ecef,z_ecef 
 #_______________________________________________________________________________
 def enu2ecef(lat_deg:float,lon_deg:float,q_enu:np.array):
     # convert vector q in the East-North-Up system to that in the  
