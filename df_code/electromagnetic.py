@@ -179,6 +179,7 @@ def get_exb_drift_velocity(E:dict,B0:dict,Bu:dict,lat:np.ndarray,lon:np.ndarray,
     # get magnitude and direction 
     v_ion_mag = np.squeeze( np.sqrt( np.power(v_ion_e,2.) + np.power(v_ion_n,2.) ) )
     if(v_ion_n.any()!=0):
+        # degrees East of North 
         v_ion_dir = np.squeeze( np.rad2deg( np.arctan(v_ion_e/v_ion_n) ) ) 
     else:
         v_ion_dir = 0  

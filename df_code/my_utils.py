@@ -137,8 +137,8 @@ def calculate_bearings(lat:np.array,lon:np.array,alt:np.array,latbs:np.array,lon
     for idx, latb in enumerate(latbs): 
         depth   = (-1.)*alt[idx]*1E+3 # convert to meters 
         point_B = wgs84.GeoPoint(latitude=lat[idx],longitude=lon[idx]  ,z=depth,degrees=True) 
-        point_A = wgs84.GeoPoint(latitude=latb    ,longitude=lonbs[idx],z=depth,degrees=True) 
-        p_AB_N  = point_A.delta_to(point_B) # we want the bearing at point A 
+        point_A = wgs84.GeoPoint(latitude=latb    ,longitude=lonbs[idx],z=depth,degrees=True) # TODO: create a vector of these in ECEF (and return)
+        p_AB_N  = point_A.delta_to(point_B) # we want the bearing at point A                  # TODO: create a vector of these in ECEF (and return) 
         bearing_deg[idx] = p_AB_N.azimuth_deg 
     return bearing_deg 
 #_______________________________________________________________________________

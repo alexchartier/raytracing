@@ -13,9 +13,11 @@
 #    a. Plot the satellite bearing angles on the quiver plot.  Likely need to convert bearing 
 #       angles into equivalent magnetic (lat,lon) angles...  
 #    b. Come up with a 'dot product' type evaluation to show they are perpendicular?  
-# 2. Plot the satellite and our ion drift velocities in ECEF coordinates for an easier comparison 
-#    a. Use nvector for the transformation  
-# 3. ['done'] Quiver plot for DMSP and our data [focus on timestamp 2019-03-02T11-16-00Z]  
+# 2. Plot the satellite bearings and ion drift velocities in ECEF coordinates  
+#    a. Use nvector for the transformation; look at quiver_example.py for guidance 
+#    b. Probably need to use 'point_A' as the base of the arrow (see my_utils.py#L140)
+# 3. Plot the model drift velocities in ECEF coordinates   
+# 4. ['done'] Quiver plot for DMSP and our data [focus on timestamp 2019-03-02T11-16-00Z]  
 #    a. [DONE] Compute a test path for what the satellite path should look like (c.f., figure 4 in paper).
 #       Extract (r,th) and make a quiver plot. Is this close to what we have in our data?  
 #    b. [DONE] Divide DMSP data up into small time steps (~10 min) and make the quiver plot. 
@@ -93,6 +95,8 @@ if __name__=='__main__':
     ax2  = fig2.add_subplot(projection='3d') 
     fig3 = plt.figure() 
     ax3  = fig3.add_subplot(projection='3d') 
+    fig4 = plt.figure()
+    ax4  = fig4.add_subplot(projection='3d') 
     # fig4,ax4 = plt.subplots(1,1)
     # fig5 = plt.figure()
     # ax5 = fig5.add_subplot(projection='polar') 
@@ -144,6 +148,11 @@ if __name__=='__main__':
                     tt_ns[i] = datetime(yy[i],mm[i],dd[i],hh[i],MIN[i],sec[i]).timestamp()
                 tt_mean = np.mean(tt_ns)
                 time_mean = datetime.fromtimestamp(tt_mean) 
+                # extract the bearing angle(s) in ECEF; effectively the trajectory of the satellite 
+                xyz,uvw = my_utils.geodetic_latlonz_to_ecef(glat,glon,-alt,deg=True,scale='km')
+                ax4.quiver(*xyz.T,*uvw.T)  
+                # for i in range(len(xx)): 
+                #     print('xe = {0:.3f}, ye = {1:.3f}, ze = {2:.3f}'.format(xx[i],yy[i],zz[i])) 
                 # plot the bearings
                 xb,yb,thb   = my_utils.bearing_to_xy_comp(bearings)
                 rb = np.sqrt( np.power(xb,2.) + np.power(yb,2.) ) 
@@ -156,7 +165,7 @@ if __name__=='__main__':
                     mlat,mlon,mlt = aacgmv2.get_aacgm_coord(glat[i],bearings[i],alt[i]/1E+3,time_mean) 
                     mblat[i]  = mlat 
                     mbrngs[i] = mlon
-                    print('glat = {0:.2f}, mlat = {1:.2f}, glon = {2:.2f}, mlon = {3:.2f}'.format(glat[i],mlat,bearings[i],mlat))
+                    # print('glat = {0:.2f}, mlat = {1:.2f}, glon = {2:.2f}, mlon = {3:.2f}'.format(glat[i],mlat,bearings[i],mlat))
                 ax.plot(np.deg2rad(bearings),rad,color='black' ,markersize=6)                # plot the bearings in GEOGRAPHIC coordinates
                 ax.plot(np.deg2rad(mbrngs)  ,np.deg2rad(90)-np.deg2rad(mblat),color='magenta',markersize=6) # plot the bearings in MAGNETIC coordinates
                 # for i in range(len(bearings)):
@@ -216,12 +225,13 @@ if __name__=='__main__':
     ax3.set_zlabel(r'$v_{ion}^{e}$ [m/s]')
     ax3.legend(loc='best')
 
-    # ax4.set_title('Bearings vs vi_dirn_geo') 
-    # ax4.set_xlabel('Bearing Angle [deg]') 
-    # ax4.set_ylabel('vi_dirn_geo [deg]') 
-    # ax4.tick_params(axis='both')
-    # ax4.xaxis.grid(True,which='both',linestyle='--')
-    # ax4.yaxis.grid(True,which='both',linestyle='--')
+    ax4.set_title('Bearing in ECEF') 
+    ax4.set_xlabel('x [km]') 
+    ax4.set_ylabel('y [km]') 
+    ax4.set_zlabel('z [km]') 
+    ax4.tick_params(axis='both')
+    ax4.xaxis.grid(True,which='both',linestyle='--')
+    ax4.yaxis.grid(True,which='both',linestyle='--')
 
     plt.show()
     # plt.savefig(outpath)

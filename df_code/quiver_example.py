@@ -37,7 +37,7 @@ if __name__=='__main__':
         brng      = p.delta_to(p2)     
         # rotate the vector
         frame_B   = nv.FrameB(brng.to_nvector(),yaw=270,pitch=0,roll=0,degrees=deg)  
-        p_brng_B  = frame_B.Pvector(np.r_[1,0,0].reshape((-1,1))) # argument is a unit vector along the x axis (along axis of vehicle)  
+        p_brng_B  = frame_B.Pvector(np.r_[-1,0,0].reshape((-1,1))) # argument is a unit vector along the x axis (along axis of vehicle)  
         # convert to ECEF frame 
         p_ecef        = p.to_ecef_vector()
         brng_ecef     = brng.to_ecef_vector()
