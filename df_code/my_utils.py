@@ -60,7 +60,7 @@ def process_dmsp(dmsp:dict,mlat_cut:float,np_latlon=None):
     # we're taking a difference of the input arrays 
     time        = np.array(dmsp['timestamps']) 
     lat,lon,alt = np.array(dmsp['gdlat']), np.array(dmsp['glon']), np.array(dmsp['gdalt']) 
-    bearings    = calculate_bearings(lat[:-1],lon[:-1],alt[:-1],lat[1:],lon[1:])
+    _,bearings    = calculate_bearings(lat[:-1],lon[:-1],alt[:-1],lat[1:],lon[1:])
     # calculate velocity direction
     dmsp['vi_mag'] = dmsp['hor_ion_v']
     vi_mag = np.array(dmsp['vi_mag']) 
@@ -71,7 +71,7 @@ def process_dmsp(dmsp:dict,mlat_cut:float,np_latlon=None):
     dmsp['vi_mag'] = vi_mag[:-1] 
     # conversion to MAG drift directions if north pole is specified  
     if np_latlon is not None: 
-        np_bearing = calculate_bearings(lat,lon,alt,np.ones(lat.shape)*np_latlon[0],np.ones(lat.shape)*np_latlon[1])
+        _,np_bearing = calculate_bearings(lat,lon,alt,np.ones(lat.shape)*np_latlon[0],np.ones(lat.shape)*np_latlon[1])
         dmsp['vi_dirn_MAG'] = dmsp['vi_dirn_geo'] + np_bearing[:-1]
     return dmsp 
 #_______________________________________________________________________________
@@ -103,13 +103,15 @@ def process_dmsp_2(dmsp,dec_rate=1,mlat_cutoff=60,np_latlon=None):
     dmsp_vals  = dmsp_vals[(dmsp_vals['mlat'] > mlat_cutoff) & np.isfinite(dmsp_vals['hor_ion_v'])]
     dmsp_times = dmsp_vals.index
     lats,lons,alts = dmsp_vals['gdlat'], dmsp_vals['glon'], dmsp_vals['gdalt']
-    brng      = calculate_bearings(lats[:-1], lons[:-1], alts[:-1], lats[1:], lons[1:])
+    brng_deg = calculate_bearings(lats[:-1], lons[:-1], alts[:-1], lats[1:], lons[1:])
     dmsp_vals = dmsp_vals[:-1]
     # add new keys to the dictionary 
-    dmsp_vals['vi_mag']       = dmsp_vals['hor_ion_v']
-    dmsp_vals['vi_dirn_geo']  = calculate_velocity_direction(lats[:-1],lons[:-1],dmsp_times[:-1],brng,dmsp_vals['vi_mag'])
-    dmsp_vals['vi_mag_model'] = np.ones(len(dmsp_vals)) * np.nan
-    dmsp_vals['bearings']     = brng  
+    dmsp_vals['vi_mag']        = dmsp_vals['hor_ion_v']
+    dmsp_vals['vi_dirn_geo']   = calculate_velocity_direction(lats[:-1],lons[:-1],dmsp_times[:-1],brng_deg,dmsp_vals['vi_mag'])
+    dmsp_vals['vi_mag_model']  = np.ones(len(dmsp_vals)) * np.nan
+    # dmsp_vals['bearings_ecef'] = brng_ecef  
+    dmsp_vals['bearings']  = brng_deg
+    # dmsp_vals['grid_pt_ecef']  = grid_pt_ecef 
     # add conversion to MAG drift directions if north pole is provided
     if np_latlon:
         np_bearings = calculate_bearings(lats, lons, alts,
@@ -133,14 +135,46 @@ def calculate_bearings(lat:np.array,lon:np.array,alt:np.array,latbs:np.array,lon
     # compute bearings using the reference ellipsoid [deg/km] 
     wgs84 = nv.FrameE(name='WGS84')
     assert len(lat)==len(latbs),'Assuming lat and latbs are equal length arrays'
-    bearing_deg = np.zeros(len(lat))*np.nan 
+    bearing_deg = np.zeros(len(lat))*np.nan
+    # bearing     = np.zeros(len(lat))*np.nan  
+    # grid_pt     = np.zeros(len(lat))*np.nan # this is the starting point of the vector for the bearings   
     for idx, latb in enumerate(latbs): 
         depth   = (-1.)*alt[idx]*1E+3 # convert to meters 
         point_B = wgs84.GeoPoint(latitude=lat[idx],longitude=lon[idx]  ,z=depth,degrees=True) 
         point_A = wgs84.GeoPoint(latitude=latb    ,longitude=lonbs[idx],z=depth,degrees=True) # TODO: create a vector of these in ECEF (and return)
-        p_AB_N  = point_A.delta_to(point_B) # we want the bearing at point A                  # TODO: create a vector of these in ECEF (and return) 
-        bearing_deg[idx] = p_AB_N.azimuth_deg 
+        p_AB_N  = point_A.delta_to(point_B) # we want the bearing at point A                  # TODO: create a vector of these in ECEF (and return)
+        # grid_pt[idx]     = point_A.to_ecef_vector() 
+        # bearing[idx]     = p_AB_N.to_ecef_vector()  
+        bearing_deg[idx] = p_AB_N.azimuth_deg
     return bearing_deg 
+#_______________________________________________________________________________
+def get_bearings_ecef(lat:np.array,lon:np.array,alt:np.array,yaw=0,pitch=0,roll=0,deg=True): 
+    # convert geodetic (lat,lon,z) to ECEF (x,y,z) using nvector
+    wgs84 = nv.FrameE(name='WGS84')
+    z     = -1.*alt
+    N     = len(lat) - 1
+    XYZ   = np.zeros((N,3))
+    UVW   = np.zeros((N,3))    
+    UVWR  = np.zeros((N,3))    
+    for i in range(N):
+        p  = wgs84.GeoPoint(latitude=lat[i]  ,longitude=lon[i]  ,z=z[i]  ,degrees=deg)
+        p2 = wgs84.GeoPoint(latitude=lat[i+1],longitude=lon[i+1],z=z[i+1],degrees=deg)
+        # compute the relative distance to the next (lat,lon,z) point
+        # note: can effectively turn this into a bearing angle by calling .azimuth_deg
+        brng      = p.delta_to(p2)
+        # rotate the vector
+        frame_B   = nv.FrameB(brng.to_nvector(),yaw=yaw,pitch=pitch,roll=roll,degrees=deg)
+        p_brng_B  = frame_B.Pvector(np.r_[-1,0,0].reshape((-1,1))) # argument is a unit vector along the x axis (along axis of vehicle)
+        # convert to ECEF frame
+        p_ecef        = p.to_ecef_vector()
+        brng_ecef     = brng.to_ecef_vector()
+        brng_ecef_rot = p_brng_B.to_ecef_vector()
+        # fill the output
+        XYZ[i,:]  = p_ecef.pvector[:].flatten()
+        UVW[i,:]  = brng_ecef.pvector[:].flatten()
+        UVWR[i,:] = brng_ecef_rot.pvector[:].flatten()
+
+    return XYZ,UVW
 #_______________________________________________________________________________
 def calculate_velocity_direction(lat:np.array,lon:np.array,time:np.array,bearing:np.array,vel:np.array,debug=False): 
     # DMSP horizontal ion drifts provided as follows: 
@@ -295,6 +329,14 @@ def get_radius_and_theta(lat:float,lon:float):
     radius = np.deg2rad(90.) - np.abs(np.deg2rad(lat))
     theta  = np.deg2rad(lon)
     return radius,theta
+#_______________________________________________________________________________
+def ecef_to_pvector(x:np.array):
+    # convert ecef to p vector
+    N = len(x)  
+    v = np.zeros((N,3)) 
+    for i in range(0,N):
+        v[i,:] = x[i].pvector[:].flatten() 
+    return v 
 #_______________________________________________________________________________
 def wrap(d_input:dict):
     ''' prepare the data for processing '''
