@@ -91,10 +91,10 @@ if __name__=='__main__':
     cbar = plt.colorbar(im,ax=ax)
     cbar.set_label('Electric Potential [kV]') 
     
-    fig2 = plt.figure() 
-    ax2  = fig2.add_subplot(projection='3d') 
-    fig3 = plt.figure() 
-    ax3  = fig3.add_subplot(projection='3d') 
+    # fig2 = plt.figure() 
+    # ax2  = fig2.add_subplot(projection='3d') 
+    # fig3 = plt.figure() 
+    # ax3  = fig3.add_subplot(projection='3d') 
     fig4 = plt.figure()
     ax4  = fig4.add_subplot(projection='3d') 
     # fig4,ax4 = plt.subplots(1,1)
@@ -142,6 +142,7 @@ if __name__=='__main__':
                 alt         = dmsp[sat]['gdalt'][tidx].to_frame().loc[:,'gdalt'].to_numpy()*1E+3 # convert to meters
                 bearings    = dmsp[sat]['bearings'][tidx].to_frame().loc[:,'bearings'].to_numpy()  
                 vi_dirn_geo = dmsp[sat]['vi_dirn_geo'][tidx].to_frame().loc[:,'vi_dirn_geo'].to_numpy()
+                vi_mag      = dmsp[sat]['vi_mag'][tidx].to_frame().loc[:,'vi_mag'].to_numpy()
                 # use average time 
                 tt_ns = np.zeros(len(yy))
                 for i in range(len(yy)):
@@ -151,7 +152,10 @@ if __name__=='__main__':
                 # extract the bearing angle(s) in ECEF; effectively the trajectory of the satellite
                 xyz,uvw = my_utils.get_bearings_ecef(glat,glon,alt)
                 # xyz,uvw = my_utils.geodetic_latlonz_to_ecef(glat,glon,-alt,deg=True,scale='km')
-                ax4.quiver(*xyz.T,*uvw.T)  
+                # convert ion drift velocities into ECEF 
+                vi_uvw = my_utils.drift_velocity_enu2ecef(glat,glon,vi_dirn_geo,vi_mag,5E+2)
+                ax4.quiver(*xyz.T,*uvw.T,label='Bearing')  
+                ax4.quiver(*xyz.T,*vi_uvw.T,label=r'v$_{ion} \times 500$',color='m')  
                 # for i in range(len(xx)): 
                 #     print('xe = {0:.3f}, ye = {1:.3f}, ze = {2:.3f}'.format(xx[i],yy[i],zz[i])) 
                 # # plot the bearings
@@ -214,23 +218,24 @@ if __name__=='__main__':
     title = '{0} {1}'.format(sat_str,time.ctime())
     ax.set_title(title)  
 
-    fig2.suptitle('North Component')
-    ax2.set_xlabel('GLAT [deg]')
-    ax2.set_ylabel('GLON [deg]')
-    ax2.set_zlabel(r'$v_{ion}^{n}$ [m/s]')
-    ax2.legend(loc='best')
+    # fig2.suptitle('North Component')
+    # ax2.set_xlabel('GLAT [deg]')
+    # ax2.set_ylabel('GLON [deg]')
+    # ax2.set_zlabel(r'$v_{ion}^{n}$ [m/s]')
+    # ax2.legend(loc='best')
 
-    fig3.suptitle('East Component')
-    ax3.set_xlabel('GLAT [deg]')
-    ax3.set_ylabel('GLON [deg]')
-    ax3.set_zlabel(r'$v_{ion}^{e}$ [m/s]')
-    ax3.legend(loc='best')
+    # fig3.suptitle('East Component')
+    # ax3.set_xlabel('GLAT [deg]')
+    # ax3.set_ylabel('GLON [deg]')
+    # ax3.set_zlabel(r'$v_{ion}^{e}$ [m/s]')
+    # ax3.legend(loc='best')
 
     ax4.set_title('Bearing in ECEF') 
     ax4.set_xlabel('x [m]') 
     ax4.set_ylabel('y [m]') 
     ax4.set_zlabel('z [m]') 
     ax4.tick_params(axis='both')
+    ax4.legend(loc='best')
     ax4.xaxis.grid(True,which='both',linestyle='--')
     ax4.yaxis.grid(True,which='both',linestyle='--')
 

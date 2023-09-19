@@ -275,6 +275,35 @@ def geodetic_latlonz_to_ecef(lat:np.array,lon:np.array,z:np.array,deg=True,scale
 #         z_ecef[i] = pv[2] 
 #     return x_ecef,y_ecef,z_ecef 
 #_______________________________________________________________________________
+def drift_velocity_enu2ecef(lat_deg:np.array,lon_deg:np.array,vi_dirn:np.array,vi_mag:np.array,sf=1.0):
+    # convert v_ion from ENU to ECEF coordinates 
+    N1 = len(lat_deg) 
+    N2 = len(vi_dirn) 
+    if(N1!=N2):
+        msg = 'ERROR! len(lat_deg) = {0}, len(vi_dirn) = {1}'.format(N1,N2) 
+        raise ValueError(msg)
+    # get east and north components of the velocity
+    vi_dirn_rad = np.deg2rad(vi_dirn)  
+    vi_E = vi_mag*np.sin(vi_dirn_rad) 
+    vi_N = vi_mag*np.cos(vi_dirn_rad)
+    uvw = np.zeros((N1-1,3))
+    for i in range(0,N1-1):
+        # rotation matrix to go from ENU -> ECEF 
+        Lambda = np.deg2rad(lon_deg[i])  
+        Phi    = np.deg2rad(lat_deg[i])  
+        M      = np.matrix([[-np.sin(Lambda),-np.sin(Phi)*np.cos(Lambda),np.cos(Phi)*np.cos(Lambda)],
+                            [np.cos(Lambda) ,-np.sin(Phi)*np.sin(Lambda),np.cos(Phi)*np.sin(Lambda)],
+                            [0,np.cos(Phi),np.sin(Lambda)]])
+        # vector in ENU
+        q_enu  = np.matrix([[vi_E[i]],[vi_N[i]],[0]])  
+        # conversion to ECEF 
+        q_ecef = M.dot(q_enu)
+        # test output 
+        # print('lat = {0:.7f}, lon = {1:.7f}, q(enu) = {2}, q(ecef) = {3}'.format(lat_deg[i],lon_deg[i],np.asarray(q_enu).ravel(),np.asarray(q_ecef).ravel()))
+        # fill output  
+        uvw[i,:] = sf*np.asarray(q_ecef).ravel()  
+    return uvw  
+#_______________________________________________________________________________
 def enu2ecef(lat_deg:float,lon_deg:float,q_enu:np.array):
     # convert vector q in the East-North-Up system to that in the  
     # Earth-Centered Earth-Fixed (ECEF) system
