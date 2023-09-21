@@ -9,7 +9,7 @@ import pandas as pd
 import pymap3d as pm
 import nc_utils
 
-wgs84_pm = pm.Ellipsoid('wgs84')
+wgs84_pm = pm.Ellipsoid.from_name('wgs84')
 wgs84 = nv.FrameE(name='WGS84')
 RAD_EARTH = 6371E3
 
@@ -348,7 +348,8 @@ def load_and_preproc_mit_gps(gps_fn, slist_pkl_fn, time):
 
 
 def write_sitelists(gps, slist, slist_fn, slist_fn_short):
-    
+    slist_fn = os.path.expanduser(slist_fn)
+    slist_fn_short = os.path.expanduser(slist_fn_short)
     # write the full sitelist
     idx = np.unique(gps['gps_site'], return_index='True')
     unique_gps = gps.iloc[idx[1]]
@@ -369,52 +370,40 @@ def write_sitelists(gps, slist, slist_fn, slist_fn_short):
 
 if __name__ == '__main__':
     gps_fn_fmt = '~/data/gps/mit_hdf/los_%Y%m%d.001.h5'
+    gps_pkl_fn_fmt = '~/data/gps/pkl/los_%Y%m%d.001.pkl'
+    slist_fn = '~/data/gps/sitelists/sitelist.txt'
+    slist_fn_150 = '~/data/gps/sitelists/sitelist_150.txt'
     slist_pkl_fn = '~/data/gps/sitelists/global_150.pkl'
-
+    
     stime = dt.datetime(2019, 3, 1, tzinfo=dt.timezone.utc)
     etime = dt.datetime(2019, 3, 2, tzinfo=dt.timezone.utc)
 
-    """
     # Get the GPS preprocessed
     time  = stime
     while time < etime:
-        gps_fn = time.strftime(gps_fn_fmt)
-        gps_pkl_fn = time.strftime(gps_pkl_fn_fmt)
+        gps_fn = time.strftime(os.path.expanduser(gps_fn_fmt))
+        gps_pkl_fn = time.strftime(os.path.expanduser(gps_pkl_fn_fmt))
         gps = load_gps(gps_fn, time)
         nc_utils.pickle(gps, gps_pkl_fn)
         time += dt.timedelta(days=1)
 
-    """ #Load pkls instead
-
-    gps_pkl_fn_fmt = '~/data/gps/pkl/los_%Y%m%d.001.pkl'
-    gps_pkl_fn_fmt_2 = '~/data/gps/pkl/los_small_%Y%m%d.001.pkl'
-    gps_pkl_fn_fmt_3 = '~/data/gps/pkl/los_small_XYZ_%Y%m%d.001.pkl'
-    gps_pkl_fn = stime.strftime(gps_pkl_fn_fmt)
-    gps_pkl_fn_2 = stime.strftime(gps_pkl_fn_fmt_2)
-    gps_pkl_fn_3 = stime.strftime(gps_pkl_fn_fmt_3)
-    gps = nc_utils.unpickle(gps_pkl_fn)
-    gps_short = nc_utils.unpickle(gps_pkl_fn_2)
-    slist = nc_utils.unpickle(slist_pkl_fn)
-
-    # write some info for matlab to plot
-    write_sitelists(gps, slist, 'data/gps/sitelist.txt', 'data/gps/sitelist_150.txt')
 
     # Calculate the sitelist
     slist = gen_sitelist(gps, 150)
-    nc_utils.pickle(slist, slist_pkl_fn)
-    
 
     # Downsample the GPS to the sitelist, and calculate coordinates 
     gps_short = downsample_to_slist(gps, slist)
-    nc_utils.pickle(gps, gps_pkl_fn_2)
    
+    # write out the sitelists
+    write_sitelists(gps, slist, slist_fn, slist_fn_150)
+    nc_utils.pickle(slist, slist_pkl_fn)
+    
     # Calculate the XYZ coordinates 
     gps_short_XYZ = calc_tx_rx_coords(gps_short)
 
     # clean up the data
     gps_short_XYZ = cleanup(gps_short_XYZ)
-    
-    nc_utils.pickle(gps_short_XYZ, gps_pkl_fn_3)
+    nc_utils.pickle(gps_short_XYZ, 'out.pkl')
 
 
 

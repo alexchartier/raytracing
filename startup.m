@@ -14,3 +14,7 @@ fprintf('_______________________________________________________________________
 
 %% m_map
 path(['/Users/chartat1/midas-3/matlab/m_map'],path);
+
+
+%% mice
+path(['/Users/chartat1/mice/'],path);
