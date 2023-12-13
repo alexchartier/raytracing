@@ -1,6 +1,9 @@
 # simulations
 
+
 You will need to install PHaRLaP from https://www.dst.defence.gov.au/opportunity/pharlap-provision-high-frequency-raytracing-laboratory-propagation-studies
+Install nc_utils from  https://github.com/alexchartier/nc_utils
+Install ionogram_classifier from https://github.com/alexchartier/ionogram_classifier
 
 WSPR validation
     download the WSPR data from https://www.wsprnet.org/drupal/wsprnet/spots, then
