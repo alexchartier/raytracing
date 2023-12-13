@@ -12,11 +12,11 @@ import scipy.interpolate
 
 
 def main(
-    stime=dt.datetime(2019, 3, 2, 10, 0),
-    etime=dt.datetime(2019, 3, 3),
-    timestep=dt.timedelta(minutes=2),
+    stime=dt.datetime(2019, 3, 4, 1),
+    etime=dt.datetime(2019, 3, 5),
+    timestep=dt.timedelta(minutes=60),
     mlat_cutoff=60.,
-    pot_fname_fmt='/Users/chartat1/pymix/data/pot_sami_cond/mar19/ampere_mix_%04d-%02d-%02dT%02d-%02d-%02dZ.nc',
+    pot_fname_fmt='/Users/chartat1/Downloads/pymix_2019Mar04/ampere_mix_%04d-%02d-%02dT%02d-%02d-%02dZ.nc',
     plot_fname_fmt='./plots/ampere_mix_%04d-%02d-%02dT%02d-%02d-%02dZ.png',
 ):
 
@@ -29,6 +29,7 @@ def main(
     pot = nc_utils.ncread_vars(pot_fname)
 
     np_idx = pot['MLAT (AACGM)'] == 90
+    assert np.sum(np_idx) > 0, 'pole not found'
     np_latlon = [pot['Geographic Latitude'][np_idx][0], pot['Geographic Longitude'][np_idx][0]]
 
     """ Run through and process """
@@ -43,17 +44,19 @@ def main(
         plot_fname = plot_fname_fmt % (time.year, time.month, time.day, time.hour, time.minute, time.second)
         fig, ax = plt.subplots(1, 1,subplot_kw={'projection': 'polar'}) 
 
-        rad, theta = get_rad_theta(
-            np.unique(pot['MLAT (AACGM)']), np.unique(pot['MLON (AACGM)']),
-        )
-        print(theta)
+
+        lats, lons = pot['MLAT (AACGM)'][:, 0], pot['MLON (AACGM)'][0, :]
+        rad, theta = get_rad_theta(lats, lons)
+
 
         """ contour data over the map. """
         latlim = 55.
    
-        theta = np.concatenate([theta, [np.abs(theta[0]),]])
-        poten = pot['Potential'][::-1, :]
-        im = ax.contourf(theta, rad, poten)
+        #theta = np.concatenate([theta, [np.abs(theta[0]),]])
+        poten = pot['Potential'] # [::-1, :]
+        si = np.argsort(theta)
+
+        im = ax.contourf(theta[si], rad, poten[:, si])
         yticks = 90 - np.rad2deg(ax.get_yticks())
         ax.set_yticklabels(['%1.0f' % y for y in yticks])
         cb = plt.colorbar(im, ax=ax)
