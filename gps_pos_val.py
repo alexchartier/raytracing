@@ -281,14 +281,14 @@ if __name__ == '__main__':
     print("Install madrigalWeb (python3 -m pip install madrigalWeb), then ")
     print(args)
     print('\n\n')
-    time = dt.datetime(2019, 3, 28, tzinfo=dt.timezone.utc)
+    time = dt.datetime(2019, 3, 31, tzinfo=dt.timezone.utc)
     etime = dt.datetime(2019, 3, 31, tzinfo=dt.timezone.utc)
     sami_fn_fmt = '~/data/sami3/%Y/sami3_regulargrid_elec_density_%Y%b%d_v01.nc'
     gps_fn_fmt = '~/data/gps/mit_hdf/los_%Y%m%d.001.h5.hdf5'
     out_fn_fmt = '~/data/gps_pos_errs/zero_init_pos_errs_%Y%m%d.nc'
     slist_fn = '~/data/gps/sitelists/global_150.pkl'
 
-    while time < etime:
+    while time <= etime:
         main(time.strftime(sami_fn_fmt), time.strftime(
             gps_fn_fmt), time.strftime(out_fn_fmt), slist_fn, time)
         time += dt.timedelta(days=1)

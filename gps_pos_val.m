@@ -2,7 +2,7 @@
 % plot the box-whiskers
 
 %% filenames
-fn = rdir('data/gps/gps_pos_errs/pos_errs*.nc');
+fn = rdir('~/data/gps_pos_errs/zero_init_pos_errs*.nc');
 latbins = -90:10:90;
 ltbins = 0:24;
 
@@ -81,8 +81,6 @@ for l = 1:length(ltbins) - 1
 end
 
 
-
-
 %% day/night comparison
 dayi = data_full.lt > 6 & data_full.lt < 18;
 nighti = ~dayi;
@@ -98,7 +96,6 @@ nightpct = median(errpct(nighti));
 highpct = median(errpct(highlati));
 midpct = median(errpct(midlati));
 lowpct = median(errpct(lowlati));
-
 
 
 %% plot
@@ -123,7 +120,6 @@ set(gca, 'FontSize', fs)
 
 grid on
 grid minor
-
 
 subplot(2, 1, 2)
 bar(hh, lterrs(:, 1:2:3))
