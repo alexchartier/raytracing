@@ -4,10 +4,12 @@ import urllib.request
 import json
 import datetime as dt
 import nc_utils
+import pandas as pd
+import xarray
 
 
 def main(
-    out_fn_fmt = '~/data/wspr/%Y%b%d-wspr.pkl',
+    out_fn_fmt = '~/data/wspr/%Y%b%d-wspr.nc',
     stime = dt.datetime(2024, 4, 5),
     etime = dt.datetime(2024, 4, 10),
 ):
@@ -31,15 +33,18 @@ def multiband_dl(
 ):
     bands = def_bands()
     time = stime 
-    data = {}
     while time < etime:
-        data[time] = {}
+        out_fn = time.strftime(out_fn_fmt)
+        frames = []
         for band, idnum in bands.items():
             if band < min_band:
                 continue
             cmd = gen_cmd(band=idnum, latlim=latlim, lonlim=lonlim, mindist=mindist)
-            data[time][band] = parse(wsprlive_get(cmd))
-        nc_utils.pickle(data, time.strftime(out_fn_fmt)) 
+            frames.append(reformat(wsprlive_get(cmd), band))
+       
+        df = pd.concat(frames) 
+        xarray.Dataset.from_dataframe(df).to_netcdf(out_fn)
+        print(f'wrote to {out_fn}')
         time += dt.timedelta(days=1)
 
 
@@ -107,7 +112,7 @@ def gen_cmd(
     return cmd
     
 
-def parse(data):
+def reformat(data, wlen):
     fields = 'time', 'frequency', 'distance', 'tx_lat', 'tx_lon', 'rx_lat', 'rx_lon',
     d2 = []
     for entry in data:
@@ -115,7 +120,14 @@ def parse(data):
         for k, v in entry.items():
             if k in fields:
                 e2[k] = v
-    return d2
+        e2['wavelength'] = wlen
+        d2.append(e2)
+
+    df = pd.DataFrame.from_records(d2)
+    if not df.empty:
+        df = df.set_index('time')
+    
+    return df
 
 
 if __name__ == "__main__":
