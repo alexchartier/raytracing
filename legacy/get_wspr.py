@@ -1,5 +1,7 @@
-# see http://wspr.rocks/liveembed/ for more config options
-
+"""
+see http://wspr.rocks/liveembed/ for more config options
+Note < 10m propagation is contaminated by repeaters
+"""
 import urllib.request
 import json
 import datetime as dt
@@ -9,43 +11,56 @@ import xarray
 
 
 def main(
-    out_fn_fmt = '~/data/wspr/%Y%b%d-wspr.nc',
+    out_fn_fmt = '~/data/wspr/wspr_%s_%i.nc',
+    datestr_fmt = '%Y%m%d',
     stime = dt.datetime(2024, 4, 5),
-    etime = dt.datetime(2024, 4, 10),
+    etime = dt.datetime(2024, 4, 6),
+    latlim = [-90, 90],
+    lonlim = [-180, 180],
+    bandlim = [10, 160],
+    mindist = 250,
+    maxlinks = 10000,
 ):
     """ 
     bands = def_bands()
-    cmd = gen_cmd(band=bands[160], latlim=[25, 50], lonlim=[-125, -66], mindist=500, maxlinks=10)
+    query = gen_query(band=bands[160], latlim=[25, 50], lonlim=[-125, -66], mindist=500, maxlinks=10)
     print(cmd)
     print(wsprlive_get(cmd))
     #print(wsprlive_get("SELECT * FROM wspr.rx where band = 10 and (time between '2024-05-08' and '2024-05-09') LIMIT 1"))
     """
 
     multiband_dl(
-        out_fn_fmt, stime, etime, 
-        latlim=[25, 50], lonlim=[-125, -66], mindist=500, min_band=2,
+        out_fn_fmt, stime, etime, datestr_fmt,  
+        latlim=latlim, lonlim=lonlim, mindist=mindist, bandlim=bandlim, maxlinks=maxlinks,
     )
 
 
 def multiband_dl(
-        out_fn_fmt, stime, etime, 
-        latlim=[25, 50], lonlim=[-125, -66], mindist=500, min_band=10,
+        out_fn_fmt, stime, etime, datestr_fmt,
+        latlim=[25, 50], lonlim=[-125, -66], mindist=500, bandlim=[2, 160],
+        maxlinks = 1E6,
+        timeinc = dt.timedelta(days=1),
 ):
     bands = def_bands()
     time = stime 
+
     while time < etime:
-        out_fn = time.strftime(out_fn_fmt)
-        frames = []
+        datestr = time.strftime(datestr_fmt)
+
         for band, idnum in bands.items():
-            if band < min_band:
+            frames = []
+            if band < min(bandlim) or band > max(bandlim):
                 continue
-            cmd = gen_cmd(band=idnum, latlim=latlim, lonlim=lonlim, mindist=mindist)
-            frames.append(reformat(wsprlive_get(cmd), band))
+            query = gen_query(times=[time, time + timeinc], band=idnum, 
+                latlim=latlim, lonlim=lonlim, mindist=mindist, maxlinks=maxlinks)
+            frames.append(reformat(wsprlive_get(query), band))
        
-        df = pd.concat(frames) 
-        xarray.Dataset.from_dataframe(df).to_netcdf(out_fn)
-        print(f'wrote to {out_fn}')
-        time += dt.timedelta(days=1)
+            df = pd.concat(frames) 
+            out_fn = out_fn_fmt % (datestr, band)
+            xarray.Dataset.from_dataframe(df).to_netcdf(out_fn)
+            print(f'wrote to {out_fn}')
+
+        time += timeinc
 
 
 def wsprlive_get(query):
@@ -79,37 +94,39 @@ def def_bands():
         0.23: 1296,
 }
 
-def gen_cmd(
+
+def gen_query(
         band=10, 
         times=[dt.datetime.now() - dt.timedelta(days=2), dt.datetime.now() - dt.timedelta(days=1)],
         latlim=None,
         lonlim=None,
         mindist=None,
-        maxlinks=1E6,
+        maxlinks=1E8,
 ):
     #timestr = '%Y-%m-%d %H:%M' 
     timestr = '%Y-%m-%d' 
-    cmd = [
+    query = [
         f"band = {band}",
         f"(time between '{times[0].strftime(timestr)}' and '{times[1].strftime(timestr)}')",
     ]
 
     if latlim:
-        cmd += [
+        query += [
         f"(tx_lat between {latlim[0]} and {latlim[1]}) ",
         f"(rx_lat between {latlim[0]} and {latlim[1]}) ",
         ]
     if lonlim:
-        cmd += [
+        query += [
         f"(tx_lon between {lonlim[0]} and {lonlim[1]}) ",
         f"(rx_lon between {lonlim[0]} and {lonlim[1]}) ",
         ]
     if mindist:
-        cmd += [f"distance > {mindist}",]
-    cmd = "SELECT * FROM wspr.rx where " + " and ".join(cmd)
+        query += [f"distance > {mindist}",]
+    query = "SELECT * FROM wspr.rx where " + " and ".join(query)
     maxlinks = int(maxlinks)
-    cmd += f" LIMIT {maxlinks}"
-    return cmd
+    query += f" LIMIT {maxlinks}"
+
+    return query
     
 
 def reformat(data, wlen):
