@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HF Path Visualizer</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">HF Link Prototype</p>
+        <h1>Trace a path, test reachability, estimate D/E-region loss.</h1>
+        <p class="hero-text">
+          Enter a UTC date and time, transmitter and receiver coordinates, and a frequency.
+          The solver uses a 60-500 km ionosphere, allows up to 2 hops, and reports whether the
+          link converges along with the modeled absorptive loss.
+        </p>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-card">
+          <span class="meta-label">Model volume</span>
+          <strong>60-500 km</strong>
+        </div>
+        <div class="meta-card">
+          <span class="meta-label">Hop search</span>
+          <strong>Up to 2 hops</strong>
+        </div>
+        <div class="meta-card">
+          <span class="meta-label">Absorption</span>
+          <strong>IRI2020 + MSIS</strong>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel form-panel">
+        <div class="panel-header">
+          <p class="panel-kicker">Inputs</p>
+          <h2>Mission Setup</h2>
+        </div>
+
+        <form id="trace-form" class="trace-form">
+          <div class="field-grid two-up">
+            <label>
+              <span>Date (UTC)</span>
+              <input name="date" type="date" value="2020-01-15" required>
+            </label>
+            <label>
+              <span>Time (UTC)</span>
+              <input name="time" type="time" value="12:00" step="60" required>
+            </label>
+          </div>
+
+          <div class="field-grid single">
+            <label>
+              <span>Frequency (MHz)</span>
+              <input name="frequency_mhz" type="number" min="1" max="30" step="0.1" value="4.1" required>
+            </label>
+          </div>
+
+          <div class="station-block">
+            <div class="station-header">
+              <p>Transmitter</p>
+              <small>Geodetic coordinates</small>
+            </div>
+            <div class="field-grid three-up">
+              <label>
+                <span>Latitude</span>
+                <input name="tx_lat" type="number" min="-90" max="90" step="0.01" value="-77.8" required>
+              </label>
+              <label>
+                <span>Longitude</span>
+                <input name="tx_lon" type="number" min="-180" max="180" step="0.01" value="166.4" required>
+              </label>
+              <label>
+                <span>Altitude (km)</span>
+                <input name="tx_alt_km" type="number" min="0" max="1000" step="0.1" value="0.0">
+              </label>
+            </div>
+          </div>
+
+          <div class="station-block">
+            <div class="station-header">
+              <p>Receiver</p>
+              <small>Geodetic coordinates</small>
+            </div>
+            <div class="field-grid three-up">
+              <label>
+                <span>Latitude</span>
+                <input name="rx_lat" type="number" min="-90" max="90" step="0.01" value="-89.9" required>
+              </label>
+              <label>
+                <span>Longitude</span>
+                <input name="rx_lon" type="number" min="-180" max="180" step="0.01" value="166.4" required>
+              </label>
+              <label>
+                <span>Altitude (km)</span>
+                <input name="rx_alt_km" type="number" min="0" max="1000" step="0.1" value="1.0">
+              </label>
+            </div>
+          </div>
+
+          <details class="advanced">
+            <summary>Advanced assumptions</summary>
+            <div class="field-grid two-up advanced-grid">
+              <label>
+                <span>F10.7</span>
+                <input name="f107" type="number" min="50" max="300" step="1" placeholder="Auto from pymsis">
+              </label>
+              <label class="readonly-field">
+                <span>Search mode</span>
+                <input type="text" value="2-hop, 60-500 km" readonly>
+              </label>
+            </div>
+          </details>
+
+          <div class="actions">
+            <button type="submit" id="trace-button">Run Trace</button>
+            <button type="button" id="preset-button" class="ghost-button">Load Polar Example</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel results-panel">
+        <div class="panel-header">
+          <p class="panel-kicker">Results</p>
+          <h2>Link Assessment</h2>
+        </div>
+
+        <div id="status-banner" class="status-banner status-idle">
+          Ready to evaluate a link.
+        </div>
+
+        <div class="metrics-grid">
+          <article class="metric-card">
+            <span class="metric-label">Reachability</span>
+            <strong id="metric-reachable">Awaiting trace</strong>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Absorptive loss</span>
+            <strong id="metric-absorption">--</strong>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Closest error</span>
+            <strong id="metric-error">--</strong>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Launch geometry</span>
+            <strong id="metric-launch">--</strong>
+          </article>
+        </div>
+
+        <div class="summary-card">
+          <h3>Trace summary</h3>
+          <p id="summary-copy">
+            The app will report whether a ray converged to the receiver and how much absorption accumulated along the path.
+          </p>
+        </div>
+
+        <div class="json-card">
+          <div class="json-header">
+            <h3>Raw response</h3>
+            <span>API payload</span>
+          </div>
+          <pre id="raw-output">{}</pre>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

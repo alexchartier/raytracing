@@ -1,0 +1,7 @@
+__pycache__/
+tests/__pycache__/
+*.pyc
+_lib/*.dylib
+pylap_macos_build/build/
+pylap_macos_build/pylap/
+pylap_macos_build/*.egg-info/
