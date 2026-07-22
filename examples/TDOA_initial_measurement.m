@@ -1,11 +1,11 @@
 %% inputs 
-time = datenum(2017, 1, 11, 11, 0, 0);
+time = datenum(2017, 1, 11, 11, 5, 0);
 
 sc_crd_fn1 = '~/data/nebula/STK_positions/tdoa_sats//CubeSat1_Fixed_Position_Velocity.txt';
 sc_crd_fn2 = '~/data/nebula/STK_positions/tdoa_sats//CubeSat2_Fixed_Position_Velocity.txt';
 gd_loc = [38, -77.5, 0];
 
-run_name = 'vert';
+run_name = 'truth';
 
 switch run_name
     case {'truth'}
