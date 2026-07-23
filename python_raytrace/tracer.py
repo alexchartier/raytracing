@@ -202,6 +202,52 @@ class PointToPointRayTracer:
             self.backend = PyLapRaytraceBackend()
         return self.backend
 
+    def prepare_ray_state_vector_batch(
+        self,
+        *,
+        tx: GeoPoint,
+        grid: IonosphereGrid,
+        elevations_deg: Sequence[float],
+        bearings_deg: Sequence[float],
+        freqs_mhz: Sequence[float],
+        ox_mode: int = 0,
+    ) -> tuple[GeoPoint, dict[str, np.ndarray], np.ndarray] | None:
+        tx_local = self._nudge_if_on_grid(tx, grid)
+        ne_cm3, bx, by, bz = self._sample_tx_state(grid, tx_local)
+        elevs = np.asarray(elevations_deg, dtype=float)
+        bears = np.asarray(bearings_deg, dtype=float)
+        freqs = np.asarray(freqs_mhz, dtype=float)
+        state_vector = self._build_state_vector_batch(tx_local, elevs, bears, freqs, ox_mode, ne_cm3, bx, by, bz)
+        if state_vector is None:
+            return None
+        valid_mask = np.asarray(state_vector.pop("_valid_mask"), dtype=bool)
+        return tx_local, state_vector, valid_mask
+
+    def trace_state_vector_batch(
+        self,
+        *,
+        tx: GeoPoint,
+        elevations_deg: Sequence[float],
+        bearings_deg: Sequence[float],
+        freqs_mhz: Sequence[float],
+        grid: IonosphereGrid,
+        state_vector: dict[str, np.ndarray],
+        ox_mode: int = 0,
+        nhops: int = 2,
+        tol: Sequence[float] = (1e-8, 0.005, 5.0),
+    ) -> list[RayTrace]:
+        return self._backend().trace(
+            tx,
+            elevations_deg,
+            bearings_deg,
+            freqs_mhz,
+            ox_mode,
+            nhops,
+            tol,
+            grid=grid,
+            state_vector=state_vector,
+        )
+
     def trace_frequencies(self, *, when: dt.datetime, tx: GeoPoint, rx: GeoPoint,
                           frequencies_mhz: Sequence[float], f107: float | None = None,
                           grid: IonosphereGrid | None = None,

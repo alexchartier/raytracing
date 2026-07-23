@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import datetime as dt
+import json
 import math
 from dataclasses import dataclass, field
+from pathlib import Path
 
 import numpy as np
 import PyIRI
@@ -32,6 +34,73 @@ class IonosphereGrid:
     neutral_temp_k: np.ndarray | None = None
     neutral_species_cm3: np.ndarray | None = None
     metadata: dict[str, float | int | str] = field(default_factory=dict)
+
+
+def save_ionosphere_grid(path: str | Path, grid: IonosphereGrid) -> Path:
+    target = Path(path).expanduser()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    payload: dict[str, object] = {
+        "format_version": np.array([1], dtype=np.int64),
+        "latitudes_deg": np.asarray(grid.latitudes_deg, dtype=float),
+        "longitudes_deg": np.asarray(grid.longitudes_deg, dtype=float),
+        "altitudes_km": np.asarray(grid.altitudes_km, dtype=float),
+        "iono_en_grid": np.asarray(grid.iono_en_grid, dtype=float),
+        "iono_en_grid_5": np.asarray(grid.iono_en_grid_5, dtype=float),
+        "collision_freq": np.asarray(grid.collision_freq, dtype=float),
+        "iono_grid_parms": np.asarray(grid.iono_grid_parms, dtype=float),
+        "Bx": np.asarray(grid.Bx, dtype=float),
+        "By": np.asarray(grid.By, dtype=float),
+        "Bz": np.asarray(grid.Bz, dtype=float),
+        "geomag_grid_parms": np.asarray(grid.geomag_grid_parms, dtype=float),
+        "metadata_json": np.array(json.dumps(grid.metadata, sort_keys=True)),
+    }
+
+    def _store_optional(name: str, value: np.ndarray | None) -> None:
+        payload[f"{name}_present"] = np.array([value is not None], dtype=bool)
+        if value is not None:
+            payload[name] = np.asarray(value, dtype=float)
+
+    _store_optional("electron_temp_k", grid.electron_temp_k)
+    _store_optional("ion_temp_k", grid.ion_temp_k)
+    _store_optional("neutral_temp_k", grid.neutral_temp_k)
+    _store_optional("neutral_species_cm3", grid.neutral_species_cm3)
+    np.savez_compressed(target, **payload)
+    return target
+
+
+def load_ionosphere_grid(path: str | Path) -> IonosphereGrid:
+    source = Path(path).expanduser()
+    with np.load(source, allow_pickle=False) as data:
+        version = int(np.asarray(data["format_version"]).ravel()[0])
+        if version != 1:
+            raise ValueError(f"unsupported ionosphere-grid cache version: {version}")
+
+        def _load_optional(name: str) -> np.ndarray | None:
+            present = bool(np.asarray(data[f"{name}_present"]).ravel()[0])
+            if not present:
+                return None
+            return np.asarray(data[name], dtype=float)
+
+        metadata_text = str(np.asarray(data["metadata_json"]).item())
+        metadata = json.loads(metadata_text) if metadata_text else {}
+        return IonosphereGrid(
+            latitudes_deg=np.asarray(data["latitudes_deg"], dtype=float),
+            longitudes_deg=np.asarray(data["longitudes_deg"], dtype=float),
+            altitudes_km=np.asarray(data["altitudes_km"], dtype=float),
+            iono_en_grid=np.asarray(data["iono_en_grid"], dtype=float),
+            iono_en_grid_5=np.asarray(data["iono_en_grid_5"], dtype=float),
+            collision_freq=np.asarray(data["collision_freq"], dtype=float),
+            iono_grid_parms=np.asarray(data["iono_grid_parms"], dtype=float).tolist(),
+            Bx=np.asarray(data["Bx"], dtype=float),
+            By=np.asarray(data["By"], dtype=float),
+            Bz=np.asarray(data["Bz"], dtype=float),
+            geomag_grid_parms=np.asarray(data["geomag_grid_parms"], dtype=float).tolist(),
+            electron_temp_k=_load_optional("electron_temp_k"),
+            ion_temp_k=_load_optional("ion_temp_k"),
+            neutral_temp_k=_load_optional("neutral_temp_k"),
+            neutral_species_cm3=_load_optional("neutral_species_cm3"),
+            metadata=metadata,
+        )
 
 
 def _normalize_utc(when: dt.datetime) -> dt.datetime:

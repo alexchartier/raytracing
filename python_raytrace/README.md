@@ -74,6 +74,25 @@ python3 -m python_raytrace.ground_to_space_homing_example --mode synthetic
 
 This example launches from a ground station, homes onto a 550 km target in full 3D, and prints the solved launch angles plus miss distance as JSON. Use `--mode real` to swap in the existing `PyIRI` + `pylap` pipeline when those local dependencies are available.
 
+Ground-to-ground homing example:
+
+```bash
+python3 -m python_raytrace.ground_to_ground_homing_example
+```
+
+This example uses the real `PyIRI` + `pylap` pipeline, places the receiver 500 km from the transmitter, traces a 5 MHz path, and prints separate O-mode and X-mode solutions as JSON. Pass `--profile-out /tmp/ground_to_ground_5mhz_profile.png` to also write an altitude profile with the electron-density swath and both rays overlaid.
+
+Space-to-space state-vector example:
+
+```bash
+python3 -m python_raytrace.space_to_space_state_vector_example \
+  --plot-out /tmp/space_to_space_500km_sweep_overview.png
+```
+
+This example places both endpoints at 500 km altitude with 500 km horizontal separation, explicitly prepares the launch state vector, passes it into the PHaRLAP backend, and sweeps 5.0-15.0 MHz in 200 kHz steps. The JSON output includes every attempted frequency, and the overview figure overlays only the rays that actually home in O-mode and X-mode while clipping the foF2 and plasma-frequency colorbars to the visible plotted region.
+
+The example now caches the generated ionosphere/geomagnetic model as a compressed local `.npz` under `.cache/space_to_space_grids/`, keyed by the scenario and grid settings. Repeated runs with the same geometry and model parameters load that saved grid instead of rebuilding PyIRI/MSIS/IRI2020 inputs. Use `--grid-cache /path/to/model.npz` to force a specific cache file, or `--rebuild-grid` to ignore the saved cache and rebuild it.
+
 Collm Skiymet time-series predictor:
 
 ```bash

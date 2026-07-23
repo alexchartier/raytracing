@@ -107,6 +107,28 @@ def initial_bearing_deg(start: GeoPoint, end: GeoPoint) -> float:
     return math.degrees(math.atan2(y, x))
 
 
+def destination_point(start: GeoPoint, bearing_deg: float, distance_km: float, alt_km: float | None = None) -> GeoPoint:
+    radius_km = 6371.0088
+    angular_distance = float(distance_km) / radius_km
+    lat1 = math.radians(start.lat_deg)
+    lon1 = math.radians(start.lon_deg)
+    bearing = math.radians(bearing_deg)
+
+    lat2 = math.asin(
+        math.sin(lat1) * math.cos(angular_distance)
+        + math.cos(lat1) * math.sin(angular_distance) * math.cos(bearing)
+    )
+    lon2 = lon1 + math.atan2(
+        math.sin(bearing) * math.sin(angular_distance) * math.cos(lat1),
+        math.cos(angular_distance) - math.sin(lat1) * math.sin(lat2),
+    )
+    return GeoPoint(
+        lat_deg=math.degrees(lat2),
+        lon_deg=wrap_longitude(math.degrees(lon2)),
+        alt_km=start.alt_km if alt_km is None else float(alt_km),
+    )
+
+
 def _unit_sphere_vector(lat_deg: float, lon_deg: float) -> np.ndarray:
     lat = math.radians(lat_deg)
     lon = math.radians(lon_deg)
@@ -190,7 +212,7 @@ def _point_to_segment_distance(point: np.ndarray, seg_start: np.ndarray, seg_end
     return float(np.linalg.norm(point - closest)), t, closest
 
 
-def ray_point_distance(ray_path: dict, rx: GeoPoint) -> RayDistance:
+def ray_point_distance(ray_path: dict, rx: GeoPoint, *, expect_reflection: bool | None = None) -> RayDistance:
     heights = np.asarray(ray_path.get("height", []), dtype=float)
     lats = np.asarray(ray_path.get("lat", []), dtype=float)
     lons = np.asarray(ray_path.get("lon", []), dtype=float)
@@ -204,7 +226,9 @@ def ray_point_distance(ray_path: dict, rx: GeoPoint) -> RayDistance:
     lons = lons[valid]
 
     start_index = 0
-    if expects_reflection(float(heights[0]), rx.alt_km):
+    if expect_reflection is None:
+        expect_reflection = expects_reflection(float(heights[0]), rx.alt_km)
+    if expect_reflection:
         apogee_index = int(np.argmax(heights))
         if apogee_index == len(heights) - 1:
             return RayDistance(math.inf, None, None, None, None, None)
@@ -221,18 +245,24 @@ def ray_point_distance(ray_path: dict, rx: GeoPoint) -> RayDistance:
     geom_distance = np.asarray(ray_path.get("geometric_distance", np.full_like(heights, np.nan)), dtype=float)
     absorption = np.asarray(ray_path.get("absorption", np.full_like(heights, np.nan)), dtype=float)
 
-    best_distance = math.inf
-    best_t = 0.0
-    best_segment = None
-    best_point = None
-
-    for idx in range(start_index, len(ray_xyz) - 1):
-        distance, t, closest = _point_to_segment_distance(point_xyz, ray_xyz[idx], ray_xyz[idx + 1])
-        if distance < best_distance:
-            best_distance = distance
-            best_t = t
-            best_segment = idx
-            best_point = closest
+    seg_start = ray_xyz[start_index:-1]
+    seg_end = ray_xyz[start_index + 1:]
+    delta = seg_end - seg_start
+    denom = np.sum(delta * delta, axis=1)
+    rel = point_xyz[None, :] - seg_start
+    t = np.zeros_like(denom)
+    valid_denom = denom > 0.0
+    t[valid_denom] = np.sum(rel[valid_denom] * delta[valid_denom], axis=1) / denom[valid_denom]
+    t = np.clip(t, 0.0, 1.0)
+    closest = seg_start + t[:, None] * delta
+    distances = np.linalg.norm(point_xyz[None, :] - closest, axis=1)
+    if distances.size == 0:
+        return RayDistance(math.inf, None, None, None, None, None)
+    best_offset = int(np.argmin(distances))
+    best_distance = float(distances[best_offset])
+    best_t = float(t[best_offset])
+    best_segment = start_index + best_offset
+    best_point = closest[best_offset]
 
     if best_segment is None or best_distance > 1e6:
         return RayDistance(math.inf, None, None, None, None, None)

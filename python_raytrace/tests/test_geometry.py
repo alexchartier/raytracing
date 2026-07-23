@@ -46,6 +46,23 @@ class GeometryTests(unittest.TestCase):
         self.assertTrue(math.isfinite(distance.group_path_km))
         self.assertAlmostEqual(distance.group_path_km, 50.0, delta=5.0)
 
+    def test_ray_point_distance_can_disable_reflection_logic_for_space_paths(self) -> None:
+        ray_path = {
+            "lat": np.array([0.0, 0.0, 0.0], dtype=float),
+            "lon": np.array([0.0, 0.5, 1.0], dtype=float),
+            "height": np.array([500.0, 550.0, 520.0], dtype=float),
+            "group_range": np.array([0.0, 50.0, 100.0], dtype=float),
+            "geometric_distance": np.array([0.0, 50.0, 100.0], dtype=float),
+            "absorption": np.array([0.0, 0.05, 0.1], dtype=float),
+        }
+        rx = GeoPoint(0.0, 0.5, 500.0)
+        reflected = ray_point_distance(ray_path, rx)
+        direct = ray_point_distance(ray_path, rx, expect_reflection=False)
+        self.assertFalse(math.isfinite(reflected.distance_m))
+        self.assertTrue(math.isfinite(direct.distance_m))
+        self.assertLess(direct.distance_m, 5e4)
+        self.assertTrue(math.isfinite(direct.group_path_km))
+
 
 if __name__ == "__main__":
     unittest.main()

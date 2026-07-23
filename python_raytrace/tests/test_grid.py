@@ -1,15 +1,54 @@
 import datetime as dt
 from pathlib import Path
+import tempfile
 import unittest
 
 import numpy as np
 
 from python_raytrace.geometry import GeoPoint
-from python_raytrace.grid import IonosphereGrid, build_pyiri_grid
+from python_raytrace.grid import IonosphereGrid, build_pyiri_grid, load_ionosphere_grid, save_ionosphere_grid
 from python_raytrace.tracer import PointToPointRayTracer, RayTrace
 
 
 class GridTests(unittest.TestCase):
+    def test_grid_cache_roundtrip(self) -> None:
+        grid = IonosphereGrid(
+            latitudes_deg=np.array([-1.0, 1.0], dtype=float),
+            longitudes_deg=np.array([0.0, 2.0], dtype=float),
+            altitudes_km=np.array([90.0, 100.0], dtype=float),
+            iono_en_grid=np.arange(8, dtype=float).reshape(2, 2, 2),
+            iono_en_grid_5=np.arange(8, dtype=float).reshape(2, 2, 2) + 10.0,
+            collision_freq=np.arange(8, dtype=float).reshape(2, 2, 2) + 20.0,
+            iono_grid_parms=[-1.0, 2.0, 2.0, 0.0, 2.0, 2.0, 90.0, 10.0, 2.0],
+            Bx=np.arange(8, dtype=float).reshape(2, 2, 2) + 30.0,
+            By=np.arange(8, dtype=float).reshape(2, 2, 2) + 40.0,
+            Bz=np.arange(8, dtype=float).reshape(2, 2, 2) + 50.0,
+            geomag_grid_parms=[-1.0, 2.0, 2.0, 0.0, 2.0, 2.0, 90.0, 10.0, 2.0],
+            electron_temp_k=np.arange(8, dtype=float).reshape(2, 2, 2) + 60.0,
+            ion_temp_k=np.arange(8, dtype=float).reshape(2, 2, 2) + 70.0,
+            neutral_temp_k=np.arange(8, dtype=float).reshape(2, 2, 2) + 80.0,
+            neutral_species_cm3=np.arange(8, dtype=float).reshape(2, 2, 2) + 90.0,
+            metadata={"source_grid": "test", "count": 2},
+        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "grid_cache.npz"
+            save_ionosphere_grid(path, grid)
+            restored = load_ionosphere_grid(path)
+        np.testing.assert_allclose(restored.latitudes_deg, grid.latitudes_deg)
+        np.testing.assert_allclose(restored.longitudes_deg, grid.longitudes_deg)
+        np.testing.assert_allclose(restored.altitudes_km, grid.altitudes_km)
+        np.testing.assert_allclose(restored.iono_en_grid, grid.iono_en_grid)
+        np.testing.assert_allclose(restored.iono_en_grid_5, grid.iono_en_grid_5)
+        np.testing.assert_allclose(restored.collision_freq, grid.collision_freq)
+        np.testing.assert_allclose(restored.Bx, grid.Bx)
+        np.testing.assert_allclose(restored.By, grid.By)
+        np.testing.assert_allclose(restored.Bz, grid.Bz)
+        np.testing.assert_allclose(restored.electron_temp_k, grid.electron_temp_k)
+        np.testing.assert_allclose(restored.ion_temp_k, grid.ion_temp_k)
+        np.testing.assert_allclose(restored.neutral_temp_k, grid.neutral_temp_k)
+        np.testing.assert_allclose(restored.neutral_species_cm3, grid.neutral_species_cm3)
+        self.assertEqual(restored.metadata, grid.metadata)
+
     @unittest.skipUnless(
         Path("python_raytrace/_lib/libiri2020_bridge.dylib").exists() or Path("python_raytrace/_lib/libiri2020_bridge.so").exists(),
         "IRI2020 bridge library has not been built",
