@@ -21,5 +21,70 @@
     "zero_return_candidate_scale": 0.8,
     "objective": 0.0,
     "profile_nrmse_150_450_km": 0.31980390118189583
+  },
+  "display": {
+    "frequency_start_mhz": 2.0,
+    "frequency_stop_mhz": 10.0,
+    "frequency_step_khz": 100.0,
+    "range_bin_km": 1.0,
+    "range_start_km": 0.0,
+    "retrieval_objective_range_floor_km": 150.0,
+    "homing_tolerance_m": 1000.0,
+    "max_accepted_returns_per_frequency_and_mode": 10,
+    "display_selection": "all accepted O/X returns in 1 km bins from 0 to 2600 km; coincident returns summed; no smoothing",
+    "accepted_return_counts": {
+      "closed_truth": {
+        "all_accepted": 85,
+        "plotted_returns": 85,
+        "occupied_bins": 48,
+        "under_10_km": 54,
+        "below_retrieval_range_floor": 54,
+        "within_retrieval_range": 31
+      },
+      "closed_fit": {
+        "all_accepted": 68,
+        "plotted_returns": 68,
+        "occupied_bins": 38,
+        "under_10_km": 44,
+        "below_retrieval_range_floor": 44,
+        "within_retrieval_range": 24
+      },
+      "shape_truth": {
+        "all_accepted": 87,
+        "plotted_returns": 87,
+        "occupied_bins": 52,
+        "under_10_km": 53,
+        "below_retrieval_range_floor": 53,
+        "within_retrieval_range": 34
+      },
+      "shape_fit": {
+        "all_accepted": 87,
+        "plotted_returns": 87,
+        "occupied_bins": 52,
+        "under_10_km": 53,
+        "below_retrieval_range_floor": 53,
+        "within_retrieval_range": 34
+      }
+    },
+    "closed_truth_return_counts": {
+      "max_returns_per_frequency_and_mode": 5,
+      "frequency_mode_cells_with_multiple_returns": 21,
+      "frequency_mode_cells_with_any_return": 41
+    },
+    "closed_fit_return_counts": {
+      "max_returns_per_frequency_and_mode": 5,
+      "frequency_mode_cells_with_multiple_returns": 16,
+      "frequency_mode_cells_with_any_return": 33
+    },
+    "shape_truth_return_counts": {
+      "max_returns_per_frequency_and_mode": 5,
+      "frequency_mode_cells_with_multiple_returns": 21,
+      "frequency_mode_cells_with_any_return": 44
+    },
+    "shape_fit_return_counts": {
+      "max_returns_per_frequency_and_mode": 5,
+      "frequency_mode_cells_with_multiple_returns": 21,
+      "frequency_mode_cells_with_any_return": 44
+    }
   }
 }

@@ -7,6 +7,7 @@ Requires the installed PyIRI/PHaRLAP runtime. No AMPERE data file is required.
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 import json
 import math
 import sys
@@ -22,6 +23,9 @@ import matplotlib.pyplot as plt
 import netCDF4
 import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib.cm import ScalarMappable
+from matplotlib.colors import Normalize
+from matplotlib.patches import Rectangle
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -39,6 +43,8 @@ from python_raytrace.multisat_topside_inverse_demo import (  # noqa: E402
     dataset_cost,
     simulate_dataset,
 )
+from python_raytrace import multisat_topside_inverse_demo as inverse_demo  # noqa: E402
+from python_raytrace.tracer import PointToPointRayTracer  # noqa: E402
 
 
 def write_orbit_fixture(path: Path) -> None:
@@ -195,54 +201,199 @@ def main() -> None:
                 "profile_nrmse_150_450_km": no_return_nrmse,
             },
         }
-        metrics_path.write_text(json.dumps(metrics, indent=2) + "\n")
+        # Plot every accepted O/X return from 2 to 10 MHz. Store the raw return
+        # table locally so later plot edits do not need another raytrace sweep.
+        display_frequencies = np.arange(2.0, 10.0001, 0.1)
+        display_range_edges = np.arange(0.0, config.range_max_km + 1.0, 1.0)
+        display_problem = replace(
+            problem,
+            frequencies_mhz=display_frequencies,
+            range_edges_km=display_range_edges,
+            range_centers_km=0.5 * (display_range_edges[:-1] + display_range_edges[1:]),
+        )
 
-        # Render a denser frequency grid solely for the report. The selected
-        # parameters above still come from the three-frequency search.
-        display_frequencies = np.arange(4.0, 6.0001, 0.25)
-        display_problem = replace(problem, frequencies_mhz=display_frequencies)
-        closed_truth_display = simulate_dataset(display_problem, replace(zero_wave, density_scale=true_scale))
-        closed_fit_display = simulate_dataset(
-            display_problem, replace(zero_wave, density_scale=float(scales[closed_index]))
+        def render_all_returns(label: str, grid):
+            cache_hash = hashlib.sha256()
+            cache_hash.update(Path(inverse_demo.__file__).read_bytes())
+            for values in (
+                grid.iono_en_grid, grid.collision_freq, grid.Bx, grid.By, grid.Bz,
+                case.fan_elevations_deg, case.fan_bearings_deg, display_frequencies,
+            ):
+                cache_hash.update(np.asarray(values, dtype=np.float64).tobytes())
+            cache_hash.update(repr((case.tx_points[1], case.rx_points[1],
+                                    config.homing_tolerance_m, config.homed_max_returns_per_frequency,
+                                    config.seed_max_candidates_per_frequency)).encode())
+            cache_dir = ROOT / ".cache" / "topside_report_returns"
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            cache_path = cache_dir / f"{label.replace(' ', '_')}_{cache_hash.hexdigest()[:16]}.npz"
+            if cache_path.exists():
+                with np.load(cache_path, allow_pickle=False) as data:
+                    records = np.asarray(data["records"], dtype=float)
+                    count_array = np.asarray(data["count_array"], dtype=int)
+                print(f"Loaded accepted returns: {label}", flush=True)
+            else:
+                record_list: list[tuple[float, float, float, float, float]] = []
+                count_array = np.zeros((display_frequencies.size, 2), dtype=int)
+                tracer = PointToPointRayTracer()
+                print(f"Tracing all accepted returns, 2–10 MHz at 100 kHz: {label}", flush=True)
+                for frequency_index, frequency_mhz in enumerate(display_frequencies):
+                    for mode_index, mode in enumerate((1, -1)):
+                        returns = inverse_demo._home_frequency_returns(
+                            tracer,
+                            tx=case.tx_points[1],
+                            rx=case.rx_points[1],
+                            grid=grid,
+                            fan_elevations_deg=case.fan_elevations_deg,
+                            fan_bearings_deg=case.fan_bearings_deg,
+                            frequency_mhz=float(frequency_mhz),
+                            ox_mode=mode,
+                            config=config,
+                        )
+                        count_array[frequency_index, mode_index] = len(returns)
+                        record_list.extend(
+                            (float(frequency_index), float(mode), ray.group_range_km,
+                             ray.miss_m, ray.absorption_db)
+                            for ray in returns
+                        )
+                    if frequency_index % 20 == 0:
+                        print(f"  {label}: {frequency_index + 1}/{display_frequencies.size} frequencies", flush=True)
+                records = np.asarray(record_list, dtype=float).reshape(-1, 5)
+                np.savez_compressed(cache_path, records=records, count_array=count_array)
+
+            counts = {
+                (round(float(frequency_mhz), 5), mode): int(count_array[frequency_index, mode_index])
+                for frequency_index, frequency_mhz in enumerate(display_frequencies)
+                for mode_index, mode in enumerate((1, -1))
+            }
+            image = np.zeros((display_frequencies.size, display_problem.range_centers_km.size), dtype=float)
+            plotted_returns = 0
+            for frequency_index, _mode, group_range_km, miss_m, absorption_db in records:
+                if not display_problem.range_edges_km[0] <= group_range_km < display_problem.range_edges_km[-1]:
+                    raise ValueError(f"Accepted {label} return at {group_range_km:.3f} km falls outside the display grid")
+                range_index = int(np.searchsorted(display_problem.range_edges_km, group_range_km, side="right") - 1)
+                weight = math.exp(-0.5 * (miss_m / 35_000.0) ** 2) * 10.0 ** (-max(absorption_db, 0.0) / 10.0)
+                image[int(frequency_index), range_index] += weight
+                plotted_returns += 1
+            occupied_bins = int(np.count_nonzero(image))
+            peak = float(np.max(image))
+            if peak > 0.0:
+                image /= peak
+            in_retrieval_range = (
+                (records[:, 2] >= config.range_min_km)
+                & (records[:, 2] < config.range_max_km)
+            )
+            return image, counts, {
+                "all_accepted": int(records.shape[0]),
+                "plotted_returns": plotted_returns,
+                "occupied_bins": occupied_bins,
+                "under_10_km": int(np.count_nonzero(records[:, 2] < 10.0)),
+                "below_retrieval_range_floor": int(np.count_nonzero(records[:, 2] < config.range_min_km)),
+                "within_retrieval_range": int(np.count_nonzero(in_retrieval_range)),
+            }
+
+        closed_truth_grid = _apply_fit_params_to_grid(problem, background, replace(zero_wave, density_scale=true_scale))
+        closed_fit_grid = _apply_fit_params_to_grid(
+            problem, background, replace(zero_wave, density_scale=float(scales[closed_index]))
         )
-        shape_truth_display = dataset_from_case(
-            display_problem, _render_case_observables(display_problem, case, independent_grid, None)
+        shape_fit_grid = _apply_fit_params_to_grid(
+            problem, background, replace(zero_wave, density_scale=float(scales[structural_index]))
         )
-        shape_fit_display = simulate_dataset(
-            display_problem, replace(zero_wave, density_scale=float(scales[structural_index]))
+        closed_truth_field, closed_truth_counts, closed_truth_return_stats = render_all_returns(
+            "closed-model truth", closed_truth_grid
         )
-        display_fields = tuple(
-            data.cases[0].total_image
-            for data in (closed_truth_display, closed_fit_display, shape_truth_display, shape_fit_display)
+        closed_fit_field, closed_fit_counts, closed_fit_return_stats = render_all_returns(
+            "closed-model retrieved", closed_fit_grid
         )
-        visible_range_indices = np.flatnonzero(np.max(np.stack(display_fields), axis=(0, 1)) > 0.01)
+        shape_truth_field, shape_truth_counts, shape_truth_return_stats = render_all_returns(
+            "profile-shape truth", independent_grid
+        )
+        shape_fit_field, shape_fit_counts, shape_fit_return_stats = render_all_returns(
+            "profile-shape retrieved", shape_fit_grid
+        )
+        display_fields = (closed_truth_field, closed_fit_field, shape_truth_field, shape_fit_field)
+
+        def count_summary(counts: dict[tuple[float, int], int]) -> dict[str, int]:
+            return {
+                "max_returns_per_frequency_and_mode": max(counts.values(), default=0),
+                "frequency_mode_cells_with_multiple_returns": sum(value > 1 for value in counts.values()),
+                "frequency_mode_cells_with_any_return": sum(value > 0 for value in counts.values()),
+            }
+
+        metrics["display"] = {
+            "frequency_start_mhz": 2.0,
+            "frequency_stop_mhz": 10.0,
+            "frequency_step_khz": 100.0,
+            "range_bin_km": 1.0,
+            "range_start_km": 0.0,
+            "retrieval_objective_range_floor_km": config.range_min_km,
+            "homing_tolerance_m": config.homing_tolerance_m,
+            "max_accepted_returns_per_frequency_and_mode": config.homed_max_returns_per_frequency,
+            "display_selection": "all accepted O/X returns in 1 km bins from 0 to 2600 km; coincident returns summed; no smoothing",
+            "accepted_return_counts": {
+                "closed_truth": closed_truth_return_stats,
+                "closed_fit": closed_fit_return_stats,
+                "shape_truth": shape_truth_return_stats,
+                "shape_fit": shape_fit_return_stats,
+            },
+            "closed_truth_return_counts": count_summary(closed_truth_counts),
+            "closed_fit_return_counts": count_summary(closed_fit_counts),
+            "shape_truth_return_counts": count_summary(shape_truth_counts),
+            "shape_fit_return_counts": count_summary(shape_fit_counts),
+        }
+        metrics_path.write_text(json.dumps(metrics, indent=2) + "\n")
+        visible_range_indices = np.flatnonzero(np.max(np.stack(display_fields), axis=(0, 1)) > 0.0)
         if visible_range_indices.size:
-            display_range_min = max(float(problem.range_edges_km[0]),
-                                    float(problem.range_edges_km[visible_range_indices[0]]) - 100.0)
-            display_range_max = min(float(problem.range_edges_km[-1]),
-                                    float(problem.range_edges_km[visible_range_indices[-1] + 1]) + 100.0)
+            display_range_min = max(float(display_problem.range_edges_km[0]),
+                                    float(display_problem.range_edges_km[visible_range_indices[0]]) - 100.0)
+            display_range_max = min(float(display_problem.range_edges_km[-1]),
+                                    float(display_problem.range_edges_km[visible_range_indices[-1] + 1]) + 100.0)
         else:
-            display_range_min = float(problem.range_edges_km[0])
-            display_range_max = float(problem.range_edges_km[-1])
+            display_range_min = float(display_problem.range_edges_km[0])
+            display_range_max = float(display_problem.range_edges_km[-1])
 
         def ionogram_pair(figure, truth_field, fit_field, *, bottom=0.43, height=0.30):
             axes = (figure.add_axes([0.11, bottom, 0.32, height]),
                     figure.add_axes([0.55, bottom, 0.32, height]))
-            image = None
+            colormap = plt.get_cmap("magma")
             for ax, field, title in zip(axes, (truth_field, fit_field),
                                         ("Synthetic truth ionogram", "Retrieved ionogram")):
-                image = ax.imshow(
-                    field.T, origin="lower", aspect="auto", cmap="magma", vmin=0.0, vmax=1.0,
-                    extent=(3.875, 6.125, float(problem.range_edges_km[0]), float(problem.range_edges_km[-1])),
-                    interpolation="nearest",
-                )
+                ax.set_facecolor(colormap(0.0))
+                # Keep each occupied 0.1 MHz × 1 km bin as a vector rectangle.
+                # A rasterized full-height image drops subpixel near-range bins.
+                for frequency_index, range_index in np.argwhere(field > 0.0):
+                    ax.add_patch(Rectangle(
+                        (display_frequencies[frequency_index] - 0.05,
+                         display_problem.range_edges_km[range_index]),
+                        0.1, 1.0, facecolor=colormap(field[frequency_index, range_index]),
+                        edgecolor="none", antialiased=False,
+                    ))
                 ax.set_ylim(display_range_max, display_range_min)
-                ax.set_xlim(3.875, 6.125)
+                ax.set_xlim(1.95, 10.05)
+                ax.axhline(config.range_min_km, color="cyan", linestyle="--", linewidth=0.8, alpha=0.9)
+                ax.text(9.95, config.range_min_km + 12.0, "150 km retrieval floor",
+                        ha="right", va="top", fontsize=6.5, color="cyan",
+                        bbox={"facecolor": "#21122e", "edgecolor": "none", "alpha": 0.8, "pad": 1.5})
                 ax.set_title(title, fontsize=10, weight="bold")
                 ax.set_xlabel("Frequency (MHz)")
                 ax.set_ylabel("Virtual range (km)")
+                near_range = ax.inset_axes([0.52, 0.32, 0.45, 0.24])
+                near_range.imshow(
+                    field[:, :10].T, origin="lower", aspect="auto", cmap=colormap,
+                    vmin=0.0, vmax=1.0, extent=(1.95, 10.05, 0.0, 10.0),
+                    interpolation="nearest",
+                )
+                near_range.set_xlim(1.95, 10.05)
+                near_range.set_ylim(10.0, 0.0)
+                near_range.set_xticks([2, 6, 10])
+                near_range.set_yticks([0, 5, 10])
+                near_range.tick_params(labelsize=6, colors="cyan", length=2)
+                near_range.set_title("0–10 km detail", fontsize=6.5, color="cyan", loc="left", pad=1)
+                for spine in near_range.spines.values():
+                    spine.set_color("cyan")
+                    spine.set_linewidth(0.6)
             colorbar_ax = figure.add_axes([0.89, bottom, 0.015, height])
-            figure.colorbar(image, cax=colorbar_ax, label="Normalized power").ax.tick_params(labelsize=8)
+            figure.colorbar(ScalarMappable(norm=Normalize(0.0, 1.0), cmap=colormap),
+                            cax=colorbar_ax, label="Normalized power").ax.tick_params(labelsize=8)
 
         def page(title: str, number: int):
             figure = plt.figure(figsize=(8.5, 11), facecolor="white")
@@ -306,11 +457,16 @@ def main() -> None:
             # Page 2: methods and an explicit provenance table.
             fig = page("1. Methods and provenance", 2)
             y = paragraph(fig, "One generated 800 km Earth orbit supplies a vertical transmitter/receiver case. "
-                          "The background is PyIRI; PHaRLAP traces three frequencies (4, 5, and 6 MHz). "
-                          "Only density scale is searched, at 0.80, 0.90, 1.00, 1.10, 1.20, and 1.30. "
-                          "This is a grid-search diagnostic, not a run of the full five-parameter optimizer.", 0.855)
+                          "The background is PyIRI; the scale search uses 4, 5, and 6 MHz. Only density "
+                          "scale is searched, at 0.80 through 1.30 in 0.10 steps. The displayed ionograms "
+                          "are re-rendered from 2 to 10 MHz every 100 kHz in 1 km range bins. Homing "
+                          "tolerance is 1,000 m, with up to 10 accepted returns per frequency and mode. "
+                          "Every accepted O/X return is plotted from 0 km, including short-range returns "
+                          "below the 150 km retrieval floor. Returns sharing a bin are summed; no smoothing "
+                          "is applied. The retrieval objective uses 150–2,600 km. "
+                          "This is a grid-search diagnostic, not the full five-parameter optimizer.", 0.855)
             y = heading(fig, "Where each truth comes from", y - 0.032)
-            table_ax = fig.add_axes([0.09, 0.48, 0.82, 0.25]); table_ax.axis("off")
+            table_ax = fig.add_axes([0.09, 0.385, 0.82, 0.25]); table_ax.axis("off")
             cells = [
                 ["Closed model", "Fitted scalar family", "Shared", "Shared", "No"],
                 ["Shape mismatch", "Separate altitude formula", "Shared", "Shared", "No"],
@@ -326,9 +482,9 @@ def main() -> None:
                 cell.set_facecolor("#DCEAF0" if row == 0 else ("#F5F8FA" if row % 2 else "white"))
                 if row == 0:
                     cell.get_text().set_weight("bold")
-            fig.text(0.09, 0.468, "Table 1. Truth provenance. “Shared” means the truth generator and candidate model use the same component.",
+            fig.text(0.09, 0.373, "Table 1. Truth provenance. “Shared” means the truth generator and candidate model use the same component.",
                      fontsize=8.5, color="#415868", va="top")
-            y = heading(fig, "Scoring and accuracy measures", 0.415)
+            y = heading(fig, "Scoring and accuracy measures", 0.32)
             y = paragraph(fig, "The ionogram objective combines normalized total-power error, O/X split error, "
                           "and Doppler error. The profile NRMSE is root-mean-square density error divided by "
                           "root-mean-square truth density, evaluated at the center grid column from 150 to 450 km. "
@@ -342,19 +498,25 @@ def main() -> None:
             # Page 3: put the truth and retrieved ionograms next to one another.
             fig = page("2. Closed-model ionograms", 3)
             paragraph(fig, "The synthetic truth uses density scale 1.12. A search over six candidate scales "
-                      "selected 1.00. Both ionograms below were re-rendered on a 0.25 MHz display grid "
-                      "after selection; only 4, 5, and 6 MHz determined the selected parameter.", 0.855)
-            ionogram_pair(fig, closed_truth_display.cases[0].total_image,
-                          closed_fit_display.cases[0].total_image)
-            y = paragraph(fig, "Figure 1. Synthetic truth (left) and retrieved (right) total-power ionograms "
-                          "for the closed-model test. Axes and color limits are identical. Each image is "
-                          "normalized to its own peak, so the comparison shows return location and shape, "
-                          "not absolute received power.", 0.385, size=9.5, width=98, line_height=0.021,
+                      "selected 1.00. Both ionograms below were re-rendered from 2 to 10 MHz every "
+                      "100 kHz in 1 km range bins; only 4, 5, and 6 MHz selected the parameter.", 0.855)
+            ionogram_pair(fig, closed_truth_field, closed_fit_field)
+            y = paragraph(fig, "Figure 1. Synthetic truth (left) and retrieved (right) ionograms show every "
+                          "accepted O/X return, including those below the dashed 150 km retrieval floor. "
+                          "Insets enlarge 0–10 km. Returns in the same 1 km bin are summed, with no smoothing. "
+                          "Axes and color limits "
+                          "match; each image is normalized to its own "
+                          "peak, so absolute received power cannot be compared.", 0.385,
+                          size=9.5, width=98, line_height=0.021,
                           color="#415868")
             y = heading(fig, "What to look for", y - 0.018)
             paragraph(fig, "Compare the frequency and virtual-range locations of the bright returns. "
-                      "Their differences explain why the search did not select the generating scale's "
-                      "nearest candidate. The numerical objective and parameter error appear on page 4.", y)
+                      f"Of {closed_truth_return_stats['all_accepted']} accepted truth returns, "
+                      f"{closed_truth_return_stats['under_10_km']} lie below 10 km and are outside the score. "
+                      f"There are {count_summary(closed_truth_counts)['frequency_mode_cells_with_multiple_returns']} "
+                      "frequency/mode cells with multiple accepted returns. The 1,000 m homing gate "
+                      "checks receiver miss distance; it does not suppress multipath. The parameter "
+                      "error and search objective appear on page 4.", y)
             save_page(pdf, fig)
 
             # Page 4: closed-model objective and parameter recovery.
@@ -393,11 +555,12 @@ def main() -> None:
             paragraph(fig, f"Figure 3. Truth and retrieved density differ by {profile_nrmse:.1%} NRMSE "
                       "over 150–450 km at the center grid column.", 0.548, size=9.5,
                       width=98, line_height=0.021, color="#415868")
-            ionogram_pair(fig, shape_truth_display.cases[0].total_image,
-                          shape_fit_display.cases[0].total_image, bottom=0.22, height=0.25)
-            paragraph(fig, "Figure 4. Synthetic truth (left) and retrieved (right) total-power ionograms, "
-                      "re-rendered every 0.25 MHz with common axes and color limits. Each is normalized "
-                      "to its own peak. The 4, 5, and 6 MHz retrieval objective is "
+            ionogram_pair(fig, shape_truth_field, shape_fit_field, bottom=0.22, height=0.25)
+            paragraph(fig, "Figure 4. Truth (left) and retrieved (right) ionograms from 2 to 10 MHz at "
+                      "100 kHz × 1 km show all accepted O/X returns, including those below the dashed "
+                      "150 km retrieval floor; insets enlarge 0–10 km. Coincident returns are summed without smoothing. Each panel "
+                      "is normalized to its own peak. The "
+                      "4, 5, and 6 MHz search objective is "
                       f"{structural_costs[structural_index]:.5g}, yet the vertical profile still differs "
                       f"by {profile_nrmse:.1%}. The truth formula is separate; the background and ray tracer are shared.",
                       0.173, size=9.5, width=98, line_height=0.021, color="#415868")
