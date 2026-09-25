@@ -1420,6 +1420,10 @@ def _continue_homed_returns(
     return _deduplicate_homed_returns(followed, config.homed_max_returns_per_frequency)
 
 
+def _cached_topside_tracer() -> PointToPointRayTracer:
+    return PointToPointRayTracer(cache_native_grid=True)
+
+
 def home_frequency_sweep_adaptive(
     *,
     tx: GeoPoint,
@@ -1435,7 +1439,7 @@ def home_frequency_sweep_adaptive(
     anchor_block_size: int = 10,
     anchor_elevation_stride: int = 2,
     anchor_optimizer: str = "Powell",
-    tracer_factory: Callable[[], PointToPointRayTracer] = PointToPointRayTracer,
+    tracer_factory: Callable[[], PointToPointRayTracer] = _cached_topside_tracer,
 ) -> tuple[tuple[HomedRayReturn, ...], ...]:
     """Trace a frequency sweep with periodic fan anchors and neighboring-ray homing.
 

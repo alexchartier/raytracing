@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime as dt
 import math
 import os
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Sequence
@@ -86,7 +87,25 @@ def _ensure_pharlap_runtime_env() -> None:
 
 
 class PyLapRaytraceBackend:
-    def __init__(self, raytrace_3d_func=None):
+    """Wrap PyLap's process-wide ionosphere, tracking calls made through this class.
+
+    Direct calls to ``pylap.raytrace_3d`` can replace the native grid without
+    updating this tracker. In-place grid edits also bypass identity tracking.
+    Invalidate the cache after either operation before reusing grids.
+    """
+
+    _native_grid_lock = threading.RLock()
+    _native_grid: IonosphereGrid | None = None
+    _native_func = None
+    _reuse_unsupported_func = None
+
+    @classmethod
+    def invalidate_native_grid_cache(cls) -> None:
+        with cls._native_grid_lock:
+            cls._native_grid = None
+            cls._native_func = None
+
+    def __init__(self, raytrace_3d_func=None, *, cache_native_grid: bool = False):
         if raytrace_3d_func is None:
             _ensure_pharlap_runtime_env()
             try:
@@ -98,6 +117,7 @@ class PyLapRaytraceBackend:
                 ) from exc
             raytrace_3d_func = raytrace_3d
         self._raytrace_3d = raytrace_3d_func
+        self.cache_native_grid = cache_native_grid
 
     def trace(self, origin: GeoPoint, elevations_deg: Sequence[float], bearings_deg: Sequence[float],
               freqs_mhz: Sequence[float], ox_mode: int, nhops: int, tol: Sequence[float], *,
@@ -105,7 +125,7 @@ class PyLapRaytraceBackend:
         elevs = np.asarray(elevations_deg, dtype=float)
         bearings = np.asarray(bearings_deg, dtype=float)
         freqs = np.asarray(freqs_mhz, dtype=float)
-        args: list = [
+        base_args: list = [
             float(origin.lat_deg),
             float(wrap_longitude(origin.lon_deg)),
             float(origin.alt_km),
@@ -116,8 +136,9 @@ class PyLapRaytraceBackend:
             int(nhops),
             [float(t) for t in tol],
         ]
-        if grid is not None:
-            args.extend([
+        def grid_args() -> list:
+            assert grid is not None
+            return [
                 np.asarray(grid.iono_en_grid, dtype=float),
                 np.asarray(grid.iono_en_grid_5, dtype=float),
                 np.asarray(grid.collision_freq, dtype=float),
@@ -126,11 +147,44 @@ class PyLapRaytraceBackend:
                 np.asarray(grid.By, dtype=float),
                 np.asarray(grid.Bz, dtype=float),
                 [float(v) for v in grid.geomag_grid_parms],
-            ])
-        if state_vector is not None:
-            args.append({key: np.asarray(value, dtype=float) for key, value in state_vector.items()})
+            ]
 
-        ray_summaries, ray_paths, ray_states = self._raytrace_3d(*args)
+        state_arg = ({key: np.asarray(value, dtype=float) for key, value in state_vector.items()}
+                     if state_vector is not None else None)
+        with PyLapRaytraceBackend._native_grid_lock:
+            reuse_grid = (
+                self.cache_native_grid and grid is not None
+                and grid is PyLapRaytraceBackend._native_grid
+                and self._raytrace_3d is PyLapRaytraceBackend._native_func
+                and self._raytrace_3d is not PyLapRaytraceBackend._reuse_unsupported_func
+            )
+            args = [*base_args]
+            if grid is not None and not reuse_grid:
+                # A failed full-grid call may have partially replaced PyLap's
+                # process-wide native state, so mark the old grid invalid now.
+                PyLapRaytraceBackend._native_grid = None
+                PyLapRaytraceBackend._native_func = None
+                args.extend(grid_args())
+            if state_arg is not None:
+                args.append(state_arg)
+            try:
+                ray_summaries, ray_paths, ray_states = self._raytrace_3d(*args)
+            except TypeError:
+                if not reuse_grid:
+                    raise
+                # Older PyLap builds parse argument 10 as an electron-density
+                # array. Keep the sweep usable until the local patch is installed.
+                PyLapRaytraceBackend._reuse_unsupported_func = self._raytrace_3d
+                PyLapRaytraceBackend._native_grid = None
+                PyLapRaytraceBackend._native_func = None
+                args = [*base_args, *grid_args()]
+                if state_arg is not None:
+                    args.append(state_arg)
+                ray_summaries, ray_paths, ray_states = self._raytrace_3d(*args)
+                reuse_grid = False
+            if grid is not None and not reuse_grid:
+                PyLapRaytraceBackend._native_grid = grid
+                PyLapRaytraceBackend._native_func = self._raytrace_3d
         return [
             RayTrace(summary=summary, path=path, state=state)
             for summary, path, state in zip(ray_summaries, ray_paths, ray_states)
@@ -194,12 +248,13 @@ def appleton_hartree(theta_deg: float, ne_m3: float, b_tesla: float, wave_hz: fl
 
 
 class PointToPointRayTracer:
-    def __init__(self, backend: PyLapRaytraceBackend | None = None):
+    def __init__(self, backend: PyLapRaytraceBackend | None = None, *, cache_native_grid: bool = False):
         self.backend = backend
+        self.cache_native_grid = cache_native_grid
 
     def _backend(self) -> PyLapRaytraceBackend:
         if self.backend is None:
-            self.backend = PyLapRaytraceBackend()
+            self.backend = PyLapRaytraceBackend(cache_native_grid=self.cache_native_grid)
         return self.backend
 
     def prepare_transmitter_state(
