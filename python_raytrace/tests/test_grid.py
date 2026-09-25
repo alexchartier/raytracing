@@ -1,12 +1,25 @@
 import datetime as dt
 from pathlib import Path
+import sys
 import tempfile
 import unittest
 
 import numpy as np
 
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from python_raytrace.geometry import GeoPoint
-from python_raytrace.grid import IonosphereGrid, build_pyiri_grid, load_ionosphere_grid, save_ionosphere_grid
+from python_raytrace.grid import (
+    IonosphereGrid,
+    build_pyiri_grid,
+    extract_ionosphere_subgrid,
+    load_ionosphere_grid,
+    load_ionosphere_grid_netcdf,
+    save_ionosphere_grid,
+    save_ionosphere_grid_netcdf,
+)
 from python_raytrace.tracer import PointToPointRayTracer, RayTrace
 
 
@@ -48,6 +61,39 @@ class GridTests(unittest.TestCase):
         np.testing.assert_allclose(restored.neutral_temp_k, grid.neutral_temp_k)
         np.testing.assert_allclose(restored.neutral_species_cm3, grid.neutral_species_cm3)
         self.assertEqual(restored.metadata, grid.metadata)
+
+    def test_grid_netcdf_roundtrip_and_subgrid(self) -> None:
+        grid = IonosphereGrid(
+            latitudes_deg=np.array([-2.0, 0.0, 2.0], dtype=float),
+            longitudes_deg=np.array([178.0, 180.0, 182.0], dtype=float),
+            altitudes_km=np.array([90.0, 100.0, 110.0], dtype=float),
+            iono_en_grid=np.arange(27, dtype=float).reshape(3, 3, 3),
+            iono_en_grid_5=np.arange(27, dtype=float).reshape(3, 3, 3) + 10.0,
+            collision_freq=np.arange(27, dtype=float).reshape(3, 3, 3) + 20.0,
+            iono_grid_parms=[-2.0, 2.0, 3.0, 178.0, 2.0, 3.0, 90.0, 10.0, 3.0],
+            Bx=np.arange(27, dtype=float).reshape(3, 3, 3) + 30.0,
+            By=np.arange(27, dtype=float).reshape(3, 3, 3) + 40.0,
+            Bz=np.arange(27, dtype=float).reshape(3, 3, 3) + 50.0,
+            geomag_grid_parms=[-2.0, 2.0, 3.0, 178.0, 2.0, 3.0, 90.0, 10.0, 3.0],
+            metadata={"source_grid": "test_netcdf"},
+        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "grid_cache.nc"
+            save_ionosphere_grid_netcdf(path, grid)
+            restored = load_ionosphere_grid_netcdf(path)
+        np.testing.assert_allclose(restored.iono_en_grid, grid.iono_en_grid)
+        np.testing.assert_allclose(restored.Bx, grid.Bx)
+        self.assertEqual(restored.metadata, grid.metadata)
+
+        subgrid = extract_ionosphere_subgrid(
+            restored,
+            np.array([0.0, 2.0], dtype=float),
+            np.array([180.0, 182.0], dtype=float),
+            np.array([100.0, 110.0], dtype=float),
+        )
+        self.assertEqual(subgrid.iono_en_grid.shape, (2, 2, 2))
+        np.testing.assert_allclose(subgrid.longitudes_deg, np.array([180.0, 182.0], dtype=float))
+        np.testing.assert_allclose(subgrid.iono_en_grid, grid.iono_en_grid[1:, 1:, 1:])
 
     @unittest.skipUnless(
         Path("python_raytrace/_lib/libiri2020_bridge.dylib").exists() or Path("python_raytrace/_lib/libiri2020_bridge.so").exists(),

@@ -6,12 +6,13 @@ import math
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import netCDF4
 import numpy as np
 import PyIRI
 from PyIRI import igrf_library, main_library
 
 from .absorption import build_msis_atmosphere, effective_collision_frequency
-from .geometry import GeoPoint, enu_to_ecef, make_regional_lat_lon_grids, wrap_longitudes
+from .geometry import GeoPoint, coerce_longitude_for_grid, enu_to_ecef, make_regional_lat_lon_grids, wrap_longitudes
 from .indices import resolve_space_weather_indices
 from .iri2020_model import Iri2020Bridge, blend_low_altitude_density, fill_temperature_profile, r12_from_f107
 
@@ -103,6 +104,112 @@ def load_ionosphere_grid(path: str | Path) -> IonosphereGrid:
         )
 
 
+def save_ionosphere_grid_netcdf(path: str | Path, grid: IonosphereGrid) -> Path:
+    target = Path(path).expanduser()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with netCDF4.Dataset(target, "w") as dataset:
+        dataset.setncattr("format_version", 1)
+        dataset.setncattr("metadata_json", json.dumps(grid.metadata, sort_keys=True))
+        dataset.createDimension("lat", len(grid.latitudes_deg))
+        dataset.createDimension("lon", len(grid.longitudes_deg))
+        dataset.createDimension("alt", len(grid.altitudes_km))
+        dataset.createDimension("parm", len(grid.iono_grid_parms))
+        dataset.createDimension("geomag_parm", len(grid.geomag_grid_parms))
+        if grid.neutral_species_cm3 is not None and np.asarray(grid.neutral_species_cm3).ndim == 4:
+            neutral_species = np.asarray(grid.neutral_species_cm3, dtype=float)
+            if neutral_species.shape[:3] == (len(grid.latitudes_deg), len(grid.longitudes_deg), len(grid.altitudes_km)):
+                dataset.createDimension("species", int(neutral_species.shape[3]))
+            elif neutral_species.shape[1:] == (len(grid.latitudes_deg), len(grid.longitudes_deg), len(grid.altitudes_km)):
+                dataset.createDimension("species", int(neutral_species.shape[0]))
+            else:
+                raise ValueError(
+                    "neutral_species_cm3 must have shape (lat, lon, alt, species) "
+                    "or (species, lat, lon, alt)"
+                )
+
+        dataset.createVariable("latitudes_deg", "f8", ("lat",))[:] = np.asarray(grid.latitudes_deg, dtype=float)
+        dataset.createVariable("longitudes_deg", "f8", ("lon",))[:] = np.asarray(grid.longitudes_deg, dtype=float)
+        dataset.createVariable("altitudes_km", "f8", ("alt",))[:] = np.asarray(grid.altitudes_km, dtype=float)
+        dataset.createVariable("iono_grid_parms", "f8", ("parm",))[:] = np.asarray(grid.iono_grid_parms, dtype=float)
+        dataset.createVariable("geomag_grid_parms", "f8", ("geomag_parm",))[:] = np.asarray(grid.geomag_grid_parms, dtype=float)
+
+        for name, value in (
+            ("iono_en_grid", grid.iono_en_grid),
+            ("iono_en_grid_5", grid.iono_en_grid_5),
+            ("collision_freq", grid.collision_freq),
+            ("Bx", grid.Bx),
+            ("By", grid.By),
+            ("Bz", grid.Bz),
+        ):
+            dataset.createVariable(name, "f8", ("lat", "lon", "alt"), zlib=True, complevel=3)[:] = np.asarray(value, dtype=float)
+
+        for name, value in (
+            ("electron_temp_k", grid.electron_temp_k),
+            ("ion_temp_k", grid.ion_temp_k),
+            ("neutral_temp_k", grid.neutral_temp_k),
+            ("neutral_species_cm3", grid.neutral_species_cm3),
+        ):
+            if value is None:
+                continue
+            array = np.asarray(value, dtype=float)
+            if name == "neutral_species_cm3" and array.ndim == 4:
+                if array.shape[:3] == (len(grid.latitudes_deg), len(grid.longitudes_deg), len(grid.altitudes_km)):
+                    dims = ("lat", "lon", "alt", "species")
+                elif array.shape[1:] == (len(grid.latitudes_deg), len(grid.longitudes_deg), len(grid.altitudes_km)):
+                    dims = ("species", "lat", "lon", "alt")
+                else:
+                    raise ValueError(
+                        "neutral_species_cm3 must have shape (lat, lon, alt, species) "
+                        "or (species, lat, lon, alt)"
+                    )
+            else:
+                dims = ("lat", "lon", "alt")
+            dataset.createVariable(name, "f8", dims, zlib=True, complevel=3)[:] = array
+    return target
+
+
+def load_ionosphere_grid_netcdf(path: str | Path) -> IonosphereGrid:
+    source = Path(path).expanduser()
+    with netCDF4.Dataset(source) as dataset:
+        version = int(dataset.getncattr("format_version"))
+        if version != 1:
+            raise ValueError(f"unsupported ionosphere-grid netCDF cache version: {version}")
+
+        def _load_optional(name: str) -> np.ndarray | None:
+            if name not in dataset.variables:
+                return None
+            array = np.asarray(dataset.variables[name][:], dtype=float)
+            if name == "neutral_species_cm3":
+                if array.ndim == 4:
+                    return array
+                # Backward compatibility: some older caches wrote a malformed 3-D
+                # neutral-species field. Treat it as unavailable and reuse the
+                # cached collision-frequency field instead of forcing a rebuild.
+                return None
+            return array
+
+        metadata_json = str(dataset.getncattr("metadata_json")) if "metadata_json" in dataset.ncattrs() else ""
+        metadata = json.loads(metadata_json) if metadata_json else {}
+        return IonosphereGrid(
+            latitudes_deg=np.asarray(dataset.variables["latitudes_deg"][:], dtype=float),
+            longitudes_deg=np.asarray(dataset.variables["longitudes_deg"][:], dtype=float),
+            altitudes_km=np.asarray(dataset.variables["altitudes_km"][:], dtype=float),
+            iono_en_grid=np.asarray(dataset.variables["iono_en_grid"][:], dtype=float),
+            iono_en_grid_5=np.asarray(dataset.variables["iono_en_grid_5"][:], dtype=float),
+            collision_freq=np.asarray(dataset.variables["collision_freq"][:], dtype=float),
+            iono_grid_parms=np.asarray(dataset.variables["iono_grid_parms"][:], dtype=float).tolist(),
+            Bx=np.asarray(dataset.variables["Bx"][:], dtype=float),
+            By=np.asarray(dataset.variables["By"][:], dtype=float),
+            Bz=np.asarray(dataset.variables["Bz"][:], dtype=float),
+            geomag_grid_parms=np.asarray(dataset.variables["geomag_grid_parms"][:], dtype=float).tolist(),
+            electron_temp_k=_load_optional("electron_temp_k"),
+            ion_temp_k=_load_optional("ion_temp_k"),
+            neutral_temp_k=_load_optional("neutral_temp_k"),
+            neutral_species_cm3=_load_optional("neutral_species_cm3"),
+            metadata=metadata,
+        )
+
+
 def _normalize_utc(when: dt.datetime) -> dt.datetime:
     if when.tzinfo is None:
         return when
@@ -155,6 +262,53 @@ def _extract_regional_subgrid(
     lat_indices = _find_axis_indices(global_latitudes_deg, regional_latitudes_deg)
     lon_indices = _find_axis_indices(global_longitudes_deg, regional_longitudes_deg)
     return np.take(np.take(global_grid, lat_indices, axis=0), lon_indices, axis=1)
+
+
+def extract_ionosphere_subgrid(
+    grid: IonosphereGrid,
+    latitudes_deg: np.ndarray,
+    longitudes_deg: np.ndarray,
+    altitudes_km: np.ndarray | None = None,
+) -> IonosphereGrid:
+    latitudes_deg = np.asarray(latitudes_deg, dtype=float)
+    longitudes_deg = np.asarray(longitudes_deg, dtype=float)
+    selected_altitudes_km = np.asarray(grid.altitudes_km if altitudes_km is None else altitudes_km, dtype=float)
+
+    lat_indices = _find_axis_indices(np.asarray(grid.latitudes_deg, dtype=float), latitudes_deg)
+    mapped_lons = np.asarray(
+        [coerce_longitude_for_grid(float(value), np.asarray(grid.longitudes_deg, dtype=float)) for value in longitudes_deg],
+        dtype=float,
+    )
+    lon_indices = _find_axis_indices(np.asarray(grid.longitudes_deg, dtype=float), mapped_lons)
+    alt_indices = _find_axis_indices(np.asarray(grid.altitudes_km, dtype=float), selected_altitudes_km)
+
+    def _subset(array: np.ndarray | None) -> np.ndarray | None:
+        if array is None:
+            return None
+        values = np.asarray(array, dtype=float)
+        if values.ndim == 4 and values.shape[1:] == (len(grid.latitudes_deg), len(grid.longitudes_deg), len(grid.altitudes_km)):
+            return np.take(np.take(np.take(values, lat_indices, axis=1), lon_indices, axis=2), alt_indices, axis=3)
+        subset = np.take(np.take(np.take(values, lat_indices, axis=0), lon_indices, axis=1), alt_indices, axis=2)
+        return subset
+
+    return IonosphereGrid(
+        latitudes_deg=latitudes_deg,
+        longitudes_deg=longitudes_deg,
+        altitudes_km=selected_altitudes_km,
+        iono_en_grid=_subset(grid.iono_en_grid),
+        iono_en_grid_5=_subset(grid.iono_en_grid_5),
+        collision_freq=_subset(grid.collision_freq),
+        iono_grid_parms=_grid_parms(latitudes_deg, longitudes_deg, selected_altitudes_km),
+        Bx=_subset(grid.Bx),
+        By=_subset(grid.By),
+        Bz=_subset(grid.Bz),
+        geomag_grid_parms=_grid_parms(latitudes_deg, longitudes_deg, selected_altitudes_km),
+        electron_temp_k=_subset(grid.electron_temp_k),
+        ion_temp_k=_subset(grid.ion_temp_k),
+        neutral_temp_k=_subset(grid.neutral_temp_k),
+        neutral_species_cm3=_subset(grid.neutral_species_cm3),
+        metadata=dict(grid.metadata),
+    )
 
 
 def build_pyiri_grid_from_axes(
