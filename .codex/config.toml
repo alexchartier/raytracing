@@ -1,0 +1,5 @@
+[mcp_servers.cartman]
+command = "/bin/sh"
+args = ["/Users/chartat1/raytracing/tools/cartman_mcp/launch.sh"]
+cwd = "/Users/chartat1/raytracing"
+startup_timeout_sec = 60

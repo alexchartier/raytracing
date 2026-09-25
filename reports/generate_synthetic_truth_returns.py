@@ -2,8 +2,9 @@
 
 Run the complete adaptive sweep with ``python3
 reports/generate_synthetic_truth_returns.py --start 0 --stop 81``. The default
-vertical fan uses equal-area cells outside three near-nadir guard rings.
-Use ``--vertical-fan-layout az_el`` for the original rectangular fan. Shorter
+vertical fan is option D: half-density equal-area cells outside three near-nadir
+guard rings, with up to four extra guard seeds. Its output uses a distinct ``_D``
+suffix. Use ``--vertical-fan-layout az_el`` for the original rectangular fan. Shorter
 batches can be merged with ``--merge``. ``--method dense`` traces the full fan.
 Requires the installed PyIRI/PHaRLAP runtime.
 """
@@ -41,18 +42,19 @@ FREQUENCIES = np.arange(2.0, 10.0001, 0.1)
 
 
 def output_path(method: str, fan_layout: str = "az_el") -> Path:
-    suffix = "" if fan_layout == "az_el" else f"_{fan_layout}"
+    suffix = "" if fan_layout == "az_el" else "_equal_area_guarded_D"
     return DATA_DIR / f"synthetic_truth_returns_{method}{suffix}_2-10MHz_100kHz.npz"
 
 
 def chunk_path(method: str, start: int, stop: int, fan_layout: str = "az_el") -> Path:
-    suffix = "" if fan_layout == "az_el" else f"_{fan_layout}"
+    suffix = "" if fan_layout == "az_el" else "_equal_area_guarded_D"
     return DATA_DIR / f"synthetic_truth_{method}{suffix}_chunk_{start:02d}_{stop:02d}.npz"
 
 
 def merge_chunks(method: str, anchor_stride: int, anchor_block_size: int,
                  anchor_elevation_stride: int,
-                 anchor_optimizer: str, fan_layout: str) -> None:
+                 anchor_optimizer: str, fan_layout: str,
+                 outer_fraction: float, guard_seed_limit: int | None) -> None:
     chunk_ranges = [(start, min(start + 10, len(FREQUENCIES))) for start in range(0, len(FREQUENCIES), 10)]
     record_chunks = []
     counts = np.zeros((len(FREQUENCIES), 2), dtype=int)
@@ -65,7 +67,9 @@ def merge_chunks(method: str, anchor_stride: int, anchor_block_size: int,
                     or int(chunk["anchor_block_size"]) != anchor_block_size
                     or int(chunk["anchor_elevation_stride"]) != anchor_elevation_stride
                     or str(chunk["anchor_optimizer"]) != anchor_optimizer
-                    or chunk_layout != fan_layout):
+                    or chunk_layout != fan_layout
+                    or float(chunk["vertical_outer_ray_fraction"]) != outer_fraction
+                    or int(chunk["vertical_guard_seed_limit"]) != (-1 if guard_seed_limit is None else guard_seed_limit)):
                 raise ValueError(f"Inconsistent sweep settings in {chunk_path(method, start, stop, fan_layout)}")
             record_chunks.append(np.asarray(chunk["records"], dtype=float))
             counts += np.asarray(chunk["count_array"], dtype=int)
@@ -86,6 +90,8 @@ def merge_chunks(method: str, anchor_stride: int, anchor_block_size: int,
         frequencies_mhz=FREQUENCIES,
         method=np.array(method),
         vertical_fan_layout=np.array(fan_layout),
+        vertical_outer_ray_fraction=np.array(outer_fraction),
+        vertical_guard_seed_limit=np.array(-1 if guard_seed_limit is None else guard_seed_limit),
         anchor_stride=np.array(anchor_stride),
         anchor_block_size=np.array(anchor_block_size),
         anchor_elevation_stride=np.array(anchor_elevation_stride),
@@ -107,17 +113,29 @@ def main() -> None:
     parser.add_argument("--output", type=Path,
                         help="Output NPZ for a complete 2–10 MHz sweep")
     parser.add_argument("--method", choices=("adaptive", "dense"), default="adaptive")
+    parser.add_argument("--density-scale", type=float, default=1.12,
+                        help="Synthetic electron-density multiplier (default: 1.12)")
     parser.add_argument("--anchor-stride", type=int, default=5)
     parser.add_argument("--anchor-block-size", type=int, default=10)
     parser.add_argument("--anchor-elevation-stride", type=int, default=2)
     parser.add_argument("--anchor-optimizer", choices=("Powell", "Nelder-Mead"), default="Powell")
     parser.add_argument("--vertical-fan-layout", choices=("az_el", "equal_area_guarded"),
                         default="equal_area_guarded")
-    parser.add_argument("--vertical-outer-ray-fraction", type=float, default=1.0,
+    parser.add_argument("--vertical-outer-ray-fraction", type=float,
                         help="Fraction of equal-area directions outside the near-nadir guard")
     parser.add_argument("--vertical-guard-seed-limit", type=int,
-                        help="Additional near-nadir minima to optimize; 0 keeps nearest-neighbor minima only")
+                        help="Additional near-nadir minima to optimize; 0 uses nearest-neighbor minima only, -1 uses all")
     args = parser.parse_args()
+    if args.vertical_fan_layout == "equal_area_guarded":
+        if args.vertical_outer_ray_fraction is None:
+            args.vertical_outer_ray_fraction = 0.5
+        if args.vertical_guard_seed_limit is None:
+            args.vertical_guard_seed_limit = 4
+    else:
+        if args.vertical_outer_ray_fraction is None:
+            args.vertical_outer_ray_fraction = 1.0
+        if args.vertical_guard_seed_limit is None:
+            args.vertical_guard_seed_limit = -1
     if args.anchor_stride < 1:
         parser.error("--anchor-stride must be positive")
     if args.anchor_block_size < 1:
@@ -126,19 +144,26 @@ def main() -> None:
         parser.error("--anchor-elevation-stride must be positive")
     if not 0.0 < args.vertical_outer_ray_fraction <= 1.0:
         parser.error("--vertical-outer-ray-fraction must be in (0, 1]")
-    if args.vertical_guard_seed_limit is not None and args.vertical_guard_seed_limit < 0:
-        parser.error("--vertical-guard-seed-limit must be nonnegative")
-    if (args.vertical_outer_ray_fraction != 1.0 or args.vertical_guard_seed_limit is not None):
-        if args.vertical_fan_layout != "equal_area_guarded":
-            parser.error("vertical fan reductions require --vertical-fan-layout equal_area_guarded")
-        if args.output is None:
-            parser.error("reduced vertical fans require --output to keep each result separate")
+    if args.vertical_guard_seed_limit < -1:
+        parser.error("--vertical-guard-seed-limit must be -1 or nonnegative")
+    if not 0.0 < args.density_scale < 5.0:
+        parser.error("--density-scale must be between 0 and 5")
+    if args.density_scale != 1.12 and args.output is None:
+        parser.error("non-default density scales require --output to keep each result separate")
+    guard_seed_limit = None if args.vertical_guard_seed_limit == -1 else args.vertical_guard_seed_limit
+    if args.vertical_fan_layout == "az_el":
+        if args.vertical_outer_ray_fraction != 1.0 or guard_seed_limit is not None:
+            parser.error("az_el fan does not accept guarded equal-area reductions")
+    elif ((args.vertical_outer_ray_fraction, guard_seed_limit) != (0.5, 4)
+          and args.output is None):
+        parser.error("non-default guarded fans require --output to keep each result separate")
     if args.merge:
         if args.output is not None:
             parser.error("--output cannot be used with --merge")
         merge_chunks(args.method, args.anchor_stride, args.anchor_block_size,
                      args.anchor_elevation_stride,
-                     args.anchor_optimizer, args.vertical_fan_layout)
+                     args.anchor_optimizer, args.vertical_fan_layout,
+                     args.vertical_outer_ray_fraction, guard_seed_limit)
         return
     if args.start is None or args.stop is None or not 0 <= args.start < args.stop <= len(FREQUENCIES):
         parser.error("choose a batch with --start and --stop between 0 and 81")
@@ -157,7 +182,7 @@ def main() -> None:
             vertical_elevation_count=24,
             vertical_fan_layout=args.vertical_fan_layout,
             vertical_outer_ray_fraction=args.vertical_outer_ray_fraction,
-            vertical_guard_seed_limit=args.vertical_guard_seed_limit,
+            vertical_guard_seed_limit=guard_seed_limit,
             vertical_azimuth_step_deg=30.0,
             oblique_elevation_count=9,
             oblique_bearing_count=7,
@@ -185,7 +210,7 @@ def main() -> None:
             problem,
             problem.background_grids[0],
             IonosphereFitParams(
-                density_scale=1.12,
+                density_scale=args.density_scale,
                 hmf2_shift_km=0.0,
                 wave_amplitude_fraction=0.0,
                 wave_phase_rad=0.0,
@@ -245,7 +270,8 @@ def main() -> None:
             anchor_fan_launch_directions=np.array(anchor_fan_directions),
             fan_launch_directions=np.array(case.fan_elevations_deg.size),
             vertical_outer_ray_fraction=np.array(args.vertical_outer_ray_fraction),
-            vertical_guard_seed_limit=np.array(-1 if args.vertical_guard_seed_limit is None else args.vertical_guard_seed_limit),
+            vertical_guard_seed_limit=np.array(args.vertical_guard_seed_limit),
+            density_scale=np.array(args.density_scale),
             runtime_seconds=np.array(time.perf_counter() - sweep_start),
         )
         if full_sweep:
