@@ -1102,6 +1102,7 @@ def _trace_candidate_topside(
     bearing_deg: float,
     frequency_mhz: float,
     ox_mode: int,
+    transmitter_state: tuple[GeoPoint, float, float, float, float] | None = None,
 ) -> tuple[object, float, float | None, float | None, float]:
     # Nelder-Mead can step through the nadir pole. Reflect such angles back
     # into the physical elevation range, rotating the bearing by 180 degrees.
@@ -1113,6 +1114,7 @@ def _trace_candidate_topside(
         bearings_deg=[bearing_deg],
         freqs_mhz=[frequency_mhz],
         ox_mode=ox_mode,
+        transmitter_state=transmitter_state,
     )
     if prepared is None:
         return None, math.inf, None, None, float("nan")
@@ -1147,6 +1149,7 @@ def _follow_neighbor_return(
     homing_tolerance_m: float,
 ) -> tuple[object, float, float | None, float | None, float]:
     cache: dict[tuple[int, int], tuple[object, float, float | None, float | None, float]] = {}
+    transmitter_state = tracer.prepare_transmitter_state(tx=tx, grid=grid)
 
     def evaluate(elevation_deg: float, bearing_deg: float) -> tuple[object, float, float | None, float | None, float]:
         elevation_deg, bearing_deg = _canonical_launch_angles(elevation_deg, bearing_deg)
@@ -1162,6 +1165,7 @@ def _follow_neighbor_return(
             bearing_deg=bearing_deg,
             frequency_mhz=frequency_mhz,
             ox_mode=ox_mode,
+            transmitter_state=transmitter_state,
         )
         cache[key] = result
         return result
@@ -1200,6 +1204,7 @@ def _home_frequency_returns(
         raise ValueError("optimizer_method must be Nelder-Mead or Powell")
     elevs = np.asarray(fan_elevations_deg, dtype=float)
     bears = np.asarray(fan_bearings_deg, dtype=float)
+    transmitter_state = tracer.prepare_transmitter_state(tx=tx, grid=grid)
     prepared = tracer.prepare_ray_state_vector_batch(
         tx=tx,
         grid=grid,
@@ -1207,6 +1212,7 @@ def _home_frequency_returns(
         bearings_deg=bears,
         freqs_mhz=np.full(elevs.shape, float(frequency_mhz), dtype=float),
         ox_mode=ox_mode,
+        transmitter_state=transmitter_state,
     )
     if prepared is None:
         return ()
@@ -1257,6 +1263,7 @@ def _home_frequency_returns(
             bearing_deg=bearing_deg,
             frequency_mhz=frequency_mhz,
             ox_mode=ox_mode,
+            transmitter_state=transmitter_state,
         )
         cache[key] = result
         return result

@@ -202,6 +202,12 @@ class PointToPointRayTracer:
             self.backend = PyLapRaytraceBackend()
         return self.backend
 
+    def prepare_transmitter_state(
+        self, *, tx: GeoPoint, grid: IonosphereGrid,
+    ) -> tuple[GeoPoint, float, float, float, float]:
+        tx_local = self._nudge_if_on_grid(tx, grid)
+        return (tx_local, *self._sample_tx_state(grid, tx_local))
+
     def prepare_ray_state_vector_batch(
         self,
         *,
@@ -211,9 +217,11 @@ class PointToPointRayTracer:
         bearings_deg: Sequence[float],
         freqs_mhz: Sequence[float],
         ox_mode: int = 0,
+        transmitter_state: tuple[GeoPoint, float, float, float, float] | None = None,
     ) -> tuple[GeoPoint, dict[str, np.ndarray], np.ndarray] | None:
-        tx_local = self._nudge_if_on_grid(tx, grid)
-        ne_cm3, bx, by, bz = self._sample_tx_state(grid, tx_local)
+        if transmitter_state is None:
+            transmitter_state = self.prepare_transmitter_state(tx=tx, grid=grid)
+        tx_local, ne_cm3, bx, by, bz = transmitter_state
         elevs = np.asarray(elevations_deg, dtype=float)
         bears = np.asarray(bearings_deg, dtype=float)
         freqs = np.asarray(freqs_mhz, dtype=float)
