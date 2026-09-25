@@ -1,4 +1,8 @@
-"""Check fast vertical fans on two alternate synthetic ionosphere windows."""
+"""Check fast vertical fans on alternate synthetic ionospheres.
+
+Use --full-sweep to save complete A/B/C/D accepted-return files for both
+profiles. The default and --tune-guard retain the shorter benchmark windows.
+"""
 
 from __future__ import annotations
 
@@ -33,12 +37,21 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--tune-guard", action="store_true",
                         help="Compare half-density fans with 1, 2, 4, or all extra guard minima")
+    parser.add_argument("--full-sweep", action="store_true",
+                        help="Run and save 2–10 MHz A/B/C/D ionograms for both profiles")
     args = parser.parse_args()
-    windows = (("shape_bump", 2.0, 2.4), ("wave_3d", 8.0, 8.4))
-    variants = ((("A", None, None), ("G1", 0.5, 1), ("G2", 0.5, 2),
+    if args.tune_guard and args.full_sweep:
+        parser.error("--tune-guard and --full-sweep cannot be combined")
+    windows = (("shape_bump", 2.0, 10.0), ("wave_3d", 2.0, 10.0)) if args.full_sweep else (
+        ("shape_bump", 2.0, 2.4), ("wave_3d", 8.0, 8.4))
+    variants = ((("A", None, None), ("B", 1.0, 0), ("C", 0.5, 0),
+                 ("D", 0.5, 4)) if args.full_sweep else
+                (("A", None, None), ("G1", 0.5, 1), ("G2", 0.5, 2),
                  ("G4", 0.5, 4), ("Gall", 0.5, None)) if args.tune_guard else
                 (("A", None, None), ("B", 1.0, 0), ("C", 0.5, 0), ("Q", 0.25, 0)))
-    output_name = "vertical_fan_guard_tuning.json" if args.tune_guard else "vertical_fan_cross_profile.json"
+    output_name = ("vertical_fan_alternate_full.json" if args.full_sweep else
+                   "vertical_fan_guard_tuning.json" if args.tune_guard else
+                   "vertical_fan_cross_profile.json")
     output = ROOT / "reports" / "data" / output_name
     results = []
     with tempfile.TemporaryDirectory(prefix="vertical_fan_check_") as directory:
@@ -94,6 +107,7 @@ def main() -> None:
                     )
                     by_cell.update({(i, mode): returns for i, returns in enumerate(return_sets)})
                 by_variant[name] = by_cell
+                runtime_seconds = time.perf_counter() - started
                 reference = by_variant["A"]
                 matched = 0
                 missing = []
@@ -106,7 +120,7 @@ def main() -> None:
                     "profile": profile, "window_mhz": [start_mhz, stop_mhz],
                     "variant": name, "fan_directions": int(elevations.size),
                     "guard_seed_limit": guard_limit,
-                    "runtime_seconds": time.perf_counter() - started,
+                    "runtime_seconds": runtime_seconds,
                     "reference_returns": sum(len(cell) for cell in reference.values()),
                     "variant_returns": sum(len(cell) for cell in by_cell.values()),
                     "matched_reference_returns": matched, "missing": missing,
@@ -114,6 +128,32 @@ def main() -> None:
                 }
                 results.append(entry)
                 print(entry, flush=True)
+                if args.full_sweep:
+                    unique_elevations = np.unique(elevations)
+                    retained = np.zeros(unique_elevations.size, dtype=bool)
+                    retained[:2] = True
+                    retained[2::2] = True
+                    retained[-1] = True
+                    anchor_count = int(np.count_nonzero(np.isin(elevations, unique_elevations[retained])))
+                    records = np.asarray([
+                        (float(i), float(mode), ray.group_range_km, ray.miss_m, ray.absorption_db)
+                        for mode in (1, -1) for i in range(frequencies.size)
+                        for ray in by_cell[(i, mode)]
+                    ], dtype=float).reshape(-1, 5)
+                    destination = ROOT / "reports" / "data" / f"vertical_fan_{profile}_{name}_full.npz"
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    np.savez_compressed(
+                        destination, records=records, frequencies_mhz=frequencies,
+                        profile=np.array(profile), method=np.array("adaptive"),
+                        vertical_fan_layout=np.array("az_el" if fraction is None else "equal_area_guarded"),
+                        vertical_outer_ray_fraction=np.array(1.0 if fraction is None else fraction),
+                        vertical_guard_seed_limit=np.array(-1 if guard_limit is None else guard_limit),
+                        anchor_fan_launch_directions=np.array(anchor_count),
+                        fan_launch_directions=np.array(elevations.size),
+                        homing_tolerance_m=np.array(variant_config.homing_tolerance_m),
+                        runtime_seconds=np.array(runtime_seconds),
+                    )
+                    print(destination, flush=True)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(results, indent=2) + "\n")
     print(output)

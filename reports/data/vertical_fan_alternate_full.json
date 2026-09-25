@@ -1,0 +1,246 @@
+[
+  {
+    "profile": "shape_bump",
+    "window_mhz": [
+      2.0,
+      10.0
+    ],
+    "variant": "A",
+    "fan_directions": 288,
+    "guard_seed_limit": null,
+    "runtime_seconds": 61.899461207998684,
+    "reference_returns": 220,
+    "variant_returns": 220,
+    "matched_reference_returns": 220,
+    "missing": [],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "shape_bump",
+    "window_mhz": [
+      2.0,
+      10.0
+    ],
+    "variant": "B",
+    "fan_directions": 288,
+    "guard_seed_limit": 0,
+    "runtime_seconds": 44.54401558400423,
+    "reference_returns": 220,
+    "variant_returns": 219,
+    "matched_reference_returns": 219,
+    "missing": [
+      {
+        "frequency_mhz": 2.0,
+        "mode": 1,
+        "range_km": 667.3183569326726,
+        "elevation_deg": -87.10264369221208,
+        "bearing_deg": 36.18619822782864
+      }
+    ],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "shape_bump",
+    "window_mhz": [
+      2.0,
+      10.0
+    ],
+    "variant": "C",
+    "fan_directions": 162,
+    "guard_seed_limit": 0,
+    "runtime_seconds": 41.66837891700561,
+    "reference_returns": 220,
+    "variant_returns": 219,
+    "matched_reference_returns": 219,
+    "missing": [
+      {
+        "frequency_mhz": 2.0,
+        "mode": 1,
+        "range_km": 667.3183569326726,
+        "elevation_deg": -87.10264369221208,
+        "bearing_deg": 36.18619822782864
+      }
+    ],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "shape_bump",
+    "window_mhz": [
+      2.0,
+      10.0
+    ],
+    "variant": "D",
+    "fan_directions": 162,
+    "guard_seed_limit": 4,
+    "runtime_seconds": 57.442350249999436,
+    "reference_returns": 220,
+    "variant_returns": 220,
+    "matched_reference_returns": 220,
+    "missing": [],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "wave_3d",
+    "window_mhz": [
+      2.0,
+      10.0
+    ],
+    "variant": "A",
+    "fan_directions": 288,
+    "guard_seed_limit": null,
+    "runtime_seconds": 75.77401649999956,
+    "reference_returns": 215,
+    "variant_returns": 215,
+    "matched_reference_returns": 215,
+    "missing": [],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "wave_3d",
+    "window_mhz": [
+      2.0,
+      10.0
+    ],
+    "variant": "B",
+    "fan_directions": 288,
+    "guard_seed_limit": 0,
+    "runtime_seconds": 48.00829195800179,
+    "reference_returns": 215,
+    "variant_returns": 211,
+    "matched_reference_returns": 208,
+    "missing": [
+      {
+        "frequency_mhz": 8.0,
+        "mode": 1,
+        "range_km": 1209.6022048484426,
+        "elevation_deg": -89.36424790700222,
+        "bearing_deg": 21.230980870881126
+      },
+      {
+        "frequency_mhz": 8.1,
+        "mode": 1,
+        "range_km": 1239.7882557035284,
+        "elevation_deg": -89.52660201829194,
+        "bearing_deg": 14.885594625253532
+      },
+      {
+        "frequency_mhz": 8.2,
+        "mode": 1,
+        "range_km": 1275.48484862983,
+        "elevation_deg": -89.71649619271005,
+        "bearing_deg": 357.3633445687301
+      },
+      {
+        "frequency_mhz": 8.3,
+        "mode": 1,
+        "range_km": 1312.5892752470363,
+        "elevation_deg": -89.80020840801521,
+        "bearing_deg": 296.54475031169113
+      },
+      {
+        "frequency_mhz": 8.4,
+        "mode": 1,
+        "range_km": 1386.3172812475382,
+        "elevation_deg": -89.49770250068698,
+        "bearing_deg": 236.46347391125394
+      },
+      {
+        "frequency_mhz": 2.1,
+        "mode": -1,
+        "range_km": 542.408971345246,
+        "elevation_deg": -87.9788336365484,
+        "bearing_deg": 43.64094066928692
+      },
+      {
+        "frequency_mhz": 8.5,
+        "mode": -1,
+        "range_km": 1236.662396339781,
+        "elevation_deg": -89.29631835448086,
+        "bearing_deg": 14.908662335193071
+      }
+    ],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "wave_3d",
+    "window_mhz": [
+      2.0,
+      10.0
+    ],
+    "variant": "C",
+    "fan_directions": 162,
+    "guard_seed_limit": 0,
+    "runtime_seconds": 45.110183040989796,
+    "reference_returns": 215,
+    "variant_returns": 211,
+    "matched_reference_returns": 208,
+    "missing": [
+      {
+        "frequency_mhz": 8.0,
+        "mode": 1,
+        "range_km": 1209.6022048484426,
+        "elevation_deg": -89.36424790700222,
+        "bearing_deg": 21.230980870881126
+      },
+      {
+        "frequency_mhz": 8.1,
+        "mode": 1,
+        "range_km": 1239.7882557035284,
+        "elevation_deg": -89.52660201829194,
+        "bearing_deg": 14.885594625253532
+      },
+      {
+        "frequency_mhz": 8.2,
+        "mode": 1,
+        "range_km": 1275.48484862983,
+        "elevation_deg": -89.71649619271005,
+        "bearing_deg": 357.3633445687301
+      },
+      {
+        "frequency_mhz": 8.3,
+        "mode": 1,
+        "range_km": 1312.5892752470363,
+        "elevation_deg": -89.80020840801521,
+        "bearing_deg": 296.54475031169113
+      },
+      {
+        "frequency_mhz": 8.4,
+        "mode": 1,
+        "range_km": 1386.3172812475382,
+        "elevation_deg": -89.49770250068698,
+        "bearing_deg": 236.46347391125394
+      },
+      {
+        "frequency_mhz": 2.1,
+        "mode": -1,
+        "range_km": 542.408971345246,
+        "elevation_deg": -87.9788336365484,
+        "bearing_deg": 43.64094066928692
+      },
+      {
+        "frequency_mhz": 8.5,
+        "mode": -1,
+        "range_km": 1236.662396339781,
+        "elevation_deg": -89.29631835448086,
+        "bearing_deg": 14.908662335193071
+      }
+    ],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "wave_3d",
+    "window_mhz": [
+      2.0,
+      10.0
+    ],
+    "variant": "D",
+    "fan_directions": 162,
+    "guard_seed_limit": 4,
+    "runtime_seconds": 70.20219158301188,
+    "reference_returns": 215,
+    "variant_returns": 216,
+    "matched_reference_returns": 215,
+    "missing": [],
+    "homing_tolerance_m": 1000.0
+  }
+]
