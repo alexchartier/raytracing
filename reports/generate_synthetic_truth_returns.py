@@ -1,9 +1,10 @@
 """Trace synthetic truth returns used by the standalone ionogram.
 
 Run the complete adaptive sweep with ``python3
-reports/generate_synthetic_truth_returns.py --start 0 --stop 81``. Shorter
-batches can be merged with ``--merge``. ``--method dense`` reproduces the
-original full-fan sweep.
+reports/generate_synthetic_truth_returns.py --start 0 --stop 81``. The default
+vertical fan uses equal-area cells outside three near-nadir guard rings.
+Use ``--vertical-fan-layout az_el`` for the original rectangular fan. Shorter
+batches can be merged with ``--merge``. ``--method dense`` traces the full fan.
 Requires the installed PyIRI/PHaRLAP runtime.
 """
 
@@ -38,29 +39,33 @@ DATA_DIR = ROOT / "reports" / "data"
 FREQUENCIES = np.arange(2.0, 10.0001, 0.1)
 
 
-def output_path(method: str) -> Path:
-    return DATA_DIR / f"synthetic_truth_returns_{method}_2-10MHz_100kHz.npz"
+def output_path(method: str, fan_layout: str = "az_el") -> Path:
+    suffix = "" if fan_layout == "az_el" else f"_{fan_layout}"
+    return DATA_DIR / f"synthetic_truth_returns_{method}{suffix}_2-10MHz_100kHz.npz"
 
 
-def chunk_path(method: str, start: int, stop: int) -> Path:
-    return DATA_DIR / f"synthetic_truth_{method}_chunk_{start:02d}_{stop:02d}.npz"
+def chunk_path(method: str, start: int, stop: int, fan_layout: str = "az_el") -> Path:
+    suffix = "" if fan_layout == "az_el" else f"_{fan_layout}"
+    return DATA_DIR / f"synthetic_truth_{method}{suffix}_chunk_{start:02d}_{stop:02d}.npz"
 
 
 def merge_chunks(method: str, anchor_stride: int, anchor_block_size: int,
                  anchor_elevation_stride: int,
-                 anchor_optimizer: str) -> None:
+                 anchor_optimizer: str, fan_layout: str) -> None:
     chunk_ranges = [(start, min(start + 10, len(FREQUENCIES))) for start in range(0, len(FREQUENCIES), 10)]
     record_chunks = []
     counts = np.zeros((len(FREQUENCIES), 2), dtype=int)
     anchor_fan_directions = None
     full_fan_directions = None
     for start, stop in chunk_ranges:
-        with np.load(chunk_path(method, start, stop), allow_pickle=False) as chunk:
+        with np.load(chunk_path(method, start, stop, fan_layout), allow_pickle=False) as chunk:
+            chunk_layout = str(chunk["vertical_fan_layout"]) if "vertical_fan_layout" in chunk.files else "az_el"
             if (str(chunk["method"]) != method or int(chunk["anchor_stride"]) != anchor_stride
                     or int(chunk["anchor_block_size"]) != anchor_block_size
                     or int(chunk["anchor_elevation_stride"]) != anchor_elevation_stride
-                    or str(chunk["anchor_optimizer"]) != anchor_optimizer):
-                raise ValueError(f"Inconsistent sweep settings in {chunk_path(method, start, stop)}")
+                    or str(chunk["anchor_optimizer"]) != anchor_optimizer
+                    or chunk_layout != fan_layout):
+                raise ValueError(f"Inconsistent sweep settings in {chunk_path(method, start, stop, fan_layout)}")
             record_chunks.append(np.asarray(chunk["records"], dtype=float))
             counts += np.asarray(chunk["count_array"], dtype=int)
             chunk_fan_directions = int(chunk["anchor_fan_launch_directions"])
@@ -72,13 +77,14 @@ def merge_chunks(method: str, anchor_stride: int, anchor_block_size: int,
             anchor_fan_directions = chunk_fan_directions
             full_fan_directions = chunk_full_directions
     records = np.concatenate(record_chunks)
-    output = output_path(method)
+    output = output_path(method, fan_layout)
     np.savez_compressed(
         output,
         records=records,
         count_array=counts,
         frequencies_mhz=FREQUENCIES,
         method=np.array(method),
+        vertical_fan_layout=np.array(fan_layout),
         anchor_stride=np.array(anchor_stride),
         anchor_block_size=np.array(anchor_block_size),
         anchor_elevation_stride=np.array(anchor_elevation_stride),
@@ -104,6 +110,8 @@ def main() -> None:
     parser.add_argument("--anchor-block-size", type=int, default=10)
     parser.add_argument("--anchor-elevation-stride", type=int, default=2)
     parser.add_argument("--anchor-optimizer", choices=("Powell", "Nelder-Mead"), default="Powell")
+    parser.add_argument("--vertical-fan-layout", choices=("az_el", "equal_area_guarded"),
+                        default="equal_area_guarded")
     args = parser.parse_args()
     if args.anchor_stride < 1:
         parser.error("--anchor-stride must be positive")
@@ -116,7 +124,7 @@ def main() -> None:
             parser.error("--output cannot be used with --merge")
         merge_chunks(args.method, args.anchor_stride, args.anchor_block_size,
                      args.anchor_elevation_stride,
-                     args.anchor_optimizer)
+                     args.anchor_optimizer, args.vertical_fan_layout)
         return
     if args.start is None or args.stop is None or not 0 <= args.start < args.stop <= len(FREQUENCIES):
         parser.error("choose a batch with --start and --stop between 0 and 81")
@@ -132,6 +140,7 @@ def main() -> None:
             planes=(1,),
             frequencies_mhz=(4.0, 5.0, 6.0),
             vertical_elevation_count=24,
+            vertical_fan_layout=args.vertical_fan_layout,
             vertical_azimuth_step_deg=30.0,
             oblique_elevation_count=9,
             oblique_bearing_count=7,
@@ -205,12 +214,13 @@ def main() -> None:
         records_array = np.asarray(records, dtype=float).reshape(-1, 5)
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         full_sweep = args.start == 0 and args.stop == FREQUENCIES.size
-        destination = (args.output or output_path(args.method)) if full_sweep else chunk_path(
-            args.method, args.start, args.stop)
+        destination = (args.output or output_path(args.method, args.vertical_fan_layout)) if full_sweep else chunk_path(
+            args.method, args.start, args.stop, args.vertical_fan_layout)
         metadata = dict(
             records=records_array,
             count_array=counts,
             method=np.array(args.method),
+            vertical_fan_layout=np.array(args.vertical_fan_layout),
             anchor_stride=np.array(args.anchor_stride),
             anchor_block_size=np.array(args.anchor_block_size),
             anchor_elevation_stride=np.array(args.anchor_elevation_stride),

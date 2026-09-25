@@ -16,6 +16,7 @@ import numpy as np
 from scipy.interpolate import RegularGridInterpolator
 from scipy.ndimage import gaussian_filter
 from scipy.optimize import differential_evolution, minimize
+from scipy.spatial import cKDTree
 
 if __package__:
     from .absorption import effective_collision_frequency
@@ -101,6 +102,7 @@ class TopsideInverseConfig:
     vertical_elevation_max_deg: float = -12.0
     vertical_elevation_count: int = 24
     vertical_azimuth_step_deg: float = 30.0
+    vertical_fan_layout: str = "az_el"
     oblique_elevation_count: int = 31
     oblique_bearing_count: int = 15
     grid_lat_step_deg: float = 0.5
@@ -481,6 +483,48 @@ def _local_minimum_mask(values: np.ndarray) -> np.ndarray:
     return is_local
 
 
+def _fan_local_minimum_indices(elevations_deg: np.ndarray, bearings_deg: np.ndarray,
+                               misses_m: np.ndarray) -> np.ndarray:
+    """Find sampled minima on either a rectangular or equal-area launch fan."""
+    elevs = np.asarray(elevations_deg, dtype=float)
+    bears = np.asarray(bearings_deg, dtype=float)
+    misses = np.asarray(misses_m, dtype=float)
+    unique_elevs = np.unique(elevs)
+    unique_bears = np.unique(bears)
+    if unique_elevs.size * unique_bears.size == elevs.size:
+        grid = misses.reshape(unique_bears.size, unique_elevs.size)
+        return np.flatnonzero(_local_minimum_mask(grid).ravel())
+
+    elevation_rad = np.deg2rad(elevs)
+    bearing_rad = np.deg2rad(bears)
+    direction = np.column_stack((
+        np.cos(elevation_rad) * np.sin(bearing_rad),
+        np.cos(elevation_rad) * np.cos(bearing_rad),
+        np.sin(elevation_rad),
+    ))
+    _, neighbors = cKDTree(direction).query(direction, k=min(9, elevs.size))
+    indices = np.flatnonzero(
+        np.isfinite(misses) & np.all(misses[:, None] <= misses[neighbors[:, 1:]], axis=1)
+    )
+
+    # Keep minima from any azimuth-complete near-nadir prefix. Small homing
+    # basins there can be suppressed by neighbors in the irregular outer fan.
+    _, row_counts = np.unique(elevs, return_counts=True)
+    first_count = int(row_counts[0])
+    prefix_rows = 0
+    while (prefix_rows < row_counts.size and row_counts[prefix_rows] == first_count
+           and np.array_equal(
+               bears[prefix_rows * first_count:(prefix_rows + 1) * first_count],
+               bears[:first_count],
+           )):
+        prefix_rows += 1
+    if prefix_rows >= 2:
+        guard_misses = misses[:prefix_rows * first_count].reshape(prefix_rows, first_count)
+        guard_indices = np.flatnonzero(_local_minimum_mask(guard_misses).ravel())
+        indices = np.union1d(indices, guard_indices)
+    return indices
+
+
 def _return_leg_distance(ray_path: dict, tx: GeoPoint, rx: GeoPoint) -> tuple[float, float | None, float | None]:
     heights = np.asarray(ray_path.get("height", []), dtype=float)
     lats = np.asarray(ray_path.get("lat", []), dtype=float)
@@ -619,6 +663,47 @@ def _vertical_search_arrays(config: TopsideInverseConfig) -> tuple[np.ndarray, n
     return elevations_deg, azimuths_deg
 
 
+def _equal_area_vertical_fan(
+    config: TopsideInverseConfig, *, guard_nadir_rows: int = 0,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Place outer launch directions in equal solid-angle cells.
+
+    The optional azimuth-complete nadir rows preserve small homing basins near
+    the pole. All remaining cells have exactly equal solid angle.
+    """
+    elevation_rows, nominal_azimuths = _vertical_search_arrays(config)
+    if not (-90.0 <= elevation_rows[0] < elevation_rows[-1] <= 0.0):
+        raise ValueError("vertical equal-area fan requires elevations within [-90, 0]")
+    if not 0 <= guard_nadir_rows < elevation_rows.size:
+        raise ValueError("guard_nadir_rows must leave at least one equal-area row")
+    guarded_elevations = np.repeat(elevation_rows[:guard_nadir_rows], nominal_azimuths.size)
+    guarded_bearings = np.tile(nominal_azimuths, guard_nadir_rows)
+    outer_rows = elevation_rows[guard_nadir_rows:]
+    total = outer_rows.size * nominal_azimuths.size
+    theta = np.deg2rad(90.0 + outer_rows)
+    weights = np.maximum(np.sin(theta), 1e-9)
+    ideal_extra = (total - outer_rows.size) * weights / weights.sum()
+    extra = np.floor(ideal_extra).astype(int)
+    remainder = total - outer_rows.size - int(extra.sum())
+    extra[np.argsort(-(ideal_extra - extra), kind="stable")[:remainder]] += 1
+    populations = extra + 1
+
+    upper_elevation = (float(outer_rows[0]) if guard_nadir_rows == 0 else
+                       0.5 * float(elevation_rows[guard_nadir_rows - 1] + outer_rows[0]))
+    upper = -math.sin(math.radians(upper_elevation))
+    lower = -math.sin(math.radians(float(elevation_rows[-1])))
+    cumulative = np.r_[0, np.cumsum(populations)] / total
+    area_edges = upper - (upper - lower) * cumulative
+    centers = 0.5 * (area_edges[:-1] + area_edges[1:])
+    ring_elevations = -np.rad2deg(np.arcsin(centers))
+    elevations = np.concatenate((guarded_elevations, np.repeat(ring_elevations, populations)))
+    outer_bearings = np.concatenate([
+        360.0 * (np.arange(count, dtype=float) + (row * 0.6180339887498949) % 1.0) / count
+        for row, count in enumerate(populations)
+    ])
+    return elevations, np.concatenate((guarded_bearings, outer_bearings))
+
+
 def _fan_mesh(elevations_deg: np.ndarray, bearings_deg: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     elevation_grid, bearing_grid = np.meshgrid(elevations_deg, bearings_deg, indexing="xy")
     return elevation_grid.ravel(), bearing_grid.ravel()
@@ -709,7 +794,12 @@ def build_topside_cases(config: TopsideInverseConfig) -> tuple[TopsideCase, ...]
         tx_times = tuple(track.times_utc[int(index)] for index in tx_indices)
         vertical_elevs, vertical_bears = _vertical_search_arrays(config)
         oblique_elevs, oblique_bears = _topside_search_arrays(tx_points[1], track.positions[int(rx_indices_oblique[1])], config)
-        vertical_fan = _fan_mesh(vertical_elevs, vertical_bears)
+        if config.vertical_fan_layout == "equal_area_guarded":
+            vertical_fan = _equal_area_vertical_fan(config, guard_nadir_rows=min(3, vertical_elevs.size - 1))
+        elif config.vertical_fan_layout == "az_el":
+            vertical_fan = _fan_mesh(vertical_elevs, vertical_bears)
+        else:
+            raise ValueError("vertical_fan_layout must be 'az_el' or 'equal_area_guarded'")
         oblique_fan = _fan_mesh(oblique_elevs, oblique_bears)
 
         cases.append(
@@ -1233,12 +1323,7 @@ def _home_frequency_returns(
         miss_flat[int(flat_index)] = miss_m
 
     unique_elevs = np.unique(elevs)
-    unique_bears = np.unique(bears)
-    if unique_elevs.size * unique_bears.size != elevs.size:
-        return ()
-    miss_grid = miss_flat.reshape(unique_bears.size, unique_elevs.size)
-    local_minima = _local_minimum_mask(miss_grid)
-    seed_indices = np.flatnonzero(local_minima.ravel())
+    seed_indices = _fan_local_minimum_indices(elevs, bears, miss_flat)
     if seed_indices.size == 0:
         finite = np.flatnonzero(np.isfinite(miss_flat))
         seed_indices = finite[: config.seed_max_candidates_per_frequency]
@@ -1466,14 +1551,13 @@ def home_frequency_sweep_adaptive(
     anchor_bearings = np.asarray(fan_bearings_deg, dtype=float)
     if anchor_elevation_stride > 1:
         unique_elevations = np.unique(anchor_elevations)
-        if unique_elevations.size * np.unique(anchor_bearings).size == anchor_elevations.size:
-            retained = np.zeros(unique_elevations.size, dtype=bool)
-            retained[:2] = True
-            retained[2::anchor_elevation_stride] = True
-            retained[-1] = True
-            mask = np.isin(anchor_elevations, unique_elevations[retained])
-            anchor_elevations = anchor_elevations[mask]
-            anchor_bearings = anchor_bearings[mask]
+        retained = np.zeros(unique_elevations.size, dtype=bool)
+        retained[:2] = True
+        retained[2::anchor_elevation_stride] = True
+        retained[-1] = True
+        mask = np.isin(anchor_elevations, unique_elevations[retained])
+        anchor_elevations = anchor_elevations[mask]
+        anchor_bearings = anchor_bearings[mask]
 
     results: list[tuple[HomedRayReturn, ...]] = []
     previous_anchor = 0

@@ -7,6 +7,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
+from scipy.spatial import cKDTree
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
@@ -22,6 +23,8 @@ from python_raytrace.multisat_topside_inverse_demo import (
     _canonical_launch_angles,
     _deduplicate_homed_returns,
     _dense_plot_xlim_mhz,
+    _equal_area_vertical_fan,
+    _fan_local_minimum_indices,
     _masked_visible_field,
     _observed_support_extents,
     _plot_case_score,
@@ -37,6 +40,41 @@ from python_raytrace.grid import IonosphereGrid, load_ionosphere_grid_netcdf, sa
 
 
 class MultisatTopsideInverseDemoTests(unittest.TestCase):
+    def test_guarded_equal_area_fan_and_polar_seed(self) -> None:
+        config = TopsideInverseConfig()
+        elevations, bearings = _equal_area_vertical_fan(config, guard_nadir_rows=3)
+        self.assertEqual(elevations.size, 288)
+        rows, populations = np.unique(elevations, return_counts=True)
+        self.assertEqual(rows.size, 24)
+        np.testing.assert_array_equal(populations[:3], [12, 12, 12])
+        self.assertGreater(int(populations[-1]), int(populations[3]))
+
+        # With equal-area cell boundaries, each outer row center lies halfway
+        # through its population's share of the solid-angle coordinate.
+        original_rows = np.linspace(config.vertical_elevation_min_deg,
+                                    config.vertical_elevation_max_deg, 24)
+        upper = -np.sin(np.deg2rad(0.5 * (original_rows[2] + original_rows[3])))
+        lower = -np.sin(np.deg2rad(original_rows[-1]))
+        fractions = np.r_[0, np.cumsum(populations[3:])] / populations[3:].sum()
+        expected = upper - (upper - lower) * 0.5 * (fractions[:-1] + fractions[1:])
+        np.testing.assert_allclose(-np.sin(np.deg2rad(rows[3:])), expected)
+
+        misses = np.full(elevations.size, 10.0)
+        guarded_index = 24
+        elevation_rad = np.deg2rad(elevations)
+        bearing_rad = np.deg2rad(bearings)
+        directions = np.column_stack((
+            np.cos(elevation_rad) * np.sin(bearing_rad),
+            np.cos(elevation_rad) * np.cos(bearing_rad),
+            np.sin(elevation_rad),
+        ))
+        outer_index = 36 + int(np.argmax(directions[36:] @ directions[guarded_index]))
+        neighbors = cKDTree(directions).query(directions[guarded_index], k=9)[1]
+        self.assertIn(outer_index, neighbors)
+        misses[guarded_index] = 1.0
+        misses[outer_index] = 0.5
+        self.assertIn(guarded_index, _fan_local_minimum_indices(elevations, bearings, misses))
+
     def test_return_intensity_does_not_depend_on_homing_miss(self) -> None:
         returns = (
             HomedRayReturn(2.0, 1, object(), 1.0, 100.0, 0.0, 10.0),
