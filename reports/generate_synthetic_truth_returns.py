@@ -115,6 +115,11 @@ def main() -> None:
     parser.add_argument("--method", choices=("adaptive", "dense"), default="adaptive")
     parser.add_argument("--density-scale", type=float, default=1.12,
                         help="Synthetic electron-density multiplier (default: 1.12)")
+    parser.add_argument("--hmf2-shift-km", type=float, default=0.0,
+                        help="Shift the background density profile in altitude")
+    parser.add_argument("--wave-amplitude-fraction", type=float, default=0.0)
+    parser.add_argument("--wave-phase-rad", type=float, default=0.0)
+    parser.add_argument("--wave-bearing-deg", type=float, default=0.0)
     parser.add_argument("--anchor-stride", type=int, default=5)
     parser.add_argument("--anchor-block-size", type=int, default=10)
     parser.add_argument("--anchor-elevation-stride", type=int, default=2)
@@ -148,8 +153,10 @@ def main() -> None:
         parser.error("--vertical-guard-seed-limit must be -1 or nonnegative")
     if not 0.0 < args.density_scale < 5.0:
         parser.error("--density-scale must be between 0 and 5")
-    if args.density_scale != 1.12 and args.output is None:
-        parser.error("non-default density scales require --output to keep each result separate")
+    if (args.density_scale != 1.12 or args.hmf2_shift_km != 0.0
+            or args.wave_amplitude_fraction != 0.0 or args.wave_phase_rad != 0.0
+            or args.wave_bearing_deg != 0.0) and args.output is None:
+        parser.error("non-default ionospheres require --output to keep each result separate")
     guard_seed_limit = None if args.vertical_guard_seed_limit == -1 else args.vertical_guard_seed_limit
     if args.vertical_fan_layout == "az_el":
         if args.vertical_outer_ray_fraction != 1.0 or guard_seed_limit is not None:
@@ -211,10 +218,10 @@ def main() -> None:
             problem.background_grids[0],
             IonosphereFitParams(
                 density_scale=args.density_scale,
-                hmf2_shift_km=0.0,
-                wave_amplitude_fraction=0.0,
-                wave_phase_rad=0.0,
-                wave_bearing_deg=0.0,
+                hmf2_shift_km=args.hmf2_shift_km,
+                wave_amplitude_fraction=args.wave_amplitude_fraction,
+                wave_phase_rad=args.wave_phase_rad,
+                wave_bearing_deg=args.wave_bearing_deg,
             ),
         )
         counts = np.zeros((FREQUENCIES.size, 2), dtype=int)
@@ -272,6 +279,10 @@ def main() -> None:
             vertical_outer_ray_fraction=np.array(args.vertical_outer_ray_fraction),
             vertical_guard_seed_limit=np.array(args.vertical_guard_seed_limit),
             density_scale=np.array(args.density_scale),
+            hmf2_shift_km=np.array(args.hmf2_shift_km),
+            wave_amplitude_fraction=np.array(args.wave_amplitude_fraction),
+            wave_phase_rad=np.array(args.wave_phase_rad),
+            wave_bearing_deg=np.array(args.wave_bearing_deg),
             runtime_seconds=np.array(time.perf_counter() - sweep_start),
         )
         if full_sweep:

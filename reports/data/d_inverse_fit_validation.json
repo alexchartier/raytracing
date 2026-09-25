@@ -1,0 +1,76 @@
+{
+  "description": "Held-out synthetic D ionogram fit with generating parameters removed from the fit input",
+  "truth_independence": "Blind to generating parameters; generated separately but by the same D model family and Cartman PyLap build",
+  "truth": {
+    "density_scale": 1.137,
+    "hmf2_shift_km": 12.0,
+    "forward_runtime_seconds": 258.63157990947366,
+    "accepted_returns": 177
+  },
+  "initial_nose_density_guess": 1.1175000000000002,
+  "initial_height_shift_guess_km": 15.055748600831123,
+  "population_size": 40,
+  "populations": 4,
+  "forward_evaluations": 160,
+  "best_by_round": [
+    {
+      "density_scale": 1.15,
+      "hmf2_shift_km": 0.0,
+      "score": 0.24857224579065507
+    },
+    {
+      "density_scale": 1.108626875574,
+      "hmf2_shift_km": 13.954989404029,
+      "score": 0.05772718498744453
+    },
+    {
+      "density_scale": 1.130815762976,
+      "hmf2_shift_km": 12.490712468418,
+      "score": 0.015582846710211984
+    },
+    {
+      "density_scale": 1.136385068706,
+      "hmf2_shift_km": 12.046629466311,
+      "score": 0.0026522973597239556
+    }
+  ],
+  "retrieved": {
+    "density_scale": 1.136385068706,
+    "hmf2_shift_km": 12.046629466311,
+    "score": {
+      "return_distance": 0.0031571377415228934,
+      "nose": 0.0,
+      "ridge": 0.00457935800943182,
+      "total": 0.0026522973597239556
+    },
+    "density_scale_error": -0.0006149312940000318,
+    "hmf2_shift_error_km": 0.046629466310999845
+  },
+  "private_cartman_rounds": [
+    {
+      "name": "inverse_holdout_r1_20260925",
+      "first_start_to_last_finish_seconds": 248.15069675445557,
+      "completed": 40,
+      "privacy_violations": 0
+    },
+    {
+      "name": "inverse_holdout_r2_20260925",
+      "first_start_to_last_finish_seconds": 626.3699514865875,
+      "completed": 40,
+      "privacy_violations": 0
+    },
+    {
+      "name": "inverse_holdout_r3_20260925",
+      "first_start_to_last_finish_seconds": 314.788516998291,
+      "completed": 40,
+      "privacy_violations": 0
+    }
+  ],
+  "files": {
+    "observed_blind": "d_inverse_fit_synthetic_truth_blind.npz",
+    "retrieved": "d_inverse_fit_retrieved.npz",
+    "scores": "d_inverse_fit_scores.csv",
+    "ionogram_figure": "../figures/d_inverse_fit_ionograms.png",
+    "convergence_figure": "../figures/d_inverse_fit_convergence.png"
+  }
+}
