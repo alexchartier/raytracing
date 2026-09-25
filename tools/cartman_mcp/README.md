@@ -15,3 +15,7 @@ all created files in the private root.
 
 The local MCP log is under `.cache/cartman_mcp/`. Run
 `tools/cartman_mcp/launch.sh --self-check` to inspect the exposed surface.
+
+For SGE jobs, pass `-S /bin/bash` explicitly. Route scheduler stdout and stderr
+to `/dev/null` and redirect inside the script after `umask 077`; SGE otherwise
+creates log files with mode `0644` even in a private directory.

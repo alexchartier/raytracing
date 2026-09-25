@@ -1,0 +1,46 @@
+{
+  "date_utc": "2026-09-25",
+  "profile": "40 distinct synthetic density scales from 0.90 through 1.29",
+  "ionogram_settings": {
+    "frequency_start_mhz": 2.0,
+    "frequency_stop_mhz": 10.0,
+    "frequency_step_mhz": 0.1,
+    "modes": [1, -1],
+    "vertical_fan_layout": "equal_area_guarded",
+    "vertical_outer_ray_fraction": 0.5,
+    "vertical_guard_seed_limit": 4,
+    "fan_launch_directions": 162,
+    "anchor_fan_launch_directions": 105,
+    "homing_tolerance_m": 1000.0
+  },
+  "single_ionogram_test": {
+    "job_elapsed_seconds": 175.56000185012817,
+    "trace_runtime_seconds": 164.9630153439939,
+    "accepted_returns": 176,
+    "complete": true
+  },
+  "parallel_test": {
+    "submitted_tasks": 40,
+    "completed_outputs": 40,
+    "validated_outputs": 40,
+    "failed_tasks": 0,
+    "peak_overlapping_tasks": 40,
+    "submission_to_last_finish_seconds": 254.35694932937622,
+    "first_start_to_last_finish_seconds": 245.1336908340454,
+    "per_ionogram_trace_runtime_seconds": {
+      "min": 111.18112338148057,
+      "median": 172.77509688027203,
+      "max": 237.97414097376168
+    },
+    "accepted_returns": {
+      "min": 165,
+      "median": 178.5,
+      "max": 201
+    }
+  },
+  "remote_privacy_audit": {
+    "paths_checked": 1007,
+    "ownership_or_group_other_permission_violations": 0
+  },
+  "runtime_note": "Cartman uses an existing chartat1 PyLap build that differs from the local build; accepted-return counts are not directly comparable to the local A/B/C/D figures."
+}
