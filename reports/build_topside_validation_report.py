@@ -197,6 +197,53 @@ def main() -> None:
         }
         metrics_path.write_text(json.dumps(metrics, indent=2) + "\n")
 
+        # Render a denser frequency grid solely for the report. The selected
+        # parameters above still come from the three-frequency search.
+        display_frequencies = np.arange(4.0, 6.0001, 0.25)
+        display_problem = replace(problem, frequencies_mhz=display_frequencies)
+        closed_truth_display = simulate_dataset(display_problem, replace(zero_wave, density_scale=true_scale))
+        closed_fit_display = simulate_dataset(
+            display_problem, replace(zero_wave, density_scale=float(scales[closed_index]))
+        )
+        shape_truth_display = dataset_from_case(
+            display_problem, _render_case_observables(display_problem, case, independent_grid, None)
+        )
+        shape_fit_display = simulate_dataset(
+            display_problem, replace(zero_wave, density_scale=float(scales[structural_index]))
+        )
+        display_fields = tuple(
+            data.cases[0].total_image
+            for data in (closed_truth_display, closed_fit_display, shape_truth_display, shape_fit_display)
+        )
+        visible_range_indices = np.flatnonzero(np.max(np.stack(display_fields), axis=(0, 1)) > 0.01)
+        if visible_range_indices.size:
+            display_range_min = max(float(problem.range_edges_km[0]),
+                                    float(problem.range_edges_km[visible_range_indices[0]]) - 100.0)
+            display_range_max = min(float(problem.range_edges_km[-1]),
+                                    float(problem.range_edges_km[visible_range_indices[-1] + 1]) + 100.0)
+        else:
+            display_range_min = float(problem.range_edges_km[0])
+            display_range_max = float(problem.range_edges_km[-1])
+
+        def ionogram_pair(figure, truth_field, fit_field, *, bottom=0.43, height=0.30):
+            axes = (figure.add_axes([0.11, bottom, 0.32, height]),
+                    figure.add_axes([0.55, bottom, 0.32, height]))
+            image = None
+            for ax, field, title in zip(axes, (truth_field, fit_field),
+                                        ("Synthetic truth ionogram", "Retrieved ionogram")):
+                image = ax.imshow(
+                    field.T, origin="lower", aspect="auto", cmap="magma", vmin=0.0, vmax=1.0,
+                    extent=(3.875, 6.125, float(problem.range_edges_km[0]), float(problem.range_edges_km[-1])),
+                    interpolation="nearest",
+                )
+                ax.set_ylim(display_range_max, display_range_min)
+                ax.set_xlim(3.875, 6.125)
+                ax.set_title(title, fontsize=10, weight="bold")
+                ax.set_xlabel("Frequency (MHz)")
+                ax.set_ylabel("Virtual range (km)")
+            colorbar_ax = figure.add_axes([0.89, bottom, 0.015, height])
+            figure.colorbar(image, cax=colorbar_ax, label="Normalized power").ax.tick_params(labelsize=8)
+
         def page(title: str, number: int):
             figure = plt.figure(figsize=(8.5, 11), facecolor="white")
             figure.text(0.09, 0.948, title, fontsize=18, weight="bold", color="#173449", va="top")
@@ -204,9 +251,9 @@ def main() -> None:
                         color="#5B7180", va="top")
             figure.add_artist(plt.Line2D([0.09, 0.91], [0.895, 0.895], transform=figure.transFigure,
                                          color="#A8BBC6", linewidth=0.8))
-            figure.text(0.09, 0.043, "raytracing  ·  generated Earth diagnostic  ·  not Mars validation",
+            figure.text(0.09, 0.043, "raytracing  ·  generated Earth diagnostic  ·  no external truth data",
                         fontsize=8, color="#5B7180")
-            figure.text(0.91, 0.043, f"{number} / 5", ha="right", fontsize=8, color="#5B7180")
+            figure.text(0.91, 0.043, f"{number} / 6", ha="right", fontsize=8, color="#5B7180")
             return figure
 
         def paragraph(figure, text: str, y: float, *, x: float = 0.09, width: int = 93,
@@ -232,7 +279,7 @@ def main() -> None:
             y = heading(fig, "Executive summary", 0.803)
             y = paragraph(fig, "The retrieval code can generate and fit synthetic vertical and oblique topside ionograms. "
                           "This report evaluates one reduced vertical case and asks whether a low ionogram mismatch "
-                          "also means that the electron-density profile was recovered. It does not establish Mars retrieval accuracy.", y)
+                          "also means that the electron-density profile was recovered. No external observations are used.", y)
             y = heading(fig, "Principal findings", y - 0.029)
             findings = [
                 ("Closed-model recovery", f"A true density scale of {true_scale:.2f} was recovered as "
@@ -250,9 +297,9 @@ def main() -> None:
             y = heading(fig, "Validation verdict", y - 0.005)
             y = paragraph(fig, "The current demo's truth is generated by the same density parameterization, "
                           "PyIRI background, ray tracer, and image formation used in retrieval. The alternate "
-                          "profile test changes only the density formula. Independent empirical Mars truth "
-                          "has not been established.", y)
-            fig.text(0.09, 0.12, "Read pages 2–5 for setup, figure interpretation, and the validation gate.",
+                          "profile test changes only the density formula. Fully independent truth has not "
+                          "been established.", y)
+            fig.text(0.09, 0.12, "Read pages 2–6 for setup, paired ionograms, interpretation, and the validation gate.",
                      fontsize=9.5, color="#5B7180")
             save_page(pdf, fig)
 
@@ -270,7 +317,7 @@ def main() -> None:
                 ["No-return control", "Separate altitude formula", "Shared", "Shared", "No"],
             ]
             table = table_ax.table(cellText=cells,
-                                   colLabels=["Case", "Density truth", "PyIRI", "PHaRLAP", "Mars data"],
+                                   colLabels=["Case", "Density truth", "PyIRI", "PHaRLAP", "External data"],
                                    cellLoc="left", colLoc="left", loc="center",
                                    colWidths=[0.21, 0.34, 0.13, 0.16, 0.13])
             table.auto_set_font_size(False); table.set_fontsize(8.5); table.scale(1, 2.35)
@@ -289,11 +336,29 @@ def main() -> None:
             y = heading(fig, "Independence conclusion", y - 0.02)
             paragraph(fig, "A separate formula is useful for testing shape mismatch, but both sides still "
                       "share Earth geometry, PyIRI, PHaRLAP, and ionogram construction. It is not a "
-                      "genuinely independent Mars ground truth.", y)
+                      "fully independent ground truth.", y)
             save_page(pdf, fig)
 
-            # Page 3: closed-model result with interpretation next to its figure.
-            fig = page("2. Closed-model recovery", 3)
+            # Page 3: put the truth and retrieved ionograms next to one another.
+            fig = page("2. Closed-model ionograms", 3)
+            paragraph(fig, "The synthetic truth uses density scale 1.12. A search over six candidate scales "
+                      "selected 1.00. Both ionograms below were re-rendered on a 0.25 MHz display grid "
+                      "after selection; only 4, 5, and 6 MHz determined the selected parameter.", 0.855)
+            ionogram_pair(fig, closed_truth_display.cases[0].total_image,
+                          closed_fit_display.cases[0].total_image)
+            y = paragraph(fig, "Figure 1. Synthetic truth (left) and retrieved (right) total-power ionograms "
+                          "for the closed-model test. Axes and color limits are identical. Each image is "
+                          "normalized to its own peak, so the comparison shows return location and shape, "
+                          "not absolute received power.", 0.385, size=9.5, width=98, line_height=0.021,
+                          color="#415868")
+            y = heading(fig, "What to look for", y - 0.018)
+            paragraph(fig, "Compare the frequency and virtual-range locations of the bright returns. "
+                      "Their differences explain why the search did not select the generating scale's "
+                      "nearest candidate. The numerical objective and parameter error appear on page 4.", y)
+            save_page(pdf, fig)
+
+            # Page 4: closed-model objective and parameter recovery.
+            fig = page("3. Closed-model recovery", 4)
             paragraph(fig, "First, the truth density is generated by the same scalar family searched by the "
                       "retrieval. The generating scale (1.12) is deliberately absent from the six candidates.", 0.855)
             ax = fig.add_axes([0.15, 0.39, 0.70, 0.36])
@@ -302,7 +367,7 @@ def main() -> None:
             ax.axvline(scales[closed_index], color="#1A774E", linestyle=":", label=f"Selected {scales[closed_index]:.2f}")
             ax.set(xlabel="Candidate density scale", ylabel="Ionogram objective")
             ax.grid(alpha=0.25); ax.legend(fontsize=9)
-            y = paragraph(fig, "Figure 1. The six-point search selected scale "
+            y = paragraph(fig, "Figure 2. The six-point search selected scale "
                           f"{scales[closed_index]:.2f} for truth {true_scale:.2f}. "
                           "The objective is not smooth: neighboring candidates can change the available "
                           "ray returns. This plot shows the complete set of evaluated candidates, not a "
@@ -315,41 +380,31 @@ def main() -> None:
                       "this is a check of recoverability in one favorable model family, not independent validation.", y)
             save_page(pdf, fig)
 
-            # Page 4: structural-mismatch results, each panel explained in the caption.
-            fig = page("3. Separate profile-shape test", 4)
-            paragraph(fig, "The truth profile is generated from the PyIRI background with an altitude-dependent "
-                      "factor, 1.10 + 0.10 exp[-0.5((h − 320 km)/55 km)²]. Retrieval candidates can only "
-                      "multiply the background by a constant scale.", 0.855)
-            ax = fig.add_axes([0.13, 0.46, 0.33, 0.27])
-            ax.plot(truth_profile[profile_mask], heights[profile_mask], label="Generated", color="#B6483C", linewidth=1.8)
-            ax.plot(fit_profile[profile_mask], heights[profile_mask], label="Selected", color="#176B87", linewidth=1.8)
+            # Page 5: shape mismatch, with density profiles and paired ionograms.
+            fig = page("4. Shape mismatch: profile and ionograms", 5)
+            paragraph(fig, "Here truth uses an altitude-dependent density factor, 1.10 + 0.10 "
+                      "exp[-0.5((h − 320 km)/55 km)²]. Candidates can only multiply the PyIRI background "
+                      "by a constant. The search selected scale 1.10.", 0.855)
+            ax = fig.add_axes([0.19, 0.60, 0.62, 0.16])
+            ax.plot(truth_profile[profile_mask], heights[profile_mask], label="Truth", color="#B6483C", linewidth=1.8)
+            ax.plot(fit_profile[profile_mask], heights[profile_mask], label="Retrieved", color="#176B87", linewidth=1.8)
             ax.set(xlabel="Electron density (cm$^{-3}$)", ylabel="Altitude (km)")
             ax.grid(alpha=0.25); ax.legend(fontsize=8)
-            observed_image = structural_truth.cases[0].total_image
-            fitted_image = predictions[structural_index].cases[0].total_image
-            image_difference = fitted_image - observed_image
-            vmax = max(float(np.max(np.abs(image_difference))), 1e-6)
-            ax = fig.add_axes([0.55, 0.46, 0.26, 0.27])
-            image = ax.imshow(image_difference.T,
-                              extent=(3.5, 6.5, float(problem.range_edges_km[-1]), float(problem.range_edges_km[0])),
-                              aspect="auto", cmap="RdBu_r", vmin=-vmax, vmax=vmax)
-            ax.set(xlabel="Frequency (MHz)", ylabel="Virtual range (km)")
-            colorbar_ax = fig.add_axes([0.83, 0.46, 0.015, 0.27])
-            fig.colorbar(image, cax=colorbar_ax, label="Power difference").ax.tick_params(labelsize=8)
-            y = paragraph(fig, "Figure 2. Left: the selected scale (1.10) misses the generated altitude-dependent "
-                          f"profile by {profile_nrmse:.1%} NRMSE over 150–450 km. Right: fitted minus generated "
-                          "normalized ionogram power. Color is centered at zero; white regions have no visible "
-                          "difference at this scale.", 0.405, size=9.5, width=98, line_height=0.021,
-                          color="#415868")
-            y = heading(fig, "Interpretation", y - 0.015)
-            paragraph(fig, f"The ionogram objective is {structural_costs[structural_index]:.5g}, yet the "
-                      f"profile error is {profile_nrmse:.1%}. A close observable fit does not establish "
-                      "the correct vertical density shape. This generator is independent only of the "
-                      "fitted scalar parameterization; it shares the background and ray tracer.", y)
+            paragraph(fig, f"Figure 3. Truth and retrieved density differ by {profile_nrmse:.1%} NRMSE "
+                      "over 150–450 km at the center grid column.", 0.548, size=9.5,
+                      width=98, line_height=0.021, color="#415868")
+            ionogram_pair(fig, shape_truth_display.cases[0].total_image,
+                          shape_fit_display.cases[0].total_image, bottom=0.22, height=0.25)
+            paragraph(fig, "Figure 4. Synthetic truth (left) and retrieved (right) total-power ionograms, "
+                      "re-rendered every 0.25 MHz with common axes and color limits. Each is normalized "
+                      "to its own peak. The 4, 5, and 6 MHz retrieval objective is "
+                      f"{structural_costs[structural_index]:.5g}, yet the vertical profile still differs "
+                      f"by {profile_nrmse:.1%}. The truth formula is separate; the background and ray tracer are shared.",
+                      0.173, size=9.5, width=98, line_height=0.021, color="#415868")
             save_page(pdf, fig)
 
-            # Page 5: explain the zero-score failure and state the practical gate.
-            fig = page("4. No-return failure and next gate", 5)
+            # Page 6: explain the zero-score failure and state the practical gate.
+            fig = page("5. No-return failure and next gate", 6)
             paragraph(fig, "A second altitude-dependent truth gives no returns at 4–6 MHz. The scale-0.80 "
                       "candidate also gives no returns, so both ionograms are empty and their objective is zero.", 0.855)
             ax = fig.add_axes([0.18, 0.48, 0.64, 0.27])
@@ -359,24 +414,19 @@ def main() -> None:
                     color="#176B87", linewidth=1.8)
             ax.set(xlabel="Electron density (cm$^{-3}$)", ylabel="Altitude (km)")
             ax.grid(alpha=0.25); ax.legend(fontsize=8)
-            y = paragraph(fig, f"Figure 3. Profiles differ by {no_return_nrmse:.1%} NRMSE from 150 to 450 km "
+            y = paragraph(fig, f"Figure 5. Profiles differ by {no_return_nrmse:.1%} NRMSE from 150 to 450 km "
                           "while the ionogram objective is exactly zero. The score cannot distinguish two "
                           "empty observations. Such cases must be flagged and excluded from accuracy claims.",
                           0.429, size=9.5, width=98, line_height=0.021, color="#415868")
             y = heading(fig, "Conclusion", y - 0.014)
             y = paragraph(fig, "The present evidence supports a working synthetic diagnostic and exposes "
-                          "weak identifiability. It does not confirm independent Mars truth or measured "
+                          "weak identifiability. It does not confirm independent truth or measured "
                           "retrieval accuracy.", y)
             y = heading(fig, "Required validation", y - 0.018)
-            y = paragraph(fig, "Use an external Martian density model or measured MARSIS profiles with Mars "
-                          "geometry. Hold the truth source outside the retrieval forward model, include "
-                          "frequencies with detected returns, and report density bias and NRMSE across "
-                          "multiple cases.", y)
-            y = heading(fig, "Public model lead", y - 0.012)
-            paragraph(fig, "Huang et al. (2021), doi:10.1029/2021JA029226, publish dayside "
-                      "ion-density expressions for 150–450 km. Units, charge balance, and "
-                      "reuse terms need checking before use.",
-                      y, size=9, width=104, line_height=0.02)
+            paragraph(fig, "Use an external density field or measured sounder profiles with matching "
+                      "geometry. Keep the truth source outside the retrieval forward model, include "
+                      "frequencies with detected returns, and report density bias and NRMSE across "
+                      "multiple cases.", y)
             save_page(pdf, fig)
 
     print(json.dumps(metrics, indent=2))
