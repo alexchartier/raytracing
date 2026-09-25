@@ -1,0 +1,222 @@
+[
+  {
+    "profile": "shape_bump",
+    "window_mhz": [
+      2.0,
+      2.4
+    ],
+    "variant": "A",
+    "fan_directions": 288,
+    "guard_seed_limit": null,
+    "runtime_seconds": 4.863078541995492,
+    "reference_returns": 18,
+    "variant_returns": 18,
+    "matched_reference_returns": 18,
+    "missing": [],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "shape_bump",
+    "window_mhz": [
+      2.0,
+      2.4
+    ],
+    "variant": "G1",
+    "fan_directions": 162,
+    "guard_seed_limit": 1,
+    "runtime_seconds": 2.936319500004174,
+    "reference_returns": 18,
+    "variant_returns": 17,
+    "matched_reference_returns": 16,
+    "missing": [
+      {
+        "frequency_mhz": 2.0,
+        "mode": 1,
+        "range_km": 667.3183569326726,
+        "elevation_deg": -87.10264369221208,
+        "bearing_deg": 36.18619822782864
+      },
+      {
+        "frequency_mhz": 2.3,
+        "mode": -1,
+        "range_km": 667.1385784682899,
+        "elevation_deg": -87.97046768907828,
+        "bearing_deg": 42.30549514610789
+      }
+    ],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "shape_bump",
+    "window_mhz": [
+      2.0,
+      2.4
+    ],
+    "variant": "G2",
+    "fan_directions": 162,
+    "guard_seed_limit": 2,
+    "runtime_seconds": 3.3927998330036644,
+    "reference_returns": 18,
+    "variant_returns": 17,
+    "matched_reference_returns": 17,
+    "missing": [
+      {
+        "frequency_mhz": 2.0,
+        "mode": 1,
+        "range_km": 667.3183569326726,
+        "elevation_deg": -87.10264369221208,
+        "bearing_deg": 36.18619822782864
+      }
+    ],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "shape_bump",
+    "window_mhz": [
+      2.0,
+      2.4
+    ],
+    "variant": "G4",
+    "fan_directions": 162,
+    "guard_seed_limit": 4,
+    "runtime_seconds": 4.21401062500081,
+    "reference_returns": 18,
+    "variant_returns": 18,
+    "matched_reference_returns": 18,
+    "missing": [],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "shape_bump",
+    "window_mhz": [
+      2.0,
+      2.4
+    ],
+    "variant": "Gall",
+    "fan_directions": 162,
+    "guard_seed_limit": null,
+    "runtime_seconds": 4.1751020420051645,
+    "reference_returns": 18,
+    "variant_returns": 18,
+    "matched_reference_returns": 18,
+    "missing": [],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "wave_3d",
+    "window_mhz": [
+      8.0,
+      8.4
+    ],
+    "variant": "A",
+    "fan_directions": 288,
+    "guard_seed_limit": null,
+    "runtime_seconds": 13.205991791997803,
+    "reference_returns": 11,
+    "variant_returns": 11,
+    "matched_reference_returns": 11,
+    "missing": [],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "wave_3d",
+    "window_mhz": [
+      8.0,
+      8.4
+    ],
+    "variant": "G1",
+    "fan_directions": 162,
+    "guard_seed_limit": 1,
+    "runtime_seconds": 4.995025999989593,
+    "reference_returns": 11,
+    "variant_returns": 8,
+    "matched_reference_returns": 8,
+    "missing": [
+      {
+        "frequency_mhz": 8.0,
+        "mode": 1,
+        "range_km": 1209.6022048484426,
+        "elevation_deg": -89.36424790700222,
+        "bearing_deg": 21.230980870881126
+      },
+      {
+        "frequency_mhz": 8.3,
+        "mode": 1,
+        "range_km": 1312.5892752470363,
+        "elevation_deg": -89.80020840801521,
+        "bearing_deg": 296.54475031169113
+      },
+      {
+        "frequency_mhz": 8.4,
+        "mode": -1,
+        "range_km": 1212.5127802669033,
+        "elevation_deg": -89.20398808511747,
+        "bearing_deg": 19.522645727420752
+      }
+    ],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "wave_3d",
+    "window_mhz": [
+      8.0,
+      8.4
+    ],
+    "variant": "G2",
+    "fan_directions": 162,
+    "guard_seed_limit": 2,
+    "runtime_seconds": 6.40919291699538,
+    "reference_returns": 11,
+    "variant_returns": 9,
+    "matched_reference_returns": 9,
+    "missing": [
+      {
+        "frequency_mhz": 8.0,
+        "mode": 1,
+        "range_km": 1209.6022048484426,
+        "elevation_deg": -89.36424790700222,
+        "bearing_deg": 21.230980870881126
+      },
+      {
+        "frequency_mhz": 8.3,
+        "mode": 1,
+        "range_km": 1312.5892752470363,
+        "elevation_deg": -89.80020840801521,
+        "bearing_deg": 296.54475031169113
+      }
+    ],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "wave_3d",
+    "window_mhz": [
+      8.0,
+      8.4
+    ],
+    "variant": "G4",
+    "fan_directions": 162,
+    "guard_seed_limit": 4,
+    "runtime_seconds": 12.040936290999525,
+    "reference_returns": 11,
+    "variant_returns": 11,
+    "matched_reference_returns": 11,
+    "missing": [],
+    "homing_tolerance_m": 1000.0
+  },
+  {
+    "profile": "wave_3d",
+    "window_mhz": [
+      8.0,
+      8.4
+    ],
+    "variant": "Gall",
+    "fan_directions": 162,
+    "guard_seed_limit": null,
+    "runtime_seconds": 13.219932874999358,
+    "reference_returns": 11,
+    "variant_returns": 11,
+    "matched_reference_returns": 11,
+    "missing": [],
+    "homing_tolerance_m": 1000.0
+  }
+]

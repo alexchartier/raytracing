@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import sys
 import tempfile
+import time
 from dataclasses import replace
 from pathlib import Path
 
@@ -112,6 +113,10 @@ def main() -> None:
     parser.add_argument("--anchor-optimizer", choices=("Powell", "Nelder-Mead"), default="Powell")
     parser.add_argument("--vertical-fan-layout", choices=("az_el", "equal_area_guarded"),
                         default="equal_area_guarded")
+    parser.add_argument("--vertical-outer-ray-fraction", type=float, default=1.0,
+                        help="Fraction of equal-area directions outside the near-nadir guard")
+    parser.add_argument("--vertical-guard-seed-limit", type=int,
+                        help="Additional near-nadir minima to optimize; 0 keeps nearest-neighbor minima only")
     args = parser.parse_args()
     if args.anchor_stride < 1:
         parser.error("--anchor-stride must be positive")
@@ -119,6 +124,15 @@ def main() -> None:
         parser.error("--anchor-block-size must be positive")
     if args.anchor_elevation_stride < 1:
         parser.error("--anchor-elevation-stride must be positive")
+    if not 0.0 < args.vertical_outer_ray_fraction <= 1.0:
+        parser.error("--vertical-outer-ray-fraction must be in (0, 1]")
+    if args.vertical_guard_seed_limit is not None and args.vertical_guard_seed_limit < 0:
+        parser.error("--vertical-guard-seed-limit must be nonnegative")
+    if (args.vertical_outer_ray_fraction != 1.0 or args.vertical_guard_seed_limit is not None):
+        if args.vertical_fan_layout != "equal_area_guarded":
+            parser.error("vertical fan reductions require --vertical-fan-layout equal_area_guarded")
+        if args.output is None:
+            parser.error("reduced vertical fans require --output to keep each result separate")
     if args.merge:
         if args.output is not None:
             parser.error("--output cannot be used with --merge")
@@ -130,6 +144,7 @@ def main() -> None:
         parser.error("choose a batch with --start and --stop between 0 and 81")
     if args.output is not None and (args.start != 0 or args.stop != FREQUENCIES.size):
         parser.error("--output requires the complete 0–81 frequency sweep")
+    sweep_start = time.perf_counter()
     with tempfile.TemporaryDirectory(prefix="topside_truth_sweep_") as directory:
         temporary = Path(directory)
         orbit_path = temporary / "generated_orbit.nc"
@@ -141,6 +156,8 @@ def main() -> None:
             frequencies_mhz=(4.0, 5.0, 6.0),
             vertical_elevation_count=24,
             vertical_fan_layout=args.vertical_fan_layout,
+            vertical_outer_ray_fraction=args.vertical_outer_ray_fraction,
+            vertical_guard_seed_limit=args.vertical_guard_seed_limit,
             vertical_azimuth_step_deg=30.0,
             oblique_elevation_count=9,
             oblique_bearing_count=7,
@@ -227,6 +244,9 @@ def main() -> None:
             anchor_optimizer=np.array(args.anchor_optimizer),
             anchor_fan_launch_directions=np.array(anchor_fan_directions),
             fan_launch_directions=np.array(case.fan_elevations_deg.size),
+            vertical_outer_ray_fraction=np.array(args.vertical_outer_ray_fraction),
+            vertical_guard_seed_limit=np.array(-1 if args.vertical_guard_seed_limit is None else args.vertical_guard_seed_limit),
+            runtime_seconds=np.array(time.perf_counter() - sweep_start),
         )
         if full_sweep:
             metadata.update(

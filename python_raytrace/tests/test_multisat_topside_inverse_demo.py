@@ -74,6 +74,17 @@ class MultisatTopsideInverseDemoTests(unittest.TestCase):
         misses[guarded_index] = 1.0
         misses[outer_index] = 0.5
         self.assertIn(guarded_index, _fan_local_minimum_indices(elevations, bearings, misses))
+        self.assertNotIn(guarded_index, _fan_local_minimum_indices(
+            elevations, bearings, misses, guard_seed_limit=0))
+        self.assertIn(guarded_index, _fan_local_minimum_indices(
+            elevations, bearings, misses, guard_seed_limit=1))
+
+        reduced_config = replace(config, vertical_outer_ray_fraction=0.25)
+        reduced_elevations, reduced_bearings = _equal_area_vertical_fan(
+            reduced_config, guard_nadir_rows=3)
+        self.assertEqual(reduced_elevations.size, 99)
+        np.testing.assert_array_equal(reduced_elevations[:36], elevations[:36])
+        np.testing.assert_array_equal(reduced_bearings[:36], bearings[:36])
 
     def test_return_intensity_does_not_depend_on_homing_miss(self) -> None:
         returns = (

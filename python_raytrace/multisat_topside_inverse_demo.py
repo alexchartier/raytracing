@@ -103,6 +103,8 @@ class TopsideInverseConfig:
     vertical_elevation_count: int = 24
     vertical_azimuth_step_deg: float = 30.0
     vertical_fan_layout: str = "az_el"
+    vertical_outer_ray_fraction: float = 1.0
+    vertical_guard_seed_limit: int | None = None
     oblique_elevation_count: int = 31
     oblique_bearing_count: int = 15
     grid_lat_step_deg: float = 0.5
@@ -484,7 +486,8 @@ def _local_minimum_mask(values: np.ndarray) -> np.ndarray:
 
 
 def _fan_local_minimum_indices(elevations_deg: np.ndarray, bearings_deg: np.ndarray,
-                               misses_m: np.ndarray) -> np.ndarray:
+                               misses_m: np.ndarray, *,
+                               guard_seed_limit: int | None = None) -> np.ndarray:
     """Find sampled minima on either a rectangular or equal-area launch fan."""
     elevs = np.asarray(elevations_deg, dtype=float)
     bears = np.asarray(bearings_deg, dtype=float)
@@ -521,6 +524,12 @@ def _fan_local_minimum_indices(elevations_deg: np.ndarray, bearings_deg: np.ndar
     if prefix_rows >= 2:
         guard_misses = misses[:prefix_rows * first_count].reshape(prefix_rows, first_count)
         guard_indices = np.flatnonzero(_local_minimum_mask(guard_misses).ravel())
+        if guard_seed_limit is not None:
+            if guard_seed_limit < 0:
+                raise ValueError("guard_seed_limit must be nonnegative")
+            guard_indices = guard_indices[
+                np.argsort(misses[guard_indices], kind="stable")[:guard_seed_limit]
+            ]
         indices = np.union1d(indices, guard_indices)
     return indices
 
@@ -676,10 +685,14 @@ def _equal_area_vertical_fan(
         raise ValueError("vertical equal-area fan requires elevations within [-90, 0]")
     if not 0 <= guard_nadir_rows < elevation_rows.size:
         raise ValueError("guard_nadir_rows must leave at least one equal-area row")
+    if not 0.0 < config.vertical_outer_ray_fraction <= 1.0:
+        raise ValueError("vertical_outer_ray_fraction must be in (0, 1]")
     guarded_elevations = np.repeat(elevation_rows[:guard_nadir_rows], nominal_azimuths.size)
     guarded_bearings = np.tile(nominal_azimuths, guard_nadir_rows)
     outer_rows = elevation_rows[guard_nadir_rows:]
-    total = outer_rows.size * nominal_azimuths.size
+    total = max(outer_rows.size, int(round(
+        outer_rows.size * nominal_azimuths.size * config.vertical_outer_ray_fraction
+    )))
     theta = np.deg2rad(90.0 + outer_rows)
     weights = np.maximum(np.sin(theta), 1e-9)
     ideal_extra = (total - outer_rows.size) * weights / weights.sum()
@@ -1323,7 +1336,11 @@ def _home_frequency_returns(
         miss_flat[int(flat_index)] = miss_m
 
     unique_elevs = np.unique(elevs)
-    seed_indices = _fan_local_minimum_indices(elevs, bears, miss_flat)
+    vertical_link = tx == rx and bool(np.all(elevs < 0.0))
+    seed_indices = _fan_local_minimum_indices(
+        elevs, bears, miss_flat,
+        guard_seed_limit=config.vertical_guard_seed_limit if vertical_link else None,
+    )
     if seed_indices.size == 0:
         finite = np.flatnonzero(np.isfinite(miss_flat))
         seed_indices = finite[: config.seed_max_candidates_per_frequency]
