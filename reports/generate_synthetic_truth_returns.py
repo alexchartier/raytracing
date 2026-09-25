@@ -1,7 +1,8 @@
-"""Trace the dense-fan synthetic truth sweep used by the standalone ionogram.
+"""Trace synthetic truth returns used by the standalone ionogram.
 
-Run batches with ``python3 reports/generate_synthetic_truth_returns.py --start 0 --stop 10``
-and then use ``--merge`` after all 0–10, 10–20, ..., 80–81 batches finish.
+Run adaptive batches with ``python3 reports/generate_synthetic_truth_returns.py
+--start 0 --stop 10`` and then use ``--merge`` after all 0–10, 10–20,
+..., 80–81 batches finish. ``--method dense`` reproduces the original sweep.
 Requires the installed PyIRI/PHaRLAP runtime.
 """
 
@@ -27,38 +28,48 @@ from python_raytrace.multisat_topside_inverse_demo import (  # noqa: E402
     _home_frequency_returns,
     _subset_problem_cases,
     build_inverse_problem,
+    home_frequency_sweep_adaptive,
 )
 from python_raytrace.tracer import PointToPointRayTracer  # noqa: E402
 
 
-OUTPUT = ROOT / "reports" / "data" / "synthetic_truth_returns_dense_2-10MHz_100kHz.npz"
+DATA_DIR = ROOT / "reports" / "data"
 FREQUENCIES = np.arange(2.0, 10.0001, 0.1)
 
 
-def chunk_path(start: int, stop: int) -> Path:
-    return OUTPUT.parent / f"synthetic_truth_dense_chunk_{start:02d}_{stop:02d}.npz"
+def output_path(method: str) -> Path:
+    return DATA_DIR / f"synthetic_truth_returns_{method}_2-10MHz_100kHz.npz"
 
 
-def merge_chunks() -> None:
+def chunk_path(method: str, start: int, stop: int) -> Path:
+    return DATA_DIR / f"synthetic_truth_{method}_chunk_{start:02d}_{stop:02d}.npz"
+
+
+def merge_chunks(method: str, anchor_stride: int) -> None:
     chunk_ranges = [(start, min(start + 10, len(FREQUENCIES))) for start in range(0, len(FREQUENCIES), 10)]
     record_chunks = []
     counts = np.zeros((len(FREQUENCIES), 2), dtype=int)
     for start, stop in chunk_ranges:
-        with np.load(chunk_path(start, stop), allow_pickle=False) as chunk:
+        with np.load(chunk_path(method, start, stop), allow_pickle=False) as chunk:
+            if str(chunk["method"]) != method or int(chunk["anchor_stride"]) != anchor_stride:
+                raise ValueError(f"Inconsistent sweep settings in {chunk_path(method, start, stop)}")
             record_chunks.append(np.asarray(chunk["records"], dtype=float))
             counts += np.asarray(chunk["count_array"], dtype=int)
     records = np.concatenate(record_chunks)
+    output = output_path(method)
     np.savez_compressed(
-        OUTPUT,
+        output,
         records=records,
         count_array=counts,
         frequencies_mhz=FREQUENCIES,
+        method=np.array(method),
+        anchor_stride=np.array(anchor_stride),
         fan_launch_directions=np.array(288),
         homing_tolerance_m=np.array(1000.0),
     )
     print(f"accepted: {len(records)}; at or above 150 km: "
           f"{np.count_nonzero(records[:, 2] >= 150.0)}", flush=True)
-    print(OUTPUT, flush=True)
+    print(output, flush=True)
 
 
 def main() -> None:
@@ -66,9 +77,13 @@ def main() -> None:
     parser.add_argument("--start", type=int)
     parser.add_argument("--stop", type=int)
     parser.add_argument("--merge", action="store_true")
+    parser.add_argument("--method", choices=("adaptive", "dense"), default="adaptive")
+    parser.add_argument("--anchor-stride", type=int, default=5)
     args = parser.parse_args()
+    if args.anchor_stride < 1:
+        parser.error("--anchor-stride must be positive")
     if args.merge:
-        merge_chunks()
+        merge_chunks(args.method, args.anchor_stride)
         return
     if args.start is None or args.stop is None or not 0 <= args.start < args.stop <= len(FREQUENCIES):
         parser.error("choose a batch with --start and --stop between 0 and 81")
@@ -108,37 +123,47 @@ def main() -> None:
         )
         counts = np.zeros((FREQUENCIES.size, 2), dtype=int)
         records: list[tuple[float, float, float, float, float]] = []
-        for frequency_index in range(args.start, args.stop):
-            frequency_mhz = FREQUENCIES[frequency_index]
-            tracer = PointToPointRayTracer()
-            for mode_index, mode in enumerate((1, -1)):
-                returns = _home_frequency_returns(
-                    tracer,
-                    tx=case.tx_points[1],
-                    rx=case.rx_points[1],
-                    grid=grid,
+        for mode_index, mode in enumerate((1, -1)):
+            if args.method == "adaptive":
+                return_sets = home_frequency_sweep_adaptive(
+                    tx=case.tx_points[1], rx=case.rx_points[1], grid=grid,
                     fan_elevations_deg=case.fan_elevations_deg,
                     fan_bearings_deg=case.fan_bearings_deg,
-                    frequency_mhz=float(frequency_mhz),
-                    ox_mode=mode,
-                    config=config,
+                    frequencies_mhz=FREQUENCIES[args.start:args.stop],
+                    ox_mode=mode, config=config,
+                    range_min_km=150.0, anchor_stride=args.anchor_stride,
                 )
+            else:
+                return_sets = tuple(
+                    _home_frequency_returns(
+                        PointToPointRayTracer(),
+                        tx=case.tx_points[1], rx=case.rx_points[1], grid=grid,
+                        fan_elevations_deg=case.fan_elevations_deg,
+                        fan_bearings_deg=case.fan_bearings_deg,
+                        frequency_mhz=float(FREQUENCIES[frequency_index]),
+                        ox_mode=mode, config=config,
+                    )
+                    for frequency_index in range(args.start, args.stop)
+                )
+            for frequency_index, returns in zip(range(args.start, args.stop), return_sets):
                 counts[frequency_index, mode_index] = len(returns)
                 records.extend(
                     (float(frequency_index), float(mode), ray.group_range_km,
                      ray.miss_m, ray.absorption_db)
                     for ray in returns
                 )
-            print(f"{frequency_index + 1}/{FREQUENCIES.size} frequencies", flush=True)
+                print(f"{frequency_index + 1}/{FREQUENCIES.size} frequencies, mode {mode}", flush=True)
 
         records_array = np.asarray(records, dtype=float).reshape(-1, 5)
-        OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(
-            chunk_path(args.start, args.stop),
+            chunk_path(args.method, args.start, args.stop),
             records=records_array,
             count_array=counts,
+            method=np.array(args.method),
+            anchor_stride=np.array(args.anchor_stride),
         )
-        print(chunk_path(args.start, args.stop), flush=True)
+        print(chunk_path(args.method, args.start, args.stop), flush=True)
 
 
 if __name__ == "__main__":

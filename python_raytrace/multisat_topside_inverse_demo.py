@@ -9,7 +9,7 @@ import math
 import multiprocessing as mp
 from dataclasses import dataclass, replace
 from pathlib import Path
-from typing import Sequence
+from typing import Callable, Sequence
 
 import netCDF4
 import numpy as np
@@ -1086,6 +1086,14 @@ def _trace_fan_for_case_time(
     return group_range_km, miss_m, absorption_db
 
 
+def _canonical_launch_angles(elevation_deg: float, bearing_deg: float) -> tuple[float, float]:
+    """Map equivalent launch angles to elevation within [-90, 90] degrees."""
+    elevation_rad = math.radians(elevation_deg)
+    if math.cos(elevation_rad) < 0.0:
+        bearing_deg += 180.0
+    return math.degrees(math.asin(math.sin(elevation_rad))), bearing_deg % 360.0
+
+
 def _trace_candidate_topside(
     tracer: PointToPointRayTracer,
     *,
@@ -1097,6 +1105,9 @@ def _trace_candidate_topside(
     frequency_mhz: float,
     ox_mode: int,
 ) -> tuple[object, float, float | None, float | None, float]:
+    # Nelder-Mead can step through the nadir pole. Reflect such angles back
+    # into the physical elevation range, rotating the bearing by 180 degrees.
+    elevation_deg, bearing_deg = _canonical_launch_angles(elevation_deg, bearing_deg)
     prepared = tracer.prepare_ray_state_vector_batch(
         tx=tx,
         grid=grid,
@@ -1137,8 +1148,14 @@ def _follow_neighbor_return(
     start_bearing_deg: float,
     homing_tolerance_m: float,
 ) -> tuple[object, float, float | None, float | None, float]:
+    cache: dict[tuple[int, int], tuple[object, float, float | None, float | None, float]] = {}
+
     def evaluate(elevation_deg: float, bearing_deg: float) -> tuple[object, float, float | None, float | None, float]:
-        return _trace_candidate_topside(
+        elevation_deg, bearing_deg = _canonical_launch_angles(elevation_deg, bearing_deg)
+        key = (int(round(elevation_deg * 1e5)), int(round(bearing_deg * 1e5)))
+        if key in cache:
+            return cache[key]
+        result = _trace_candidate_topside(
             tracer,
             tx=tx,
             rx=rx,
@@ -1148,6 +1165,8 @@ def _follow_neighbor_return(
             frequency_mhz=frequency_mhz,
             ox_mode=ox_mode,
         )
+        cache[key] = result
+        return result
 
     ray, miss_m, group_path_km, absorption_db, doppler_hz = evaluate(start_elevation_deg, start_bearing_deg)
     if math.isfinite(miss_m) and miss_m <= homing_tolerance_m:
@@ -1202,17 +1221,9 @@ def _home_frequency_returns(
         nhops=1,
     )
     miss_flat = np.full(elevs.shape, np.inf, dtype=float)
-    ray_lookup: dict[int, object] = {}
-    group_lookup: dict[int, float | None] = {}
-    abs_lookup: dict[int, float | None] = {}
-    dop_lookup: dict[int, float] = {}
     for flat_index, ray in zip(np.flatnonzero(valid_mask), rays):
-        miss_m, group_path_km, absorption_db = _return_leg_distance(ray.path, tx, rx)
+        miss_m, _group_path_km, _absorption_db = _return_leg_distance(ray.path, tx, rx)
         miss_flat[int(flat_index)] = miss_m
-        ray_lookup[int(flat_index)] = ray
-        group_lookup[int(flat_index)] = group_path_km
-        abs_lookup[int(flat_index)] = absorption_db
-        dop_lookup[int(flat_index)] = _doppler_from_summary(ray)
 
     unique_elevs = np.unique(elevs)
     unique_bears = np.unique(bears)
@@ -1231,6 +1242,7 @@ def _home_frequency_returns(
     cache: dict[tuple[int, int], tuple[object, float, float | None, float | None, float]] = {}
 
     def evaluate(elevation_deg: float, bearing_deg: float) -> tuple[object, float, float | None, float | None, float]:
+        elevation_deg, bearing_deg = _canonical_launch_angles(elevation_deg, bearing_deg)
         key = (int(round(elevation_deg * 1e5)), int(round(bearing_deg * 1e5)))
         cached = cache.get(key)
         if cached is not None:
@@ -1285,18 +1297,150 @@ def _home_frequency_returns(
             )
         )
 
+    return _deduplicate_homed_returns(homed, config.homed_max_returns_per_frequency)
+
+
+def _deduplicate_homed_returns(
+    returns: Sequence[HomedRayReturn], max_returns: int,
+) -> tuple[HomedRayReturn, ...]:
+    """Keep distinct physical launch directions and virtual ranges."""
     chosen: list[HomedRayReturn] = []
-    seen: set[tuple[int, int]] = set()
-    for solution in sorted(homed, key=lambda item: (item.group_range_km, item.miss_m)):
-        elev = float(solution.ray.path.get("initial_elev", np.nan))
-        key = (int(round(elev * 5.0)), int(round(solution.group_range_km)))
-        if key in seen:
+    chosen_directions: list[np.ndarray] = []
+    angular_cosine = math.cos(math.radians(0.02))
+    for solution in sorted(returns, key=lambda item: (item.group_range_km, item.miss_m)):
+        elevation = math.radians(float(solution.ray.path["initial_elev"]))
+        bearing = math.radians(float(solution.ray.path["initial_bearing"]))
+        direction = np.array([
+            math.cos(elevation) * math.sin(bearing),
+            math.cos(elevation) * math.cos(bearing),
+            math.sin(elevation),
+        ])
+        if any(
+            abs(solution.group_range_km - prior.group_range_km) < 1.0
+            and float(np.dot(direction, prior_direction)) >= angular_cosine
+            for prior, prior_direction in zip(chosen, chosen_directions)
+        ):
             continue
-        seen.add(key)
         chosen.append(solution)
-        if len(chosen) >= config.homed_max_returns_per_frequency:
+        chosen_directions.append(direction)
+        if len(chosen) >= max_returns:
             break
     return tuple(chosen)
+
+
+def _continue_homed_returns(
+    tracer: PointToPointRayTracer,
+    previous: Sequence[HomedRayReturn],
+    *,
+    tx: GeoPoint,
+    rx: GeoPoint,
+    grid: IonosphereGrid,
+    frequency_mhz: float,
+    ox_mode: int,
+    config: TopsideInverseConfig,
+    range_min_km: float,
+) -> tuple[HomedRayReturn, ...]:
+    """Home the previous frequency's paths at an adjacent frequency."""
+    followed: list[HomedRayReturn] = []
+    for solution in previous:
+        ray, miss_m, group_range_km, absorption_db, doppler_hz = _follow_neighbor_return(
+            tracer,
+            tx=tx,
+            rx=rx,
+            grid=grid,
+            frequency_mhz=frequency_mhz,
+            ox_mode=ox_mode,
+            start_elevation_deg=float(solution.ray.path["initial_elev"]),
+            start_bearing_deg=float(solution.ray.path["initial_bearing"]),
+            homing_tolerance_m=config.homing_tolerance_m,
+        )
+        if (ray is None or not math.isfinite(miss_m) or miss_m > config.homing_tolerance_m
+                or group_range_km is None or not math.isfinite(group_range_km)
+                or group_range_km < range_min_km):
+            continue
+        followed.append(HomedRayReturn(
+            frequency_mhz=frequency_mhz,
+            ox_mode=ox_mode,
+            ray=ray,
+            miss_m=float(miss_m),
+            group_range_km=float(group_range_km),
+            absorption_db=0.0 if absorption_db is None or not math.isfinite(absorption_db) else float(absorption_db),
+            doppler_hz=float(doppler_hz) if math.isfinite(doppler_hz) else 0.0,
+        ))
+    return _deduplicate_homed_returns(followed, config.homed_max_returns_per_frequency)
+
+
+def home_frequency_sweep_adaptive(
+    *,
+    tx: GeoPoint,
+    rx: GeoPoint,
+    grid: IonosphereGrid,
+    fan_elevations_deg: np.ndarray,
+    fan_bearings_deg: np.ndarray,
+    frequencies_mhz: Sequence[float],
+    ox_mode: int,
+    config: TopsideInverseConfig,
+    range_min_km: float = 150.0,
+    anchor_stride: int = 5,
+    tracer_factory: Callable[[], PointToPointRayTracer] = PointToPointRayTracer,
+) -> tuple[tuple[HomedRayReturn, ...], ...]:
+    """Trace a frequency sweep with dense anchors and neighboring-ray homing.
+
+    Every ``anchor_stride`` steps and the final step use the full fan. Between
+    anchors, accepted returns are followed forward and then backward from the
+    next full-fan anchor. A failed continuation triggers a full-fan search.
+    Only returns at or above ``range_min_km`` are retained.
+    """
+    frequencies = np.asarray(frequencies_mhz, dtype=float)
+    if frequencies.ndim != 1 or np.any(np.diff(frequencies) <= 0.0):
+        raise ValueError("frequencies_mhz must be a strictly increasing vector")
+    if anchor_stride < 1:
+        raise ValueError("anchor_stride must be positive")
+    if frequencies.size == 0:
+        return ()
+
+    results: list[tuple[HomedRayReturn, ...]] = []
+    previous_anchor = 0
+
+    def global_search(frequency_mhz: float) -> tuple[HomedRayReturn, ...]:
+        found = _home_frequency_returns(
+            tracer_factory(), tx=tx, rx=rx, grid=grid,
+            fan_elevations_deg=fan_elevations_deg,
+            fan_bearings_deg=fan_bearings_deg,
+            frequency_mhz=frequency_mhz, ox_mode=ox_mode, config=config,
+        )
+        return tuple(solution for solution in found if solution.group_range_km >= range_min_km)
+
+    for frequency_index, frequency_mhz in enumerate(frequencies):
+        frequency_mhz = float(frequency_mhz)
+        is_anchor = frequency_index % anchor_stride == 0 or frequency_index == frequencies.size - 1
+        if is_anchor:
+            current = global_search(frequency_mhz)
+        else:
+            current = _continue_homed_returns(
+                tracer_factory(), results[-1], tx=tx, rx=rx, grid=grid,
+                frequency_mhz=frequency_mhz, ox_mode=ox_mode,
+                config=config, range_min_km=range_min_km,
+            )
+            if not current and results[-1]:
+                current = global_search(frequency_mhz)
+        results.append(current)
+
+        if is_anchor and frequency_index > previous_anchor:
+            for back_index in range(frequency_index - 1, previous_anchor, -1):
+                backward = _continue_homed_returns(
+                    tracer_factory(), results[back_index + 1], tx=tx, rx=rx,
+                    grid=grid, frequency_mhz=float(frequencies[back_index]),
+                    ox_mode=ox_mode, config=config, range_min_km=range_min_km,
+                )
+                results[back_index] = _deduplicate_homed_returns(
+                    (*results[back_index], *backward),
+                    config.homed_max_returns_per_frequency,
+                )
+                if not results[back_index] and results[back_index + 1]:
+                    results[back_index] = global_search(float(frequencies[back_index]))
+            previous_anchor = frequency_index
+    return tuple(results)
 
 
 def _estimate_return_doppler_hz(

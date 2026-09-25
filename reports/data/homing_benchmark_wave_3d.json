@@ -1,0 +1,43 @@
+{
+  "profile": "wave_3d",
+  "fan_directions": 288,
+  "homing_tolerance_m": 1000.0,
+  "anchor_stride": 5,
+  "range_match_tolerance_km": 1.0,
+  "angle_match_tolerance_deg": 0.5,
+  "windows": [
+    {
+      "first_mhz": 2.0,
+      "last_mhz": 2.4,
+      "dense_seconds": 18.97844887500105,
+      "adaptive_seconds": 7.593404208004358,
+      "speedup": 2.499333415570778,
+      "dense_returns": 10,
+      "adaptive_returns": 17,
+      "matched_dense_returns": 10,
+      "misses": []
+    },
+    {
+      "first_mhz": 4.0,
+      "last_mhz": 4.4,
+      "dense_seconds": 19.41765824900358,
+      "adaptive_seconds": 7.83523037499981,
+      "speedup": 2.478249817766724,
+      "dense_returns": 10,
+      "adaptive_returns": 16,
+      "matched_dense_returns": 10,
+      "misses": []
+    },
+    {
+      "first_mhz": 8.0,
+      "last_mhz": 8.4,
+      "dense_seconds": 34.1828113340016,
+      "adaptive_seconds": 24.080483082987485,
+      "speedup": 1.4195234878054113,
+      "dense_returns": 10,
+      "adaptive_returns": 11,
+      "matched_dense_returns": 10,
+      "misses": []
+    }
+  ]
+}

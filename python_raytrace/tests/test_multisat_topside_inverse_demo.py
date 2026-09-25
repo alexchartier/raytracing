@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 
@@ -16,6 +17,8 @@ from python_raytrace.multisat_topside_inverse_demo import (
     CaseObservables,
     HomedRayReturn,
     TopsideInverseConfig,
+    _canonical_launch_angles,
+    _deduplicate_homed_returns,
     _dense_plot_xlim_mhz,
     _masked_visible_field,
     _observed_support_extents,
@@ -32,6 +35,23 @@ from python_raytrace.grid import IonosphereGrid, load_ionosphere_grid_netcdf, sa
 
 
 class MultisatTopsideInverseDemoTests(unittest.TestCase):
+    def test_equivalent_nadir_angles_are_one_return(self) -> None:
+        elevation, bearing = _canonical_launch_angles(-92.0, 214.7)
+        self.assertAlmostEqual(elevation, -88.0)
+        self.assertAlmostEqual(bearing, 34.7)
+
+        def ray_return(elev: float, bear: float, range_km: float) -> HomedRayReturn:
+            ray = SimpleNamespace(path={"initial_elev": elev, "initial_bearing": bear})
+            return HomedRayReturn(4.1, 1, ray, 100.0, range_km, 0.0, 0.0)
+
+        returns = _deduplicate_homed_returns((
+            ray_return(-92.0, 214.7, 958.05),
+            ray_return(-88.0, 34.7, 957.39),
+            ray_return(-87.9, 34.7, 957.50),
+            ray_return(-82.0, 34.7, 957.50),
+        ), 64)
+        self.assertEqual(len(returns), 3)
+
     def test_frequency_axis_generation(self) -> None:
         axis = make_frequency_axis_mhz(5.0, 5.3, 100.0)
         np.testing.assert_allclose(axis, np.array([5.0, 5.1, 5.2, 5.3], dtype=float))
