@@ -5,6 +5,7 @@ The checked-in NPZ contains the accepted returns from a density-scale-1.12
 synthetic truth sweep (2–10 MHz, 100 kHz spacing) with adaptive homing.
 """
 
+import argparse
 from pathlib import Path
 
 import matplotlib
@@ -23,7 +24,13 @@ RANGE_MIN_KM = 150
 
 
 def main() -> None:
-    with np.load(SOURCE, allow_pickle=False) as source:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source", type=Path, default=SOURCE,
+                        help="Accepted-return NPZ from a complete frequency sweep")
+    parser.add_argument("--output-stem", type=Path, default=OUTPUT_STEM,
+                        help="Output path without the PNG or PDF suffix")
+    args = parser.parse_args()
+    with np.load(args.source, allow_pickle=False) as source:
         records = np.asarray(source["records"], dtype=float)
         method = str(source["method"])
         fan_directions = int(source["fan_launch_directions"])
@@ -71,12 +78,12 @@ def main() -> None:
              f"{np.unique(included[:, 0]).size} frequencies. Each occupied bin is shown once; no smoothing.",
              fontsize=10, color="#435969")
 
-    OUTPUT_STEM.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(OUTPUT_STEM.with_suffix(".png"), dpi=300)
-    fig.savefig(OUTPUT_STEM.with_suffix(".pdf"))
+    args.output_stem.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(args.output_stem.with_suffix(".png"), dpi=300)
+    fig.savefig(args.output_stem.with_suffix(".pdf"))
     plt.close(fig)
-    print(OUTPUT_STEM.with_suffix(".png"))
-    print(OUTPUT_STEM.with_suffix(".pdf"))
+    print(args.output_stem.with_suffix(".png"))
+    print(args.output_stem.with_suffix(".pdf"))
 
 
 if __name__ == "__main__":

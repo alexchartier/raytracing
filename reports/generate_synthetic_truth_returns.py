@@ -97,6 +97,8 @@ def main() -> None:
     parser.add_argument("--start", type=int)
     parser.add_argument("--stop", type=int)
     parser.add_argument("--merge", action="store_true")
+    parser.add_argument("--output", type=Path,
+                        help="Output NPZ for a complete 2–10 MHz sweep")
     parser.add_argument("--method", choices=("adaptive", "dense"), default="adaptive")
     parser.add_argument("--anchor-stride", type=int, default=5)
     parser.add_argument("--anchor-block-size", type=int, default=10)
@@ -110,12 +112,16 @@ def main() -> None:
     if args.anchor_elevation_stride < 1:
         parser.error("--anchor-elevation-stride must be positive")
     if args.merge:
+        if args.output is not None:
+            parser.error("--output cannot be used with --merge")
         merge_chunks(args.method, args.anchor_stride, args.anchor_block_size,
                      args.anchor_elevation_stride,
                      args.anchor_optimizer)
         return
     if args.start is None or args.stop is None or not 0 <= args.start < args.stop <= len(FREQUENCIES):
         parser.error("choose a batch with --start and --stop between 0 and 81")
+    if args.output is not None and (args.start != 0 or args.stop != FREQUENCIES.size):
+        parser.error("--output requires the complete 0–81 frequency sweep")
     with tempfile.TemporaryDirectory(prefix="topside_truth_sweep_") as directory:
         temporary = Path(directory)
         orbit_path = temporary / "generated_orbit.nc"
@@ -199,7 +205,7 @@ def main() -> None:
         records_array = np.asarray(records, dtype=float).reshape(-1, 5)
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         full_sweep = args.start == 0 and args.stop == FREQUENCIES.size
-        destination = output_path(args.method) if full_sweep else chunk_path(
+        destination = (args.output or output_path(args.method)) if full_sweep else chunk_path(
             args.method, args.start, args.stop)
         metadata = dict(
             records=records_array,
@@ -217,6 +223,7 @@ def main() -> None:
                 frequencies_mhz=FREQUENCIES,
                 homing_tolerance_m=np.array(config.homing_tolerance_m),
             )
+        destination.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(destination, **metadata)
         print(destination, flush=True)
 
