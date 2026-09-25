@@ -27,6 +27,7 @@ def main() -> None:
         records = np.asarray(source["records"], dtype=float)
         method = str(source["method"])
         fan_directions = int(source["fan_launch_directions"])
+        anchor_directions = int(source["anchor_fan_launch_directions"])
     assert records.shape[1] == 5
     included = records[records[:, 2] >= RANGE_MIN_KM]
     if included.size == 0:
@@ -62,7 +63,8 @@ def main() -> None:
     fig.suptitle("Synthetic truth ionogram", x=0.10, y=0.96, ha="left",
                  fontsize=18, fontweight="bold", color="#173449")
     fig.text(0.10, 0.916,
-             f"2–10 MHz  ·  100 kHz × 1 km bins  ·  {method} homing, {fan_directions}-direction anchors",
+             f"2–10 MHz  ·  100 kHz × 1 km bins  ·  {method} homing, "
+             f"{anchor_directions}-direction anchors ({fan_directions}-direction reference)",
              fontsize=11, color="#435969")
     fig.text(0.10, 0.065,
              f"{len(included)} accepted O/X returns in {np.count_nonzero(occupied)} occupied bins across "

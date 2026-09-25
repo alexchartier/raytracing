@@ -3,15 +3,17 @@
   "fan_directions": 288,
   "homing_tolerance_m": 1000.0,
   "anchor_stride": 5,
+  "adaptive_anchor_optimizer": "Powell with near-nadir Nelder-Mead",
+  "dense_optimizer": "Nelder-Mead",
   "range_match_tolerance_km": 1.0,
   "angle_match_tolerance_deg": 0.5,
   "windows": [
     {
       "first_mhz": 2.0,
       "last_mhz": 2.4,
-      "dense_seconds": 19.544686667009955,
-      "adaptive_seconds": 7.9865053329995135,
-      "speedup": 2.44721387541721,
+      "dense_seconds": 19.316059667005902,
+      "adaptive_seconds": 5.415536792002968,
+      "speedup": 3.5667857885352388,
       "dense_returns": 11,
       "adaptive_returns": 18,
       "matched_dense_returns": 11,
@@ -20,9 +22,9 @@
     {
       "first_mhz": 4.0,
       "last_mhz": 4.4,
-      "dense_seconds": 19.725368916988373,
-      "adaptive_seconds": 7.368486291001318,
-      "speedup": 2.6769906515369053,
+      "dense_seconds": 20.32597612499376,
+      "adaptive_seconds": 3.7840394579980057,
+      "speedup": 5.37150216074847,
       "dense_returns": 10,
       "adaptive_returns": 16,
       "matched_dense_returns": 10,
@@ -31,13 +33,16 @@
     {
       "first_mhz": 8.0,
       "last_mhz": 8.4,
-      "dense_seconds": 29.811726334010018,
-      "adaptive_seconds": 13.493165875013801,
-      "speedup": 2.209394489784965,
+      "dense_seconds": 30.751760376006132,
+      "adaptive_seconds": 7.239178166986676,
+      "speedup": 4.247962913282824,
       "dense_returns": 10,
       "adaptive_returns": 14,
       "matched_dense_returns": 10,
       "misses": []
     }
-  ]
+  ],
+  "anchor_fan_directions": 168,
+  "anchor_elevation_stride": 2,
+  "anchor_block_size": 10
 }

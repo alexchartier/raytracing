@@ -118,11 +118,22 @@ def main() -> None:
                 wave_phase_rad=0.6, wave_bearing_deg=45.0,
             ))
 
+        anchor_rows = np.unique(case.fan_elevations_deg)
+        retained_rows = np.zeros(anchor_rows.size, dtype=bool)
+        retained_rows[:2] = True
+        retained_rows[2::2] = True
+        retained_rows[-1] = True
         result = {
             "profile": args.profile,
             "fan_directions": int(case.fan_elevations_deg.size),
+            "anchor_fan_directions": int(np.count_nonzero(np.isin(
+                case.fan_elevations_deg, anchor_rows[retained_rows]))),
             "homing_tolerance_m": float(config.homing_tolerance_m),
             "anchor_stride": 5,
+            "anchor_block_size": 10,
+            "anchor_elevation_stride": 2,
+            "adaptive_anchor_optimizer": "Powell with near-nadir Nelder-Mead",
+            "dense_optimizer": "Nelder-Mead",
             "range_match_tolerance_km": 1.0,
             "angle_match_tolerance_deg": 0.5,
             "windows": [],
@@ -154,7 +165,8 @@ def main() -> None:
                     fan_elevations_deg=case.fan_elevations_deg,
                     fan_bearings_deg=case.fan_bearings_deg,
                     frequencies_mhz=frequencies, ox_mode=mode, config=config,
-                    range_min_km=150.0, anchor_stride=5,
+                    range_min_km=150.0, anchor_stride=5, anchor_block_size=10,
+                    anchor_elevation_stride=2,
                 )
                 adaptive_seconds += time.perf_counter() - start
                 for frequency_index, solutions in enumerate(adaptive_sets):

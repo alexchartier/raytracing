@@ -1,17 +1,21 @@
 {
   "profile": "wave_3d",
   "fan_directions": 288,
+  "anchor_fan_directions": 168,
   "homing_tolerance_m": 1000.0,
   "anchor_stride": 5,
+  "anchor_elevation_stride": 2,
+  "adaptive_anchor_optimizer": "Powell with near-nadir Nelder-Mead",
+  "dense_optimizer": "Nelder-Mead",
   "range_match_tolerance_km": 1.0,
   "angle_match_tolerance_deg": 0.5,
   "windows": [
     {
       "first_mhz": 2.0,
       "last_mhz": 2.4,
-      "dense_seconds": 18.97844887500105,
-      "adaptive_seconds": 7.593404208004358,
-      "speedup": 2.499333415570778,
+      "dense_seconds": 19.01110074899043,
+      "adaptive_seconds": 5.2000357509969035,
+      "speedup": 3.6559557778705263,
       "dense_returns": 10,
       "adaptive_returns": 17,
       "matched_dense_returns": 10,
@@ -20,9 +24,9 @@
     {
       "first_mhz": 4.0,
       "last_mhz": 4.4,
-      "dense_seconds": 19.41765824900358,
-      "adaptive_seconds": 7.83523037499981,
-      "speedup": 2.478249817766724,
+      "dense_seconds": 19.955124542000704,
+      "adaptive_seconds": 4.115270000009332,
+      "speedup": 4.849043815340294,
       "dense_returns": 10,
       "adaptive_returns": 16,
       "matched_dense_returns": 10,
@@ -31,13 +35,14 @@
     {
       "first_mhz": 8.0,
       "last_mhz": 8.4,
-      "dense_seconds": 34.1828113340016,
-      "adaptive_seconds": 24.080483082987485,
-      "speedup": 1.4195234878054113,
+      "dense_seconds": 35.207388459006324,
+      "adaptive_seconds": 15.255301250013872,
+      "speedup": 2.3078789387377263,
       "dense_returns": 10,
       "adaptive_returns": 11,
       "matched_dense_returns": 10,
       "misses": []
     }
-  ]
+  ],
+  "anchor_block_size": 10
 }

@@ -17,6 +17,8 @@ from python_raytrace.multisat_topside_inverse_demo import (
     CaseObservables,
     HomedRayReturn,
     TopsideInverseConfig,
+    _accumulate_doppler,
+    _accumulate_image,
     _canonical_launch_angles,
     _deduplicate_homed_returns,
     _dense_plot_xlim_mhz,
@@ -35,6 +37,24 @@ from python_raytrace.grid import IonosphereGrid, load_ionosphere_grid_netcdf, sa
 
 
 class MultisatTopsideInverseDemoTests(unittest.TestCase):
+    def test_return_intensity_does_not_depend_on_homing_miss(self) -> None:
+        returns = (
+            HomedRayReturn(2.0, 1, object(), 1.0, 100.0, 0.0, 10.0),
+            HomedRayReturn(2.0, 1, object(), 999.0, 100.0, 0.0, 20.0),
+        )
+        image = np.zeros((1, 1), dtype=float)
+        numerator = np.zeros_like(image)
+        denominator = np.zeros_like(image)
+        frequencies = np.array([2.0])
+        range_edges = np.array([99.0, 101.0])
+        _accumulate_image(image, returns=returns, frequencies_mhz=frequencies,
+                          range_edges_km=range_edges)
+        _accumulate_doppler(numerator, denominator, returns=returns,
+                            frequencies_mhz=frequencies, range_edges_km=range_edges)
+        self.assertEqual(float(image[0, 0]), 2.0)
+        self.assertEqual(float(denominator[0, 0]), 2.0)
+        self.assertEqual(float(numerator[0, 0]), 30.0)
+
     def test_equivalent_nadir_angles_are_one_return(self) -> None:
         elevation, bearing = _canonical_launch_angles(-92.0, 214.7)
         self.assertAlmostEqual(elevation, -88.0)

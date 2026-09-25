@@ -89,8 +89,6 @@ class TopsideInverseConfig:
     oblique_separation_km: float = 600.0
     epoch_offsets: tuple[int, ...] = (-1, 0, 1)
     frequencies_mhz: tuple[float, ...] = (6.0, 8.0, 10.0, 12.0, 14.0)
-    return_gate_km: float = 35.0
-    return_cutoff_sigma: float = 3.0
     range_min_km: float = 150.0
     range_max_km: float = 2600.0
     range_bin_km: float = 25.0
@@ -1196,7 +1194,10 @@ def _home_frequency_returns(
     frequency_mhz: float,
     ox_mode: int,
     config: TopsideInverseConfig,
+    optimizer_method: str = "Nelder-Mead",
 ) -> tuple[HomedRayReturn, ...]:
+    if optimizer_method not in ("Nelder-Mead", "Powell"):
+        raise ValueError("optimizer_method must be Nelder-Mead or Powell")
     elevs = np.asarray(fan_elevations_deg, dtype=float)
     bears = np.asarray(fan_bearings_deg, dtype=float)
     prepared = tracer.prepare_ray_state_vector_batch(
@@ -1267,35 +1268,77 @@ def _home_frequency_returns(
         los_bearing_deg, los_elevation_deg, _ = _line_of_sight_angles(tx, rx)
         seed_points.insert(0, (float(los_elevation_deg), float(los_bearing_deg)))
 
-    homed: list[HomedRayReturn] = []
-    for start_elev, start_bear in seed_points:
+    vertical_fan = bool(np.all(elevs < 0.0))
+    near_nadir_limit = float(unique_elevs[min(1, unique_elevs.size - 1)])
+
+    def home_seed(start_elev: float, start_bear: float, seed_method: str) -> HomedRayReturn | None:
+        use_nadir_coordinates = seed_method == "Powell" and vertical_fan
+
+        def angles_from_params(params: np.ndarray) -> tuple[float, float]:
+            if not use_nadir_coordinates:
+                return float(params[0]), float(params[1])
+            nadir_offset = math.hypot(float(params[0]), float(params[1]))
+            return -90.0 + nadir_offset, math.degrees(math.atan2(float(params[0]), float(params[1]))) % 360.0
 
         def objective(params: np.ndarray) -> float:
-            _ray, miss_m, _group, _absorption, _doppler = evaluate(float(params[0]), float(params[1]))
+            if use_nadir_coordinates and math.hypot(float(params[0]), float(params[1])) > 90.0:
+                return 1e9
+            elevation, bearing = angles_from_params(params)
+            _ray, miss_m, _group, _absorption, _doppler = evaluate(elevation, bearing)
             return miss_m
 
+        if seed_method == "Powell":
+            options = {"ftol": 0.01, "xtol": 0.01, "maxfev": 80, "disp": False}
+            nadir_offset = 90.0 + start_elev
+            bearing_rad = math.radians(start_bear)
+            start_params = (np.array([nadir_offset * math.sin(bearing_rad),
+                                      nadir_offset * math.cos(bearing_rad)]) if use_nadir_coordinates
+                            else np.array([start_elev, start_bear], dtype=float))
+        else:
+            options = {"fatol": config.homing_tolerance_m, "xatol": 0.01, "maxfev": 80, "disp": False}
+            start_params = np.array([start_elev, start_bear], dtype=float)
         result = minimize(
             objective,
-            np.array([start_elev, start_bear], dtype=float),
-            method="Nelder-Mead",
-            options={"fatol": config.homing_tolerance_m, "xatol": 0.01, "maxfev": 80, "disp": False},
+            start_params,
+            method=seed_method,
+            options=options,
         )
-        ray, miss_m, group_path_km, absorption_db, doppler_hz = evaluate(float(result.x[0]), float(result.x[1]))
-        if ray is None or not math.isfinite(miss_m) or group_path_km is None or not math.isfinite(group_path_km):
-            continue
-        if miss_m > config.homing_tolerance_m:
-            continue
-        homed.append(
-            HomedRayReturn(
-                frequency_mhz=float(frequency_mhz),
-                ox_mode=int(ox_mode),
-                ray=ray,
-                miss_m=float(miss_m),
-                group_range_km=float(group_path_km),
-                absorption_db=0.0 if absorption_db is None or not math.isfinite(absorption_db) else float(absorption_db),
-                doppler_hz=float(doppler_hz) if math.isfinite(doppler_hz) else 0.0,
+        result_elev, result_bear = angles_from_params(result.x)
+        ray, miss_m, group_path_km, absorption_db, doppler_hz = evaluate(result_elev, result_bear)
+        if (use_nadir_coordinates and 10.0 < miss_m < 5_000.0
+                and group_path_km is not None and group_path_km >= config.range_min_km):
+            def polish_objective(params: np.ndarray) -> float:
+                return evaluate(float(params[0]), float(params[1]))[1]
+
+            polished = minimize(
+                polish_objective, np.array([result_elev, result_bear]),
+                method="Nelder-Mead",
+                options={"fatol": 10.0, "xatol": 0.01, "maxfev": 40, "disp": False},
             )
+            polished_ray = evaluate(float(polished.x[0]), float(polished.x[1]))
+            if polished_ray[1] < miss_m:
+                ray, miss_m, group_path_km, absorption_db, doppler_hz = polished_ray
+        if ray is None or not math.isfinite(miss_m) or group_path_km is None or not math.isfinite(group_path_km):
+            return None
+        if miss_m > config.homing_tolerance_m:
+            return None
+        return HomedRayReturn(
+            frequency_mhz=float(frequency_mhz),
+            ox_mode=int(ox_mode),
+            ray=ray,
+            miss_m=float(miss_m),
+            group_range_km=float(group_path_km),
+            absorption_db=0.0 if absorption_db is None or not math.isfinite(absorption_db) else float(absorption_db),
+            doppler_hz=float(doppler_hz) if math.isfinite(doppler_hz) else 0.0,
         )
+
+    homed: list[HomedRayReturn] = []
+    for start_elev, start_bear in seed_points:
+        seed_method = ("Nelder-Mead" if optimizer_method == "Powell" and vertical_fan
+                       and start_elev <= near_nadir_limit + 1e-9 else optimizer_method)
+        solution = home_seed(start_elev, start_bear, seed_method)
+        if solution is not None:
+            homed.append(solution)
 
     return _deduplicate_homed_returns(homed, config.homed_max_returns_per_frequency)
 
@@ -1382,13 +1425,18 @@ def home_frequency_sweep_adaptive(
     config: TopsideInverseConfig,
     range_min_km: float = 150.0,
     anchor_stride: int = 5,
+    anchor_block_size: int = 10,
+    anchor_elevation_stride: int = 2,
+    anchor_optimizer: str = "Powell",
     tracer_factory: Callable[[], PointToPointRayTracer] = PointToPointRayTracer,
 ) -> tuple[tuple[HomedRayReturn, ...], ...]:
-    """Trace a frequency sweep with dense anchors and neighboring-ray homing.
+    """Trace a frequency sweep with periodic fan anchors and neighboring-ray homing.
 
-    Every ``anchor_stride`` steps and the final step use the full fan. Between
-    anchors, accepted returns are followed forward and then backward from the
-    next full-fan anchor. A failed continuation triggers a full-fan search.
+    Every ``anchor_stride`` steps, each ``anchor_block_size`` block end, and
+    the final step search an elevation-subset fan. The first two rows nearest
+    nadir are always retained. Powell anchors retain Nelder-Mead for those
+    rows. Between anchors, accepted returns are followed forward and backward.
+    A failed continuation triggers an anchor-fan search.
     Only returns at or above ``range_min_km`` are retained.
     """
     frequencies = np.asarray(frequencies_mhz, dtype=float)
@@ -1396,8 +1444,25 @@ def home_frequency_sweep_adaptive(
         raise ValueError("frequencies_mhz must be a strictly increasing vector")
     if anchor_stride < 1:
         raise ValueError("anchor_stride must be positive")
+    if anchor_block_size < 1:
+        raise ValueError("anchor_block_size must be positive")
+    if anchor_elevation_stride < 1:
+        raise ValueError("anchor_elevation_stride must be positive")
     if frequencies.size == 0:
         return ()
+
+    anchor_elevations = np.asarray(fan_elevations_deg, dtype=float)
+    anchor_bearings = np.asarray(fan_bearings_deg, dtype=float)
+    if anchor_elevation_stride > 1:
+        unique_elevations = np.unique(anchor_elevations)
+        if unique_elevations.size * np.unique(anchor_bearings).size == anchor_elevations.size:
+            retained = np.zeros(unique_elevations.size, dtype=bool)
+            retained[:2] = True
+            retained[2::anchor_elevation_stride] = True
+            retained[-1] = True
+            mask = np.isin(anchor_elevations, unique_elevations[retained])
+            anchor_elevations = anchor_elevations[mask]
+            anchor_bearings = anchor_bearings[mask]
 
     results: list[tuple[HomedRayReturn, ...]] = []
     previous_anchor = 0
@@ -1405,15 +1470,18 @@ def home_frequency_sweep_adaptive(
     def global_search(frequency_mhz: float) -> tuple[HomedRayReturn, ...]:
         found = _home_frequency_returns(
             tracer_factory(), tx=tx, rx=rx, grid=grid,
-            fan_elevations_deg=fan_elevations_deg,
-            fan_bearings_deg=fan_bearings_deg,
+            fan_elevations_deg=anchor_elevations,
+            fan_bearings_deg=anchor_bearings,
             frequency_mhz=frequency_mhz, ox_mode=ox_mode, config=config,
+            optimizer_method=anchor_optimizer,
         )
         return tuple(solution for solution in found if solution.group_range_km >= range_min_km)
 
     for frequency_index, frequency_mhz in enumerate(frequencies):
         frequency_mhz = float(frequency_mhz)
-        is_anchor = frequency_index % anchor_stride == 0 or frequency_index == frequencies.size - 1
+        is_anchor = (frequency_index % anchor_stride == 0
+                     or frequency_index % anchor_block_size == anchor_block_size - 1
+                     or frequency_index == frequencies.size - 1)
         if is_anchor:
             current = global_search(frequency_mhz)
         else:
@@ -1491,20 +1559,6 @@ def _estimate_return_doppler_hz(
     return -float(center_return.frequency_mhz) * 1e6 * range_rate_mps / C_M_PER_S
 
 
-def _return_weight(
-    miss_m: np.ndarray,
-    absorption_db: np.ndarray,
-    config: TopsideInverseConfig,
-) -> np.ndarray:
-    miss_scale_m = max(config.return_gate_km * 1000.0, 1.0)
-    miss = np.asarray(miss_m, dtype=float)
-    absorption = np.asarray(absorption_db, dtype=float)
-    weight = np.exp(-0.5 * (miss / miss_scale_m) ** 2) * 10.0 ** (-np.maximum(absorption, 0.0) / 10.0)
-    cutoff = miss <= config.return_cutoff_sigma * miss_scale_m
-    weight = np.where(np.isfinite(miss) & np.isfinite(absorption) & cutoff, weight, 0.0)
-    return weight
-
-
 def _accumulate_image(
     image: np.ndarray,
     *,
@@ -1520,8 +1574,7 @@ def _accumulate_image(
         range_bin = int(np.digitize(solution.group_range_km, range_edges_km) - 1)
         if range_bin < 0 or range_bin >= image.shape[1]:
             continue
-        miss_scale_m = max(1.0, 35_000.0)
-        weight = math.exp(-0.5 * (solution.miss_m / miss_scale_m) ** 2) * 10.0 ** (-max(solution.absorption_db, 0.0) / 10.0)
+        weight = 10.0 ** (-max(solution.absorption_db, 0.0) / 10.0)
         image[freq_index, range_bin] += weight
 
 
@@ -1541,8 +1594,7 @@ def _accumulate_doppler(
         range_bin = int(np.digitize(solution.group_range_km, range_edges_km) - 1)
         if range_bin < 0 or range_bin >= numerator.shape[1]:
             continue
-        miss_scale_m = max(1.0, 35_000.0)
-        weight = math.exp(-0.5 * (solution.miss_m / miss_scale_m) ** 2) * 10.0 ** (-max(solution.absorption_db, 0.0) / 10.0)
+        weight = 10.0 ** (-max(solution.absorption_db, 0.0) / 10.0)
         numerator[freq_index, range_bin] += weight * solution.doppler_hz
         denominator[freq_index, range_bin] += weight
 

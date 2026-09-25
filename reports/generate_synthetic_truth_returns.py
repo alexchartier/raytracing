@@ -1,8 +1,9 @@
 """Trace synthetic truth returns used by the standalone ionogram.
 
-Run adaptive batches with ``python3 reports/generate_synthetic_truth_returns.py
---start 0 --stop 10`` and then use ``--merge`` after all 0–10, 10–20,
-..., 80–81 batches finish. ``--method dense`` reproduces the original sweep.
+Run the complete adaptive sweep with ``python3
+reports/generate_synthetic_truth_returns.py --start 0 --stop 81``. Shorter
+batches can be merged with ``--merge``. ``--method dense`` reproduces the
+original full-fan sweep.
 Requires the installed PyIRI/PHaRLAP runtime.
 """
 
@@ -45,16 +46,31 @@ def chunk_path(method: str, start: int, stop: int) -> Path:
     return DATA_DIR / f"synthetic_truth_{method}_chunk_{start:02d}_{stop:02d}.npz"
 
 
-def merge_chunks(method: str, anchor_stride: int) -> None:
+def merge_chunks(method: str, anchor_stride: int, anchor_block_size: int,
+                 anchor_elevation_stride: int,
+                 anchor_optimizer: str) -> None:
     chunk_ranges = [(start, min(start + 10, len(FREQUENCIES))) for start in range(0, len(FREQUENCIES), 10)]
     record_chunks = []
     counts = np.zeros((len(FREQUENCIES), 2), dtype=int)
+    anchor_fan_directions = None
+    full_fan_directions = None
     for start, stop in chunk_ranges:
         with np.load(chunk_path(method, start, stop), allow_pickle=False) as chunk:
-            if str(chunk["method"]) != method or int(chunk["anchor_stride"]) != anchor_stride:
+            if (str(chunk["method"]) != method or int(chunk["anchor_stride"]) != anchor_stride
+                    or int(chunk["anchor_block_size"]) != anchor_block_size
+                    or int(chunk["anchor_elevation_stride"]) != anchor_elevation_stride
+                    or str(chunk["anchor_optimizer"]) != anchor_optimizer):
                 raise ValueError(f"Inconsistent sweep settings in {chunk_path(method, start, stop)}")
             record_chunks.append(np.asarray(chunk["records"], dtype=float))
             counts += np.asarray(chunk["count_array"], dtype=int)
+            chunk_fan_directions = int(chunk["anchor_fan_launch_directions"])
+            chunk_full_directions = int(chunk["fan_launch_directions"])
+            if anchor_fan_directions is not None and chunk_fan_directions != anchor_fan_directions:
+                raise ValueError("Inconsistent anchor fan sizes across chunks")
+            if full_fan_directions is not None and chunk_full_directions != full_fan_directions:
+                raise ValueError("Inconsistent full fan sizes across chunks")
+            anchor_fan_directions = chunk_fan_directions
+            full_fan_directions = chunk_full_directions
     records = np.concatenate(record_chunks)
     output = output_path(method)
     np.savez_compressed(
@@ -64,7 +80,11 @@ def merge_chunks(method: str, anchor_stride: int) -> None:
         frequencies_mhz=FREQUENCIES,
         method=np.array(method),
         anchor_stride=np.array(anchor_stride),
-        fan_launch_directions=np.array(288),
+        anchor_block_size=np.array(anchor_block_size),
+        anchor_elevation_stride=np.array(anchor_elevation_stride),
+        anchor_optimizer=np.array(anchor_optimizer),
+        fan_launch_directions=np.array(full_fan_directions),
+        anchor_fan_launch_directions=np.array(anchor_fan_directions),
         homing_tolerance_m=np.array(1000.0),
     )
     print(f"accepted: {len(records)}; at or above 150 km: "
@@ -79,11 +99,20 @@ def main() -> None:
     parser.add_argument("--merge", action="store_true")
     parser.add_argument("--method", choices=("adaptive", "dense"), default="adaptive")
     parser.add_argument("--anchor-stride", type=int, default=5)
+    parser.add_argument("--anchor-block-size", type=int, default=10)
+    parser.add_argument("--anchor-elevation-stride", type=int, default=2)
+    parser.add_argument("--anchor-optimizer", choices=("Powell", "Nelder-Mead"), default="Powell")
     args = parser.parse_args()
     if args.anchor_stride < 1:
         parser.error("--anchor-stride must be positive")
+    if args.anchor_block_size < 1:
+        parser.error("--anchor-block-size must be positive")
+    if args.anchor_elevation_stride < 1:
+        parser.error("--anchor-elevation-stride must be positive")
     if args.merge:
-        merge_chunks(args.method, args.anchor_stride)
+        merge_chunks(args.method, args.anchor_stride, args.anchor_block_size,
+                     args.anchor_elevation_stride,
+                     args.anchor_optimizer)
         return
     if args.start is None or args.stop is None or not 0 <= args.start < args.stop <= len(FREQUENCIES):
         parser.error("choose a batch with --start and --stop between 0 and 81")
@@ -110,6 +139,16 @@ def main() -> None:
         )
         problem = _subset_problem_cases(build_inverse_problem(config), ["plane01_sv121_vertical"])
         case = problem.cases[0]
+        if args.method == "adaptive":
+            unique_elevations = np.unique(case.fan_elevations_deg)
+            retained = np.zeros(unique_elevations.size, dtype=bool)
+            retained[:2] = True
+            retained[2::args.anchor_elevation_stride] = True
+            retained[-1] = True
+            anchor_fan_directions = int(np.count_nonzero(np.isin(
+                case.fan_elevations_deg, unique_elevations[retained])))
+        else:
+            anchor_fan_directions = int(case.fan_elevations_deg.size)
         grid = _apply_fit_params_to_grid(
             problem,
             problem.background_grids[0],
@@ -132,6 +171,9 @@ def main() -> None:
                     frequencies_mhz=FREQUENCIES[args.start:args.stop],
                     ox_mode=mode, config=config,
                     range_min_km=150.0, anchor_stride=args.anchor_stride,
+                    anchor_block_size=args.anchor_block_size,
+                    anchor_elevation_stride=args.anchor_elevation_stride,
+                    anchor_optimizer=args.anchor_optimizer,
                 )
             else:
                 return_sets = tuple(
@@ -156,14 +198,27 @@ def main() -> None:
 
         records_array = np.asarray(records, dtype=float).reshape(-1, 5)
         DATA_DIR.mkdir(parents=True, exist_ok=True)
-        np.savez_compressed(
-            chunk_path(args.method, args.start, args.stop),
+        full_sweep = args.start == 0 and args.stop == FREQUENCIES.size
+        destination = output_path(args.method) if full_sweep else chunk_path(
+            args.method, args.start, args.stop)
+        metadata = dict(
             records=records_array,
             count_array=counts,
             method=np.array(args.method),
             anchor_stride=np.array(args.anchor_stride),
+            anchor_block_size=np.array(args.anchor_block_size),
+            anchor_elevation_stride=np.array(args.anchor_elevation_stride),
+            anchor_optimizer=np.array(args.anchor_optimizer),
+            anchor_fan_launch_directions=np.array(anchor_fan_directions),
+            fan_launch_directions=np.array(case.fan_elevations_deg.size),
         )
-        print(chunk_path(args.method, args.start, args.stop), flush=True)
+        if full_sweep:
+            metadata.update(
+                frequencies_mhz=FREQUENCIES,
+                homing_tolerance_m=np.array(config.homing_tolerance_m),
+            )
+        np.savez_compressed(destination, **metadata)
+        print(destination, flush=True)
 
 
 if __name__ == "__main__":
