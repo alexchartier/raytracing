@@ -1,0 +1,25 @@
+{
+  "scenario": "generated Earth orbit; PyIRI background; one vertical case; 4, 5, 6 MHz; density-scale retrieval only",
+  "same_model": {
+    "true_scale": 1.12,
+    "retrieved_scale": 1.0,
+    "absolute_scale_error": 0.1200000000000001,
+    "objective": 0.006590263964419218,
+    "generated_ionogram_power_sum": 3.830428269876239
+  },
+  "structural_mismatch": {
+    "truth_formula": "PyIRI density times [1.10 + 0.10 exp(-0.5 ((altitude_km - 320)/55)^2)]",
+    "retrieved_scale": 1.1,
+    "objective": 0.0001483409793777315,
+    "profile_nrmse_150_450_km": 0.0665792919316475,
+    "generated_ionogram_power_sum": 5.7041414474525975,
+    "independent_background": false,
+    "independent_ray_tracer": false
+  },
+  "no_return_control": {
+    "generated_ionogram_power_sum": 0.0,
+    "zero_return_candidate_scale": 0.8,
+    "objective": 0.0,
+    "profile_nrmse_150_450_km": 0.31980390118189583
+  }
+}
