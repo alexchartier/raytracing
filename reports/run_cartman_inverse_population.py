@@ -1,9 +1,9 @@
-"""Run one 40-member D-ionogram inverse population privately on Cartman.
+"""Run a D-ionogram candidate population privately on Cartman.
 
     python3 reports/run_cartman_inverse_population.py submit FIT_DIR ROUND RUN_NAME
     python3 reports/run_cartman_inverse_population.py status RUN_NAME
 
-After all 40 outputs finish, copy RUN_NAME/results into a local private folder
+After all outputs finish, copy RUN_NAME/results into a local private folder
 and call ``fit_d_ionogram.py advance`` with that folder.
 """
 
@@ -39,12 +39,14 @@ export XDG_CACHE_HOME="$run/cache/$task"
 export PYTHONDONTWRITEBYTECODE=1
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 line=$(sed -n "${task_id}p" "$run/candidates.tsv")
-read -r density shift <<< "$line"
+read -r density shift width <<< "$line"
 test -n "$density" && test -n "$shift"
+width=${width:-1.0}
 cd "$repo"
 date -u +%s.%N > "$run/status/$task.start"
 __PYTHON__ reports/generate_synthetic_truth_returns.py --start 0 --stop 81 \
   --density-scale "$density" --hmf2-shift-km "$shift" \
+  --f2-width-scale "$width" \
   --output "$run/results/ionogram_$task.npz"
 date -u +%s.%N > "$run/status/$task.finish"
 """
@@ -56,24 +58,36 @@ def _run_path(name: str) -> str:
     return f"{REMOTE_ROOT}/runs/{name}"
 
 
-def submit(workdir: Path, round_number: int, name: str) -> None:
+def submit(workdir: Path, round_number: int, name: str, queues: str | None = None,
+           slots: int = 1) -> None:
     candidates = json.loads((workdir / f"candidates_round_{round_number}.json").read_text())
-    if len(candidates) != 40 or [c["task"] for c in candidates] != list(range(1, 41)):
-        raise ValueError("Expected tasks 1–40")
+    count = len(candidates)
+    if not 1 <= count <= 40 or [c["task"] for c in candidates] != list(range(1, count + 1)):
+        raise ValueError("Expected sequential tasks 1–N with N no greater than 40")
     path = _run_path(name)
     _call_tool("cartman_mkdir", {"zone": "sandbox", "path": name})
-    table = "".join(f"{c['density_scale']:.12f} {c['hmf2_shift_km']:.12f}\n" for c in candidates)
+    table = "".join(f"{c['density_scale']:.12f} {c['hmf2_shift_km']:.12f} "
+                    f"{c.get('f2_width_scale', 1.0):.12f}\n" for c in candidates)
     _call_tool("cartman_write_file", {"zone": "sandbox", "path": f"{name}/candidates.tsv", "text": table})
     # Keep the exact local D generator in the private remote checkout.
     source = (ROOT / "reports" / "generate_synthetic_truth_returns.py").read_text()
     _call_tool("cartman_write_file", {"zone": "repo", "path": "reports/generate_synthetic_truth_returns.py", "text": source})
     script = JOB.replace("__RUN__", path).replace("__ROOT__", REMOTE_ROOT).replace("__PYTHON__", REMOTE_PYTHON)
+    qsub_args = ["-terse", "-cwd", "-S", "/bin/bash", "-N", "inverse_D_40",
+                 "-m", "n", "-t", f"1-{count}", "-tc", str(count),
+                 "-o", "/dev/null", "-e", "/dev/null"]
+    if not 1 <= slots <= 32:
+        raise ValueError("slots must be between 1 and 32")
+    if slots > 1:
+        qsub_args.extend(["-pe", "ocmp", str(slots)])
+    if queues is not None:
+        if not re.fullmatch(r"[A-Za-z0-9.,@_-]+", queues):
+            raise ValueError("Invalid queue list")
+        qsub_args.extend(["-q", queues])
     result = _call_tool("cartman_qsub_submit", {
         "zone": "sandbox", "cwd": name, "script_path": f"{name}/job.sh",
         "script_text": script,
-        "qsub_args": ["-terse", "-cwd", "-S", "/bin/bash", "-N", "inverse_D_40",
-                      "-m", "n", "-t", "1-40", "-tc", "40",
-                      "-o", "/dev/null", "-e", "/dev/null"],
+        "qsub_args": qsub_args,
         "timeout_seconds": 120,
     })["structuredContent"]
     print(json.dumps({"name": name, "job_id": result["job_id"], "remote_path": path}, indent=2))
@@ -89,6 +103,7 @@ run = Path({run!r})
 starts = {{int(p.stem): float(p.read_text()) for p in (run/'status').glob('*.start')}}
 finishes = {{int(p.stem): float(p.read_text()) for p in (run/'status').glob('*.finish')}}
 exits = {{int(p.stem): int(p.read_text()) for p in (run/'status').glob('*.exit')}}
+expected = sum(bool(line.strip()) for line in (run/'candidates.tsv').read_text().splitlines())
 outputs = sorted((run/'results').glob('ionogram_*.npz'))
 valid = []
 for path in outputs:
@@ -101,10 +116,10 @@ for parent, dirs, names in os.walk(run):
         info = path.lstat()
         if info.st_uid != os.getuid() or stat.S_IMODE(info.st_mode) & 0o077:
             violations.append(str(path))
-print(json.dumps({{'started':len(starts),'finished':len(finishes), 'exit_codes':exits,
+print(json.dumps({{'expected':expected,'started':len(starts),'finished':len(finishes), 'exit_codes':exits,
                   'valid_outputs':valid, 'privacy_violations':violations,
                   'first_start_to_last_finish_seconds':
-                    max(finishes.values())-min(starts.values()) if len(finishes)==40 else None}}))
+                    max(finishes.values())-min(starts.values()) if len(finishes)==expected else None}}))
 PYREMOTE"""
     result = _call_tool("cartman_exec_remote", {"zone": "sandbox", "cwd": name,
                                                 "command": command, "timeout_seconds": 120})["structuredContent"]
@@ -120,11 +135,14 @@ def main() -> None:
     sub_submit.add_argument("workdir", type=Path)
     sub_submit.add_argument("round_number", type=int, choices=(1, 2, 3))
     sub_submit.add_argument("run_name")
+    sub_submit.add_argument("--queues", help="Comma-separated SGE queues or queue@host names")
+    sub_submit.add_argument("--slots", type=int, default=1,
+                            help="Reserve this many ocmp slots per ray-tracing job")
     sub_status = sub.add_parser("status")
     sub_status.add_argument("run_name")
     args = parser.parse_args()
     if args.action == "submit":
-        submit(args.workdir, args.round_number, args.run_name)
+        submit(args.workdir, args.round_number, args.run_name, args.queues, args.slots)
     else:
         status(args.run_name)
 

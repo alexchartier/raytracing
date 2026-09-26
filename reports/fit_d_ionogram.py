@@ -23,7 +23,7 @@ from pathlib import Path
 import numpy as np
 from scipy.spatial import cKDTree
 
-BOUNDS = np.array([[0.85, 1.35], [-40.0, 40.0]])
+BOUNDS = np.array([[0.25, 1.40], [-100.0, 100.0]])
 POPULATION = 40
 REFINEMENTS = 3
 
@@ -35,6 +35,7 @@ class Ionogram:
     density_scale: float | None
     hmf2_shift_km: float | None
     settings: tuple
+    f2_width_scale: float = 1.0
 
     @classmethod
     def read(cls, path: Path) -> "Ionogram":
@@ -43,6 +44,7 @@ class Ionogram:
             records = np.asarray(data["records"], dtype=float)
             density = float(data["density_scale"]) if "density_scale" in data else None
             shift = float(data["hmf2_shift_km"]) if "hmf2_shift_km" in data else 0.0
+            width = float(data["f2_width_scale"]) if "f2_width_scale" in data else 1.0
             settings = (str(data["method"]), str(data["vertical_fan_layout"]),
                         float(data["vertical_outer_ray_fraction"]),
                         int(data["vertical_guard_seed_limit"]),
@@ -55,7 +57,7 @@ class Ionogram:
             raise ValueError(f"Bad frequency indices in {path}")
         if settings != ("adaptive", "equal_area_guarded", .5, 4, 1000.0):
             raise ValueError(f"Expected the D generator and 1 km homing gate in {path}: {settings}")
-        return cls(frequencies, records, density, shift, settings)
+        return cls(frequencies, records, density, shift, settings, width)
 
     def nose(self, mode: int) -> float | None:
         indices = self.records[self.records[:, 1] == mode, 0].astype(int)
@@ -84,7 +86,7 @@ def _return_distance(a: np.ndarray, b: np.ndarray) -> float:
 
 
 def score(observed: Ionogram, predicted: Ionogram) -> dict[str, float]:
-    if not np.array_equal(observed.frequencies, predicted.frequencies):
+    if not np.allclose(observed.frequencies, predicted.frequencies, atol=1e-6):
         raise ValueError("Frequency axes differ")
     if observed.settings != predicted.settings:
         raise ValueError("Ionogram generator settings differ")

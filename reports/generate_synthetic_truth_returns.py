@@ -51,6 +51,25 @@ def chunk_path(method: str, start: int, stop: int, fan_layout: str = "az_el") ->
     return DATA_DIR / f"synthetic_truth_{method}{suffix}_chunk_{start:02d}_{stop:02d}.npz"
 
 
+def stretch_f2_width(grid, width_scale: float):
+    """Stretch each background profile about its own F2 peak before shifting it."""
+    if abs(width_scale - 1.0) < 1e-12:
+        return grid
+    altitudes = np.asarray(grid.altitudes_km, dtype=float)
+    source = np.asarray(grid.iono_en_grid, dtype=float)
+    stretched = np.empty_like(source)
+    for latitude in range(source.shape[0]):
+        for longitude in range(source.shape[1]):
+            profile = source[latitude, longitude]
+            peak_altitude = float(altitudes[np.argmax(profile)])
+            mapped_altitudes = peak_altitude + (altitudes - peak_altitude) / width_scale
+            stretched[latitude, longitude] = np.interp(
+                mapped_altitudes, altitudes, profile,
+                left=float(profile[0]), right=float(profile[-1]),
+            )
+    return replace(grid, iono_en_grid=stretched, iono_en_grid_5=stretched)
+
+
 def merge_chunks(method: str, anchor_stride: int, anchor_block_size: int,
                  anchor_elevation_stride: int,
                  anchor_optimizer: str, fan_layout: str,
@@ -117,9 +136,13 @@ def main() -> None:
                         help="Synthetic electron-density multiplier (default: 1.12)")
     parser.add_argument("--hmf2-shift-km", type=float, default=0.0,
                         help="Shift the background density profile in altitude")
+    parser.add_argument("--f2-width-scale", type=float, default=1.0,
+                        help="Stretch the background profile around its F2 peak")
     parser.add_argument("--wave-amplitude-fraction", type=float, default=0.0)
     parser.add_argument("--wave-phase-rad", type=float, default=0.0)
     parser.add_argument("--wave-bearing-deg", type=float, default=0.0)
+    parser.add_argument("--density-grid-npz", type=Path,
+                        help="Independent electron-density grid on the D case axes (cm^-3)")
     parser.add_argument("--anchor-stride", type=int, default=5)
     parser.add_argument("--anchor-block-size", type=int, default=10)
     parser.add_argument("--anchor-elevation-stride", type=int, default=2)
@@ -153,9 +176,12 @@ def main() -> None:
         parser.error("--vertical-guard-seed-limit must be -1 or nonnegative")
     if not 0.0 < args.density_scale < 5.0:
         parser.error("--density-scale must be between 0 and 5")
+    if not 0.5 <= args.f2_width_scale <= 2.0:
+        parser.error("--f2-width-scale must be between 0.5 and 2.0")
     if (args.density_scale != 1.12 or args.hmf2_shift_km != 0.0
+            or args.f2_width_scale != 1.0
             or args.wave_amplitude_fraction != 0.0 or args.wave_phase_rad != 0.0
-            or args.wave_bearing_deg != 0.0) and args.output is None:
+            or args.wave_bearing_deg != 0.0 or args.density_grid_npz is not None) and args.output is None:
         parser.error("non-default ionospheres require --output to keep each result separate")
     guard_seed_limit = None if args.vertical_guard_seed_limit == -1 else args.vertical_guard_seed_limit
     if args.vertical_fan_layout == "az_el":
@@ -213,9 +239,25 @@ def main() -> None:
                 case.fan_elevations_deg, unique_elevations[retained])))
         else:
             anchor_fan_directions = int(case.fan_elevations_deg.size)
+        background_grid = problem.background_grids[0]
+        density_source = "PyIRI"
+        if args.density_grid_npz is not None:
+            with np.load(args.density_grid_npz, allow_pickle=False) as external:
+                for name, actual in (("latitudes_deg", background_grid.latitudes_deg),
+                                     ("longitudes_deg", background_grid.longitudes_deg),
+                                     ("altitudes_km", background_grid.altitudes_km)):
+                    if not np.allclose(external[name], actual, rtol=0.0, atol=1e-8):
+                        raise ValueError(f"Independent density grid has a different {name} axis")
+                density = np.asarray(external["electron_density_cm3"], dtype=float)
+                density_source = str(external["model"])
+            if density.shape != background_grid.iono_en_grid.shape or not np.all(np.isfinite(density)) or np.any(density <= 0):
+                raise ValueError("Independent density grid has invalid shape or nonpositive density")
+            background_grid = replace(background_grid, iono_en_grid=density,
+                                      iono_en_grid_5=density)
+        background_grid = stretch_f2_width(background_grid, args.f2_width_scale)
         grid = _apply_fit_params_to_grid(
             problem,
-            problem.background_grids[0],
+            background_grid,
             IonosphereFitParams(
                 density_scale=args.density_scale,
                 hmf2_shift_km=args.hmf2_shift_km,
@@ -280,9 +322,11 @@ def main() -> None:
             vertical_guard_seed_limit=np.array(args.vertical_guard_seed_limit),
             density_scale=np.array(args.density_scale),
             hmf2_shift_km=np.array(args.hmf2_shift_km),
+            f2_width_scale=np.array(args.f2_width_scale),
             wave_amplitude_fraction=np.array(args.wave_amplitude_fraction),
             wave_phase_rad=np.array(args.wave_phase_rad),
             wave_bearing_deg=np.array(args.wave_bearing_deg),
+            density_source=np.array(density_source),
             runtime_seconds=np.array(time.perf_counter() - sweep_start),
         )
         if full_sweep:

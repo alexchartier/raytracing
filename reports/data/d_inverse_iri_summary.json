@@ -1,0 +1,67 @@
+{
+  "candidate_count": 160,
+  "best_score_by_population": [
+    0.7048622269656356,
+    0.3509586660565453,
+    0.2924503974624919,
+    0.20141922618269595
+  ],
+  "retrieved": {
+    "density_scale": 0.445463946842,
+    "hmf2_shift_km": -58.904091227594,
+    "score": {
+      "return_distance": 0.15687789443982936,
+      "nose": 0.2500000000000002,
+      "ridge": 0.2631819212039487,
+      "total": 0.20141922618269595
+    },
+    "f2_width_scale": 1.466678922275
+  },
+  "returns": {
+    "truth": {
+      "1": 56,
+      "-1": 60
+    },
+    "retrieved": {
+      "1": 41,
+      "-1": 56
+    }
+  },
+  "nose_mhz": {
+    "truth": {
+      "1": 5.400000000000003,
+      "-1": 5.400000000000003
+    },
+    "retrieved": {
+      "1": 5.200000000000003,
+      "-1": 5.600000000000003
+    }
+  },
+  "common_frequency_median_range_mae_km": {
+    "1": 15.09910424394786,
+    "-1": 19.76769658474362
+  },
+  "density_at_sounder": {
+    "latitude_deg": -53.67859907285381,
+    "longitude_deg": 7.7400542554165135,
+    "truth_peak_cm3": 362539.1342868797,
+    "truth_peak_altitude_km": 260.0,
+    "retrieved_peak_cm3": 349281.5175864878,
+    "retrieved_peak_altitude_km": 280.0,
+    "rms_error_150_to_600_km_relative_to_truth_peak": 0.06264131729955728,
+    "median_absolute_percentage_error_150_to_600_km": 13.020672453900662,
+    "rms_error_peak_to_600_km_relative_to_truth_peak": 0.04092512148659203,
+    "median_absolute_percentage_error_peak_to_600_km": 12.959147606973215,
+    "rms_error_150_km_to_below_peak_relative_to_truth_peak": 0.10963842056787028
+  },
+  "profile_oracle_diagnostic": {
+    "uses_truth_density_for_selection": true,
+    "candidate": {
+      "density_scale": 0.456937481208,
+      "hmf2_shift_km": -79.031742929434,
+      "f2_width_scale": 1.326618624345
+    },
+    "ionogram_score": 0.3326730141097871,
+    "rms_error_150_to_600_km_relative_to_truth_peak": 0.03707360140582976
+  }
+}

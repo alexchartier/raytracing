@@ -13,36 +13,38 @@ from matplotlib.colors import ListedColormap, BoundaryNorm
 from fit_d_ionogram import Ionogram, score
 
 
-def _image(ionogram: Ionogram, mode: int) -> np.ndarray:
-    image = np.zeros((1450, 81), dtype=np.uint8)
+def _image(ionogram: Ionogram, mode: int, range_max_km: int) -> np.ndarray:
+    image = np.zeros((range_max_km - 150, 81), dtype=np.uint8)
     records = ionogram.records[ionogram.records[:, 1] == mode]
     for row in records:
         index = int(row[0])
         bin_km = int(np.floor(row[2])) - 150
-        if 0 <= index < 81 and 0 <= bin_km < 1450:
+        if 0 <= index < 81 and 0 <= bin_km < image.shape[0]:
             image[bin_km, index] = min(int(image[bin_km, index]) + 1, 3)
     return image
 
 
-def plot(state_path: Path, output_prefix: Path) -> None:
+def plot(state_path: Path, output_prefix: Path, *, truth_label: str = "Synthetic truth") -> None:
     state = json.loads(state_path.read_text())
     evaluations = state["evaluations"]
     best = min(evaluations, key=lambda row: row["score"]["total"])
     observed = Ionogram.read(Path(state["observed"]))
     retrieved = Ionogram.read(Path(best["path"]))
+    maximum_return_km = max(np.max(observed.records[:, 2]), np.max(retrieved.records[:, 2]))
+    range_max_km = max(1600, int(np.ceil((maximum_return_km + 1) / 100.0) * 100))
     colors = ListedColormap(["white", "#253a5e", "#a25422", "#5e2319"])
     norm = BoundaryNorm([-.5, .5, 1.5, 2.5, 3.5], colors.N)
     fig, axes = plt.subplots(2, 2, figsize=(16, 15), sharex=True, sharey=True,
                              constrained_layout=True)
-    for column, (ionogram, title) in enumerate(((observed, "Synthetic truth"), (retrieved, "Retrieved"))):
+    for column, (ionogram, title) in enumerate(((observed, truth_label), (retrieved, "Retrieved"))):
         for row, (mode, label) in enumerate(((1, "O mode"), (-1, "X mode"))):
             ax = axes[row, column]
-            ax.imshow(_image(ionogram, mode), origin="lower", aspect="auto",
+            ax.imshow(_image(ionogram, mode, range_max_km), origin="lower", aspect="auto",
                       interpolation="nearest", cmap=colors, norm=norm,
-                      extent=(1.95, 10.05, 150, 1600))
+                      extent=(1.95, 10.05, 150, range_max_km))
             ax.set_title(f"{title}: {label} ({len(ionogram.records[ionogram.records[:, 1] == mode])} returns)")
             ax.set_xlim(2, 10)
-            ax.set_ylim(150, 1600)
+            ax.set_ylim(150, range_max_km)
             ax.set_xlabel("Frequency (MHz)")
             ax.set_ylabel("Group range (km)")
     fig.suptitle("D ionogram: 0.1 MHz × 1 km bins; blue = 1, ochre = 2, red = 3+ accepted returns", fontsize=15)
@@ -59,9 +61,11 @@ def plot(state_path: Path, output_prefix: Path) -> None:
         if boundary < len(costs):
             ax.axvline(boundary + .5, color="#888888", linestyle="--", linewidth=1)
     ax.set_yscale("log")
+    width_label = (f", width {best['f2_width_scale']:.3f}"
+                   if "f2_width_scale" in best else "")
     ax.set(xlabel="Completed forward ionograms", ylabel="Best return score (log scale)",
            title=(f"Fit convergence; final density {best['density_scale']:.4f}, "
-                  f"height shift {best['hmf2_shift_km']:+.1f} km"))
+                  f"height shift {best['hmf2_shift_km']:+.1f} km{width_label}"))
     ax.grid(alpha=.2)
     convergence = output_prefix.with_name(output_prefix.name + "_convergence.png")
     fig.savefig(convergence, dpi=200)
@@ -74,8 +78,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("state", type=Path)
     parser.add_argument("output_prefix", type=Path)
+    parser.add_argument("--truth-label", default="Synthetic truth")
     args = parser.parse_args()
-    plot(args.state, args.output_prefix)
+    plot(args.state, args.output_prefix, truth_label=args.truth_label)
 
 
 if __name__ == "__main__":

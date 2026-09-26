@@ -1,0 +1,2082 @@
+[
+  {
+    "candidate_index": 1,
+    "population": 0,
+    "density_scale": 0.9,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.5682424160209383,
+      "nose": 0.625,
+      "ridge": 0.7955937032121074,
+      "total": 0.6279020694539376
+    }
+  },
+  {
+    "candidate_index": 2,
+    "population": 0,
+    "density_scale": 0.91,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.5443197322957138,
+      "nose": 0.625,
+      "ridge": 0.7689454406864334,
+      "total": 0.6094149408999293
+    }
+  },
+  {
+    "candidate_index": 3,
+    "population": 0,
+    "density_scale": 0.92,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.5210937494093936,
+      "nose": 0.5625000000000002,
+      "ridge": 0.7435843302419818,
+      "total": 0.5759434282235629
+    }
+  },
+  {
+    "candidate_index": 4,
+    "population": 0,
+    "density_scale": 0.93,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.4942548922946977,
+      "nose": 0.5000000000000004,
+      "ridge": 0.7188101167907979,
+      "total": 0.5406022141202435
+    }
+  },
+  {
+    "candidate_index": 5,
+    "population": 0,
+    "density_scale": 0.94,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.459946541094803,
+      "nose": 0.43750000000000067,
+      "ridge": 0.6920301419395338,
+      "total": 0.5007516259900486
+    }
+  },
+  {
+    "candidate_index": 6,
+    "population": 0,
+    "density_scale": 0.95,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.4340580848120491,
+      "nose": 0.37500000000000033,
+      "ridge": 0.6652955533981619,
+      "total": 0.4655410573262595
+    }
+  },
+  {
+    "candidate_index": 7,
+    "population": 0,
+    "density_scale": 0.96,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.4090825069141386,
+      "nose": 0.31249999999999944,
+      "ridge": 0.6374877643945809,
+      "total": 0.43061793168169227
+    }
+  },
+  {
+    "candidate_index": 8,
+    "population": 0,
+    "density_scale": 0.97,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.38618111170573244,
+      "nose": 0.31249999999999944,
+      "ridge": 0.6062273506354979,
+      "total": 0.4117700815652523
+    }
+  },
+  {
+    "candidate_index": 9,
+    "population": 0,
+    "density_scale": 0.98,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.36337483498256073,
+      "nose": 0.2499999999999991,
+      "ridge": 0.5751441721699714,
+      "total": 0.3773849936744025
+    }
+  },
+  {
+    "candidate_index": 10,
+    "population": 0,
+    "density_scale": 0.99,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.3452565897882706,
+      "nose": 0.18749999999999933,
+      "ridge": 0.5436125450272731,
+      "total": 0.3454886333890033
+    }
+  },
+  {
+    "candidate_index": 11,
+    "population": 0,
+    "density_scale": 1.0,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.3249369129729913,
+      "nose": 0.12499999999999956,
+      "ridge": 0.5097914962442904,
+      "total": 0.3119236013840032
+    }
+  },
+  {
+    "candidate_index": 12,
+    "population": 0,
+    "density_scale": 1.01,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.30381014768703035,
+      "nose": 0.06249999999999978,
+      "ridge": 0.47643869696814023,
+      "total": 0.2780083206214947
+    }
+  },
+  {
+    "candidate_index": 13,
+    "population": 0,
+    "density_scale": 1.02,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.27945527674176907,
+      "nose": 0.06249999999999978,
+      "ridge": 0.43593790279221,
+      "total": 0.25651298276641493
+    }
+  },
+  {
+    "candidate_index": 14,
+    "population": 0,
+    "density_scale": 1.03,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.25529235839528863,
+      "nose": 0.0,
+      "ridge": 0.40038243177014754,
+      "total": 0.22048728347143826
+    }
+  },
+  {
+    "candidate_index": 15,
+    "population": 0,
+    "density_scale": 1.04,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.23218699756279038,
+      "nose": 0.06249999999999978,
+      "ridge": 0.3531549138295735,
+      "total": 0.21395883142544936
+    }
+  },
+  {
+    "candidate_index": 16,
+    "population": 0,
+    "density_scale": 1.05,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.20893170547179768,
+      "nose": 0.12500000000000067,
+      "ridge": 0.30230489905109226,
+      "total": 0.20662341781970736
+    }
+  },
+  {
+    "candidate_index": 17,
+    "population": 0,
+    "density_scale": 1.06,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.19688487844031874,
+      "nose": 0.18750000000000044,
+      "ridge": 0.25364710362580467,
+      "total": 0.20589110386733636
+    }
+  },
+  {
+    "candidate_index": 18,
+    "population": 0,
+    "density_scale": 1.07,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.17489154122709982,
+      "nose": 0.18750000000000044,
+      "ridge": 0.21247550126992254,
+      "total": 0.18556044792888954
+    }
+  },
+  {
+    "candidate_index": 19,
+    "population": 0,
+    "density_scale": 1.08,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.1535445413974788,
+      "nose": 0.2500000000000002,
+      "ridge": 0.17912006780022308,
+      "total": 0.18277351132865802
+    }
+  },
+  {
+    "candidate_index": 20,
+    "population": 0,
+    "density_scale": 1.09,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.13168390744205113,
+      "nose": 0.3125000000000011,
+      "ridge": 0.15171744784351912,
+      "total": 0.18089463866183222
+    }
+  },
+  {
+    "candidate_index": 21,
+    "population": 0,
+    "density_scale": 1.1,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.11660165952211005,
+      "nose": 0.3750000000000009,
+      "ridge": 0.1340350288063948,
+      "total": 0.18468791849843974
+    }
+  },
+  {
+    "candidate_index": 22,
+    "population": 0,
+    "density_scale": 1.11,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.10928134487616756,
+      "nose": 0.3750000000000009,
+      "ridge": 0.12692120794881095,
+      "total": 0.17923898127165458
+    }
+  },
+  {
+    "candidate_index": 23,
+    "population": 0,
+    "density_scale": 1.12,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.1024611127117904,
+      "nose": 0.43750000000000067,
+      "ridge": 0.12333548944345499,
+      "total": 0.1903957098801759
+    }
+  },
+  {
+    "candidate_index": 24,
+    "population": 0,
+    "density_scale": 1.13,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.10782826096563378,
+      "nose": 0.5000000000000004,
+      "ridge": 0.13183933195684278,
+      "total": 0.21067340992246725
+    }
+  },
+  {
+    "candidate_index": 25,
+    "population": 0,
+    "density_scale": 1.14,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.10177562280877236,
+      "nose": 0.5625000000000002,
+      "ridge": 0.13161269256572267,
+      "total": 0.22292413105796938
+    }
+  },
+  {
+    "candidate_index": 26,
+    "population": 0,
+    "density_scale": 1.15,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.10463780332565795,
+      "nose": 0.5625000000000002,
+      "ridge": 0.14326309716327332,
+      "total": 0.22682841126176662
+    }
+  },
+  {
+    "candidate_index": 27,
+    "population": 0,
+    "density_scale": 1.16,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.10943617894928026,
+      "nose": 0.625,
+      "ridge": 0.15771238946980165,
+      "total": 0.24798237631606448
+    }
+  },
+  {
+    "candidate_index": 28,
+    "population": 0,
+    "density_scale": 1.17,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.124511233210617,
+      "nose": 0.6875000000000009,
+      "ridge": 0.1797386776124037,
+      "total": 0.2763039137883203
+    }
+  },
+  {
+    "candidate_index": 29,
+    "population": 0,
+    "density_scale": 1.18,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.14971343623770017,
+      "nose": 0.7500000000000018,
+      "ridge": 0.20582135041412092,
+      "total": 0.31100666001355975
+    }
+  },
+  {
+    "candidate_index": 30,
+    "population": 0,
+    "density_scale": 1.19,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.1660361639972757,
+      "nose": 0.7500000000000018,
+      "ridge": 0.23517039224145506,
+      "total": 0.32585396864679306
+    }
+  },
+  {
+    "candidate_index": 31,
+    "population": 0,
+    "density_scale": 1.2,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.19082236510019113,
+      "nose": 0.8125000000000016,
+      "ridge": 0.26375744178497706,
+      "total": 0.3608287891621009
+    }
+  },
+  {
+    "candidate_index": 32,
+    "population": 0,
+    "density_scale": 1.21,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.21256615431279086,
+      "nose": 0.8750000000000013,
+      "ridge": 0.29109433738910584,
+      "total": 0.3938802523498565
+    }
+  },
+  {
+    "candidate_index": 33,
+    "population": 0,
+    "density_scale": 1.22,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.2320904228188849,
+      "nose": 0.9375000000000007,
+      "ridge": 0.31785892275250255,
+      "total": 0.42559651710088736
+    }
+  },
+  {
+    "candidate_index": 34,
+    "population": 0,
+    "density_scale": 1.23,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.25929152991218485,
+      "nose": 0.9375000000000007,
+      "ridge": 0.3446472661684149,
+      "total": 0.4459147946853848
+    }
+  },
+  {
+    "candidate_index": 35,
+    "population": 0,
+    "density_scale": 1.24,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.2840802789790748,
+      "nose": 1.0,
+      "ridge": 0.37018075886570107,
+      "total": 0.4802803052116314
+    }
+  },
+  {
+    "candidate_index": 36,
+    "population": 0,
+    "density_scale": 1.25,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.3045070886973015,
+      "nose": 1.0,
+      "ridge": 0.395165487644798,
+      "total": 0.49651199631247545
+    }
+  },
+  {
+    "candidate_index": 37,
+    "population": 0,
+    "density_scale": 1.26,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.3195501718244115,
+      "nose": 1.0,
+      "ridge": 0.4187442685823656,
+      "total": 0.5095014482198994
+    }
+  },
+  {
+    "candidate_index": 38,
+    "population": 0,
+    "density_scale": 1.27,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.3392169978760285,
+      "nose": 1.0,
+      "ridge": 0.4419598972728839,
+      "total": 0.5249613282863925
+    }
+  },
+  {
+    "candidate_index": 39,
+    "population": 0,
+    "density_scale": 1.28,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.3548116475434342,
+      "nose": 1.0,
+      "ridge": 0.46391126932912363,
+      "total": 0.5379286600147135
+    }
+  },
+  {
+    "candidate_index": 40,
+    "population": 0,
+    "density_scale": 1.29,
+    "hmf2_shift_km": 0.0,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.37026454289919586,
+      "nose": 1.0,
+      "ridge": 0.4806194664846082,
+      "total": 0.5497693918914793
+    }
+  },
+  {
+    "candidate_index": 41,
+    "population": 1,
+    "density_scale": 0.932627601501,
+    "hmf2_shift_km": -4.501703948242,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.5885973978133088,
+      "nose": 0.5000000000000004,
+      "ridge": 0.8311001730322602,
+      "total": 0.6149486034037721
+    }
+  },
+  {
+    "candidate_index": 42,
+    "population": 1,
+    "density_scale": 0.955790574901,
+    "hmf2_shift_km": -4.902574993809,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.5306563225402674,
+      "nose": 0.37500000000000033,
+      "ridge": 0.7869867056161863,
+      "total": 0.5430083185203844
+    }
+  },
+  {
+    "candidate_index": 43,
+    "population": 1,
+    "density_scale": 0.996648365184,
+    "hmf2_shift_km": -10.877432874251,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.5610880301984428,
+      "nose": 0.18749999999999933,
+      "ridge": 0.855937047820063,
+      "total": 0.526660826173156
+    }
+  },
+  {
+    "candidate_index": 44,
+    "population": 1,
+    "density_scale": 1.01170126414,
+    "hmf2_shift_km": -12.795356333872,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.5671459561843344,
+      "nose": 0.12499999999999956,
+      "ridge": 0.8750810571701748,
+      "total": 0.5181964873354188
+    }
+  },
+  {
+    "candidate_index": 45,
+    "population": 1,
+    "density_scale": 1.054049393217,
+    "hmf2_shift_km": -7.529040974001,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.36066794143354863,
+      "nose": 0.06249999999999978,
+      "ridge": 0.5752682693102891,
+      "total": 0.32904602165050956
+    }
+  },
+  {
+    "candidate_index": 46,
+    "population": 1,
+    "density_scale": 1.072726766504,
+    "hmf2_shift_km": -3.307906512069,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.22909166765700056,
+      "nose": 0.18750000000000044,
+      "ridge": 0.32132171849556707,
+      "total": 0.23713976091046385
+    }
+  },
+  {
+    "candidate_index": 47,
+    "population": 1,
+    "density_scale": 1.113847068416,
+    "hmf2_shift_km": -13.01197184926,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.3409553423209692,
+      "nose": 0.3750000000000009,
+      "ridge": 0.516326530743987,
+      "total": 0.3845407444253307
+    }
+  },
+  {
+    "candidate_index": 48,
+    "population": 1,
+    "density_scale": 1.129111116404,
+    "hmf2_shift_km": -12.008087625701,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.29779134713419786,
+      "nose": 0.43750000000000067,
+      "ridge": 0.43494142975083,
+      "total": 0.360148526873975
+    }
+  },
+  {
+    "candidate_index": 49,
+    "population": 1,
+    "density_scale": 0.922344302829,
+    "hmf2_shift_km": 8.712013805431,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.34145153379411974,
+      "nose": 0.5625000000000002,
+      "ridge": 0.46487133237453043,
+      "total": 0.42139761006167203
+    }
+  },
+  {
+    "candidate_index": 50,
+    "population": 1,
+    "density_scale": 0.948508252996,
+    "hmf2_shift_km": 4.820189075148,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.34407793571491146,
+      "nose": 0.43750000000000067,
+      "ridge": 0.51260194877041,
+      "total": 0.4011382543972835
+    }
+  },
+  {
+    "candidate_index": 51,
+    "population": 1,
+    "density_scale": 0.986925190942,
+    "hmf2_shift_km": 6.304421083634,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.24409314707810575,
+      "nose": 0.2499999999999991,
+      "ridge": 0.3363204501923606,
+      "total": 0.2640153209314301
+    }
+  },
+  {
+    "candidate_index": 52,
+    "population": 1,
+    "density_scale": 1.018626875574,
+    "hmf2_shift_km": 8.488948676605,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.09722132201343645,
+      "nose": 0.12499999999999956,
+      "ridge": 0.14909871698265473,
+      "total": 0.11454147050392088
+    }
+  },
+  {
+    "candidate_index": 53,
+    "population": 1,
+    "density_scale": 1.027937152068,
+    "hmf2_shift_km": 5.110785179524,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.14416499996608081,
+      "nose": 0.06249999999999978,
+      "ridge": 0.2255556077063806,
+      "total": 0.14002687152262053
+    }
+  },
+  {
+    "candidate_index": 54,
+    "population": 1,
+    "density_scale": 1.063781195765,
+    "hmf2_shift_km": 0.017906836724,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.18587951607488762,
+      "nose": 0.18750000000000044,
+      "ridge": 0.23570897875589944,
+      "total": 0.1962505295923682
+    }
+  },
+  {
+    "candidate_index": 55,
+    "population": 1,
+    "density_scale": 1.10316428736,
+    "hmf2_shift_km": 3.22655562137,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.06806791765679782,
+      "nose": 0.3750000000000009,
+      "ridge": 0.0704075861787947,
+      "total": 0.14526887194699795
+    }
+  },
+  {
+    "candidate_index": 56,
+    "population": 1,
+    "density_scale": 1.132937946032,
+    "hmf2_shift_km": -1.292817654592,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.1137816919760099,
+      "nose": 0.5000000000000004,
+      "ridge": 0.13734635896768793,
+      "total": 0.21504920238034314
+    }
+  },
+  {
+    "candidate_index": 57,
+    "population": 1,
+    "density_scale": 0.911782212412,
+    "hmf2_shift_km": 10.604296855498,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.31865474937063953,
+      "nose": 0.625,
+      "ridge": 0.4355947869181187,
+      "total": 0.4186290695374755
+    }
+  },
+  {
+    "candidate_index": 58,
+    "population": 1,
+    "density_scale": 0.938250737989,
+    "hmf2_shift_km": 16.956789209538,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.15974247845884199,
+      "nose": 0.43750000000000067,
+      "ridge": 0.2064154820073824,
+      "total": 0.23851645955383977
+    }
+  },
+  {
+    "candidate_index": 59,
+    "population": 1,
+    "density_scale": 0.992416745044,
+    "hmf2_shift_km": 18.173790185895,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.18759176614609008,
+      "nose": 0.18749999999999933,
+      "ridge": 0.28109869034282264,
+      "total": 0.20627020944891392
+    }
+  },
+  {
+    "candidate_index": 60,
+    "population": 1,
+    "density_scale": 1.005351097503,
+    "hmf2_shift_km": 16.640208959034,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.1815972653153595,
+      "nose": 0.12499999999999956,
+      "ridge": 0.2702618823736179,
+      "total": 0.1851808723981712
+    }
+  },
+  {
+    "candidate_index": 61,
+    "population": 1,
+    "density_scale": 1.056211059507,
+    "hmf2_shift_km": 20.42632525593,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.2993585060689642,
+      "nose": 0.12500000000000067,
+      "ridge": 0.479349166378128,
+      "total": 0.2917670116135561
+    }
+  },
+  {
+    "candidate_index": 62,
+    "population": 1,
+    "density_scale": 1.083302493386,
+    "hmf2_shift_km": 16.54960218726,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.28001056057635576,
+      "nose": 0.2500000000000002,
+      "ridge": 0.4614117245451198,
+      "total": 0.3087881532260197
+    }
+  },
+  {
+    "candidate_index": 63,
+    "population": 1,
+    "density_scale": 1.113569710434,
+    "hmf2_shift_km": 11.778501185009,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.24893997327952444,
+      "nose": 0.3750000000000009,
+      "ridge": 0.4068544774117938,
+      "total": 0.3120378807860974
+    }
+  },
+  {
+    "candidate_index": 64,
+    "population": 1,
+    "density_scale": 1.119488148806,
+    "hmf2_shift_km": 13.467957693835,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.2972303012635181,
+      "nose": 0.3750000000000009,
+      "ridge": 0.4878657875907828,
+      "total": 0.3547998232130918
+    }
+  },
+  {
+    "candidate_index": 65,
+    "population": 1,
+    "density_scale": 0.919207013644,
+    "hmf2_shift_km": 25.590211773201,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.2293632758535872,
+      "nose": 0.625,
+      "ridge": 0.33599553670151444,
+      "total": 0.34959890905977586
+    }
+  },
+  {
+    "candidate_index": 66,
+    "population": 1,
+    "density_scale": 0.945476262892,
+    "hmf2_shift_km": 29.152811752092,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.31323469741215626,
+      "nose": 0.5000000000000004,
+      "ridge": 0.4972907258332282,
+      "total": 0.3967372287433317
+    }
+  },
+  {
+    "candidate_index": 67,
+    "population": 1,
+    "density_scale": 0.983378539109,
+    "hmf2_shift_km": 30.70406200879,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.38810579234935316,
+      "nose": 0.2499999999999991,
+      "ridge": 0.6364272958459052,
+      "total": 0.4032436449613251
+    }
+  },
+  {
+    "candidate_index": 68,
+    "population": 1,
+    "density_scale": 1.002336257985,
+    "hmf2_shift_km": 27.052609437973,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.34122318960185016,
+      "nose": 0.18749999999999933,
+      "ridge": 0.5712894689761765,
+      "total": 0.34880564807625275
+    }
+  },
+  {
+    "candidate_index": 69,
+    "population": 1,
+    "density_scale": 1.035269881774,
+    "hmf2_shift_km": 30.344638439094,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.4725136623220797,
+      "nose": 0.0,
+      "ridge": 0.7509020925124412,
+      "total": 0.4100629327796321
+    }
+  },
+  {
+    "candidate_index": 70,
+    "population": 1,
+    "density_scale": 1.067860316769,
+    "hmf2_shift_km": 32.933142769264,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.5998964821056159,
+      "nose": 0.12500000000000067,
+      "ridge": 0.9158432367435734,
+      "total": 0.5443617125068037
+    }
+  },
+  {
+    "candidate_index": 71,
+    "population": 1,
+    "density_scale": 1.09413376162,
+    "hmf2_shift_km": 31.155742457405,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.6199980732789934,
+      "nose": 0.2500000000000002,
+      "ridge": 0.9581040737196084,
+      "total": 0.5951197550473681
+    }
+  },
+  {
+    "candidate_index": 72,
+    "population": 1,
+    "density_scale": 1.132177261081,
+    "hmf2_shift_km": 29.131774646543,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.6595024126463964,
+      "nose": 0.43750000000000067,
+      "ridge": 0.9888732701632188,
+      "total": 0.669875980988162
+    }
+  },
+  {
+    "candidate_index": 73,
+    "population": 1,
+    "density_scale": 1.103205056356,
+    "hmf2_shift_km": 13.500247586688,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.2583782899155527,
+      "nose": 0.3125000000000011,
+      "ridge": 0.43032266861649615,
+      "total": 0.3062975931768535
+    }
+  },
+  {
+    "candidate_index": 74,
+    "population": 1,
+    "density_scale": 1.121987328431,
+    "hmf2_shift_km": -5.188094362131,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.1902515178263422,
+      "nose": 0.43750000000000067,
+      "ridge": 0.23016006757415286,
+      "total": 0.2600453483193189
+    }
+  },
+  {
+    "candidate_index": 75,
+    "population": 1,
+    "density_scale": 1.160722688912,
+    "hmf2_shift_km": -9.337392974253,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.2133955284012949,
+      "nose": 0.5625000000000002,
+      "ridge": 0.2762958990688894,
+      "total": 0.3132517204344901
+    }
+  },
+  {
+    "candidate_index": 76,
+    "population": 1,
+    "density_scale": 1.066631486994,
+    "hmf2_shift_km": 3.427236335217,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.1037543732913443,
+      "nose": 0.12500000000000067,
+      "ridge": 0.12672778502907614,
+      "total": 0.11366046231605477
+    }
+  },
+  {
+    "candidate_index": 77,
+    "population": 1,
+    "density_scale": 1.181780533242,
+    "hmf2_shift_km": 4.719984807104,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.2533901196636845,
+      "nose": 0.6875000000000009,
+      "ridge": 0.378606166073466,
+      "total": 0.3869607990297199
+    }
+  },
+  {
+    "candidate_index": 78,
+    "population": 1,
+    "density_scale": 1.108952001902,
+    "hmf2_shift_km": -33.114016352522,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.7819448369878115,
+      "nose": 0.3125000000000011,
+      "ridge": 0.9884444492517427,
+      "total": 0.7058835501936451
+    }
+  },
+  {
+    "candidate_index": 79,
+    "population": 1,
+    "density_scale": 1.015556043348,
+    "hmf2_shift_km": -8.39913358832,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.46641810904073044,
+      "nose": 0.12499999999999956,
+      "ridge": 0.7331947749805876,
+      "total": 0.43441891496851914
+    }
+  },
+  {
+    "candidate_index": 80,
+    "population": 1,
+    "density_scale": 1.090813304269,
+    "hmf2_shift_km": 1.938079345912,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08984939347591234,
+      "nose": 0.2500000000000002,
+      "ridge": 0.09583394926163234,
+      "total": 0.13108395626407832
+    }
+  },
+  {
+    "candidate_index": 81,
+    "population": 2,
+    "density_scale": 1.030991444339,
+    "hmf2_shift_km": 2.427414358655,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.20712923887582546,
+      "nose": 0.0,
+      "ridge": 0.3124444681696955,
+      "total": 0.17640997501564312
+    }
+  },
+  {
+    "candidate_index": 82,
+    "population": 2,
+    "density_scale": 1.059374159835,
+    "hmf2_shift_km": 4.370353813266,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.10353898260860453,
+      "nose": 0.12500000000000067,
+      "ridge": 0.13370105463370885,
+      "total": 0.11493665136147442
+    }
+  },
+  {
+    "candidate_index": 83,
+    "population": 2,
+    "density_scale": 1.06202777939,
+    "hmf2_shift_km": 2.462961345465,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.13608588116155923,
+      "nose": 0.12500000000000067,
+      "ridge": 0.17291222638053166,
+      "total": 0.14067967991496408
+    }
+  },
+  {
+    "candidate_index": 84,
+    "population": 2,
+    "density_scale": 1.028514376855,
+    "hmf2_shift_km": 4.892158751265,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.15221423747462268,
+      "nose": 0.0,
+      "ridge": 0.23710073146141636,
+      "total": 0.13113797690332574
+    }
+  },
+  {
+    "candidate_index": 85,
+    "population": 2,
+    "density_scale": 1.100291544713,
+    "hmf2_shift_km": 8.616146971144,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.1645256998881256,
+      "nose": 0.3125000000000011,
+      "ridge": 0.239482438515696,
+      "total": 0.21651062264160859
+    }
+  },
+  {
+    "candidate_index": 86,
+    "population": 2,
+    "density_scale": 1.052728291758,
+    "hmf2_shift_km": 5.737909787089,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08526762313660785,
+      "nose": 0.06249999999999978,
+      "ridge": 0.1275230391438618,
+      "total": 0.08802680055390662
+    }
+  },
+  {
+    "candidate_index": 87,
+    "population": 2,
+    "density_scale": 1.110751801273,
+    "hmf2_shift_km": 1.697184742268,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08092550893325931,
+      "nose": 0.3750000000000009,
+      "ridge": 0.09182129592982483,
+      "total": 0.15662328909925782
+    }
+  },
+  {
+    "candidate_index": 88,
+    "population": 2,
+    "density_scale": 1.071571221131,
+    "hmf2_shift_km": 4.172938260682,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08619947792955279,
+      "nose": 0.18750000000000044,
+      "ridge": 0.09266879353391465,
+      "total": 0.11281847156803708
+    }
+  },
+  {
+    "candidate_index": 89,
+    "population": 2,
+    "density_scale": 1.057262080073,
+    "hmf2_shift_km": 5.299348145138,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.09048931860789616,
+      "nose": 0.12500000000000067,
+      "ridge": 0.12125764581851653,
+      "total": 0.10527065439804638
+    }
+  },
+  {
+    "candidate_index": 90,
+    "population": 2,
+    "density_scale": 1.081146392271,
+    "hmf2_shift_km": 9.563325059346,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.14726636881337804,
+      "nose": 0.2500000000000002,
+      "ridge": 0.19479239183989655,
+      "total": 0.1824549812153373
+    }
+  },
+  {
+    "candidate_index": 91,
+    "population": 2,
+    "density_scale": 1.041057176484,
+    "hmf2_shift_km": 5.025363968274,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.12128049671604815,
+      "nose": 0.0,
+      "ridge": 0.18724903670334161,
+      "total": 0.10415408053449482
+    }
+  },
+  {
+    "candidate_index": 92,
+    "population": 2,
+    "density_scale": 1.092837211282,
+    "hmf2_shift_km": 4.127701994671,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.060835398937962484,
+      "nose": 0.2500000000000002,
+      "ridge": 0.058027090042445134,
+      "total": 0.10756488742436845
+    }
+  },
+  {
+    "candidate_index": 93,
+    "population": 2,
+    "density_scale": 1.101525397531,
+    "hmf2_shift_km": 7.865929487123,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.15013931621158555,
+      "nose": 0.3125000000000011,
+      "ridge": 0.21761795726842964,
+      "total": 0.20422521537005825
+    }
+  },
+  {
+    "candidate_index": 94,
+    "population": 2,
+    "density_scale": 1.052544150303,
+    "hmf2_shift_km": 3.210015177245,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.14240845461893964,
+      "nose": 0.12500000000000067,
+      "ridge": 0.19533008448185674,
+      "total": 0.14864066693678832
+    }
+  },
+  {
+    "candidate_index": 95,
+    "population": 2,
+    "density_scale": 1.074077259768,
+    "hmf2_shift_km": 1.863384069949,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.12547709788868677,
+      "nose": 0.2500000000000002,
+      "ridge": 0.14101242891301846,
+      "total": 0.15971488962138147
+    }
+  },
+  {
+    "candidate_index": 96,
+    "population": 2,
+    "density_scale": 1.068123222807,
+    "hmf2_shift_km": -0.813192824341,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.19295542849706937,
+      "nose": 0.18750000000000044,
+      "ridge": 0.24655367203777068,
+      "total": 0.20231122008094238
+    }
+  },
+  {
+    "candidate_index": 97,
+    "population": 2,
+    "density_scale": 1.079542796156,
+    "hmf2_shift_km": 3.763461495997,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08176761973204784,
+      "nose": 0.2500000000000002,
+      "ridge": 0.0761865724243113,
+      "total": 0.12270950533748863
+    }
+  },
+  {
+    "candidate_index": 98,
+    "population": 2,
+    "density_scale": 1.035286378199,
+    "hmf2_shift_km": 4.099126051738,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.15368724216414187,
+      "nose": 0.0,
+      "ridge": 0.23850311023491438,
+      "total": 0.1322286052372609
+    }
+  },
+  {
+    "candidate_index": 99,
+    "population": 2,
+    "density_scale": 1.080320427143,
+    "hmf2_shift_km": 2.153419736178,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.1076853721530049,
+      "nose": 0.2500000000000002,
+      "ridge": 0.11412378954177618,
+      "total": 0.14455171259250799
+    }
+  },
+  {
+    "candidate_index": 100,
+    "population": 2,
+    "density_scale": 1.057760887691,
+    "hmf2_shift_km": 5.201104230317,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08932827189980982,
+      "nose": 0.12500000000000067,
+      "ridge": 0.12210007431247488,
+      "total": 0.10480056440739055
+    }
+  },
+  {
+    "candidate_index": 101,
+    "population": 2,
+    "density_scale": 1.087209425987,
+    "hmf2_shift_km": 7.484902532211,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.12224395851551548,
+      "nose": 0.2500000000000002,
+      "ridge": 0.1436837059253454,
+      "total": 0.15847091836860266
+    }
+  },
+  {
+    "candidate_index": 102,
+    "population": 2,
+    "density_scale": 1.103869690175,
+    "hmf2_shift_km": 3.052083643555,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.07372780371283262,
+      "nose": 0.3750000000000009,
+      "ridge": 0.07226848200017735,
+      "total": 0.14875398844209364
+    }
+  },
+  {
+    "candidate_index": 103,
+    "population": 2,
+    "density_scale": 1.04903215437,
+    "hmf2_shift_km": 7.030504275451,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08053233749510154,
+      "nose": 0.06249999999999978,
+      "ridge": 0.11980487065429235,
+      "total": 0.08387875975316426
+    }
+  },
+  {
+    "candidate_index": 104,
+    "population": 2,
+    "density_scale": 1.06925304651,
+    "hmf2_shift_km": 3.903730492647,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.0959368888444401,
+      "nose": 0.18750000000000044,
+      "ridge": 0.10658388291544674,
+      "total": 0.12095706544753153
+    }
+  },
+  {
+    "candidate_index": 105,
+    "population": 2,
+    "density_scale": 1.070990363443,
+    "hmf2_shift_km": 4.793048012412,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.0779273929763725,
+      "nose": 0.18750000000000044,
+      "ridge": 0.08190564475628187,
+      "total": 0.10611619508826137
+    }
+  },
+  {
+    "candidate_index": 106,
+    "population": 2,
+    "density_scale": 1.058607963127,
+    "hmf2_shift_km": 9.913046178263,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.13250396298432351,
+      "nose": 0.12500000000000067,
+      "ridge": 0.17308513869631809,
+      "total": 0.13874420738064172
+    }
+  },
+  {
+    "candidate_index": 107,
+    "population": 2,
+    "density_scale": 1.050586628431,
+    "hmf2_shift_km": 3.018230160223,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.14794960254614997,
+      "nose": 0.12500000000000067,
+      "ridge": 0.20989082688301897,
+      "total": 0.15460044677698645
+    }
+  },
+  {
+    "candidate_index": 108,
+    "population": 2,
+    "density_scale": 1.06034896704,
+    "hmf2_shift_km": 7.243892871963,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.0923503871164431,
+      "nose": 0.12500000000000067,
+      "ridge": 0.11200898178323246,
+      "total": 0.10444450927069036
+    }
+  },
+  {
+    "candidate_index": 109,
+    "population": 2,
+    "density_scale": 1.110069585167,
+    "hmf2_shift_km": 3.712487491269,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.09168607533278865,
+      "nose": 0.3750000000000009,
+      "ridge": 0.10872321504613755,
+      "total": 0.1659219844422615
+    }
+  },
+  {
+    "candidate_index": 110,
+    "population": 2,
+    "density_scale": 1.069197401986,
+    "hmf2_shift_km": 5.394673385199,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08120182709204754,
+      "nose": 0.18750000000000044,
+      "ridge": 0.0793662555897881,
+      "total": 0.10740925601858389
+    }
+  },
+  {
+    "candidate_index": 111,
+    "population": 2,
+    "density_scale": 1.058662361803,
+    "hmf2_shift_km": -0.712378018811,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.2019275780399094,
+      "nose": 0.12500000000000067,
+      "ridge": 0.2857932945197446,
+      "total": 0.19946882682589925
+    }
+  },
+  {
+    "candidate_index": 112,
+    "population": 2,
+    "density_scale": 1.067949928016,
+    "hmf2_shift_km": 2.505574855965,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.12363192367590706,
+      "nose": 0.18750000000000044,
+      "ridge": 0.1461067508342797,
+      "total": 0.14409390818860493
+    }
+  },
+  {
+    "candidate_index": 113,
+    "population": 2,
+    "density_scale": 1.036061805789,
+    "hmf2_shift_km": 2.448921653565,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.19097278212271113,
+      "nose": 0.0,
+      "ridge": 0.2901284777838165,
+      "total": 0.16306072572425445
+    }
+  },
+  {
+    "candidate_index": 114,
+    "population": 2,
+    "density_scale": 1.071516531798,
+    "hmf2_shift_km": 1.096344319155,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.14617394700803968,
+      "nose": 0.18750000000000044,
+      "ridge": 0.17293641050869635,
+      "total": 0.16185795295616123
+    }
+  },
+  {
+    "candidate_index": 115,
+    "population": 2,
+    "density_scale": 1.080778871973,
+    "hmf2_shift_km": 1.824439409894,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.11176726956658428,
+      "nose": 0.2500000000000002,
+      "ridge": 0.12129995994024378,
+      "total": 0.14823199024967018
+    }
+  },
+  {
+    "candidate_index": 116,
+    "population": 2,
+    "density_scale": 1.09476924279,
+    "hmf2_shift_km": -2.110756961529,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.1706128543951415,
+      "nose": 0.3125000000000011,
+      "ridge": 0.20225944563869147,
+      "total": 0.21241395904506638
+    }
+  },
+  {
+    "candidate_index": 117,
+    "population": 2,
+    "density_scale": 1.066808818304,
+    "hmf2_shift_km": 1.043524644212,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.15721736949422638,
+      "nose": 0.18750000000000044,
+      "ridge": 0.19291755438687785,
+      "total": 0.17192806409920022
+    }
+  },
+  {
+    "candidate_index": 118,
+    "population": 2,
+    "density_scale": 1.089633874241,
+    "hmf2_shift_km": 3.210644120894,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.07103837001818816,
+      "nose": 0.2500000000000002,
+      "ridge": 0.06923672399882178,
+      "total": 0.11541844830976791
+    }
+  },
+  {
+    "candidate_index": 119,
+    "population": 2,
+    "density_scale": 1.05236514276,
+    "hmf2_shift_km": 2.765425068091,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.15043108887922435,
+      "nose": 0.12500000000000067,
+      "ridge": 0.20984827376462276,
+      "total": 0.15595675363649814
+    }
+  },
+  {
+    "candidate_index": 120,
+    "population": 2,
+    "density_scale": 1.055712395877,
+    "hmf2_shift_km": 21.059160027715,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.31132275734452675,
+      "nose": 0.12500000000000067,
+      "ridge": 0.4979340571840586,
+      "total": 0.3020643279763016
+    }
+  },
+  {
+    "candidate_index": 121,
+    "population": 3,
+    "density_scale": 1.045861348662,
+    "hmf2_shift_km": 6.211777329445,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.0910695437805758,
+      "nose": 0.06249999999999978,
+      "ridge": 0.1388381688192559,
+      "total": 0.09348088284316781
+    }
+  },
+  {
+    "candidate_index": 122,
+    "population": 3,
+    "density_scale": 1.058698719571,
+    "hmf2_shift_km": 6.115717344796,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.07954098310592596,
+      "nose": 0.12500000000000067,
+      "ridge": 0.10332244030385809,
+      "total": 0.09566202876903107
+    }
+  },
+  {
+    "candidate_index": 123,
+    "population": 3,
+    "density_scale": 1.044609848406,
+    "hmf2_shift_km": 8.337350328164,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.09412270289834052,
+      "nose": 0.06249999999999978,
+      "ridge": 0.13768195744421927,
+      "total": 0.09492887808293107
+    }
+  },
+  {
+    "candidate_index": 124,
+    "population": 3,
+    "density_scale": 1.044663282866,
+    "hmf2_shift_km": 5.582896727527,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.09959105589469042,
+      "nose": 0.0,
+      "ridge": 0.15809021358417275,
+      "total": 0.08639312345891428
+    }
+  },
+  {
+    "candidate_index": 125,
+    "population": 3,
+    "density_scale": 1.061351990182,
+    "hmf2_shift_km": 5.18344759845,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08806251884626368,
+      "nose": 0.12500000000000067,
+      "ridge": 0.10792620540083765,
+      "total": 0.10126962644561273
+    }
+  },
+  {
+    "candidate_index": 126,
+    "population": 3,
+    "density_scale": 1.04873818305,
+    "hmf2_shift_km": 6.593239514181,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08097981518683015,
+      "nose": 0.06249999999999978,
+      "ridge": 0.12395539603381509,
+      "total": 0.08495497755951954
+    }
+  },
+  {
+    "candidate_index": 127,
+    "population": 3,
+    "density_scale": 1.042157081466,
+    "hmf2_shift_km": 4.86482189687,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.12197266458076647,
+      "nose": 0.0,
+      "ridge": 0.18806957664747298,
+      "total": 0.10469888084891615
+    }
+  },
+  {
+    "candidate_index": 128,
+    "population": 3,
+    "density_scale": 1.056965100171,
+    "hmf2_shift_km": 6.406085479442,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08307142201009181,
+      "nose": 0.12500000000000067,
+      "ridge": 0.10556965526614091,
+      "total": 0.09805321315877885
+    }
+  },
+  {
+    "candidate_index": 129,
+    "population": 3,
+    "density_scale": 1.049760401195,
+    "hmf2_shift_km": 7.491943291535,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08756962362461804,
+      "nose": 0.06249999999999978,
+      "ridge": 0.12358566542873778,
+      "total": 0.08850542607928744
+    }
+  },
+  {
+    "candidate_index": 130,
+    "population": 3,
+    "density_scale": 1.045507972421,
+    "hmf2_shift_km": 5.238464287309,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.10615508520888343,
+      "nose": 0.06249999999999978,
+      "ridge": 0.163611044281065,
+      "total": 0.10673250572109882
+    }
+  },
+  {
+    "candidate_index": 131,
+    "population": 3,
+    "density_scale": 1.033619589318,
+    "hmf2_shift_km": 8.905074668646,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.09648039418640858,
+      "nose": 0.0,
+      "ridge": 0.14896513931303335,
+      "total": 0.08285724466513139
+    }
+  },
+  {
+    "candidate_index": 132,
+    "population": 3,
+    "density_scale": 1.047121463985,
+    "hmf2_shift_km": 5.68079873348,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.09626439513631299,
+      "nose": 0.06249999999999978,
+      "ridge": 0.1477159892566196,
+      "total": 0.09811361517629602
+    }
+  },
+  {
+    "candidate_index": 133,
+    "population": 3,
+    "density_scale": 1.058302509859,
+    "hmf2_shift_km": 4.128982556524,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.10710006401598934,
+      "nose": 0.12500000000000067,
+      "ridge": 0.14437725497944265,
+      "total": 0.11903048620468284
+    }
+  },
+  {
+    "candidate_index": 134,
+    "population": 3,
+    "density_scale": 1.046247873564,
+    "hmf2_shift_km": 6.834248957404,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08575737556612904,
+      "nose": 0.06249999999999978,
+      "ridge": 0.12598607506248882,
+      "total": 0.08798877157386868
+    }
+  },
+  {
+    "candidate_index": 135,
+    "population": 3,
+    "density_scale": 1.046431567395,
+    "hmf2_shift_km": 6.636095138259,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08395264245935777,
+      "nose": 0.06249999999999978,
+      "ridge": 0.12898031679335784,
+      "total": 0.0875950167113183
+    }
+  },
+  {
+    "candidate_index": 136,
+    "population": 3,
+    "density_scale": 1.052667084528,
+    "hmf2_shift_km": 7.660847867045,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08783177684814993,
+      "nose": 0.06249999999999978,
+      "ridge": 0.12313182906518344,
+      "total": 0.0885588430795191
+    }
+  },
+  {
+    "candidate_index": 137,
+    "population": 3,
+    "density_scale": 1.05596771865,
+    "hmf2_shift_km": 5.686756872394,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08259306275414188,
+      "nose": 0.06249999999999978,
+      "ridge": 0.11716021873788976,
+      "total": 0.08448322826235594
+    }
+  },
+  {
+    "candidate_index": 138,
+    "population": 3,
+    "density_scale": 1.041415172139,
+    "hmf2_shift_km": 6.97198111323,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08492833779465188,
+      "nose": 0.0,
+      "ridge": 0.13560424298774854,
+      "total": 0.07383143438460824
+    }
+  },
+  {
+    "candidate_index": 139,
+    "population": 3,
+    "density_scale": 1.050821871647,
+    "hmf2_shift_km": 7.599630248706,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.0859873258763032,
+      "nose": 0.06249999999999978,
+      "ridge": 0.12403431723009595,
+      "total": 0.0877248926779859
+    }
+  },
+  {
+    "candidate_index": 140,
+    "population": 3,
+    "density_scale": 1.047590981469,
+    "hmf2_shift_km": 7.401543716276,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08343547736575599,
+      "nose": 0.06249999999999978,
+      "ridge": 0.12395576481557495,
+      "total": 0.08630566551428073
+    }
+  },
+  {
+    "candidate_index": 141,
+    "population": 3,
+    "density_scale": 1.051507255917,
+    "hmf2_shift_km": 3.763608489327,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.13123267722746002,
+      "nose": 0.12500000000000067,
+      "ridge": 0.1842109491805152,
+      "total": 0.14027016231120623
+    }
+  },
+  {
+    "candidate_index": 142,
+    "population": 3,
+    "density_scale": 1.040363023687,
+    "hmf2_shift_km": 6.076217904349,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.1009046663592447,
+      "nose": 0.0,
+      "ridge": 0.15879087138831016,
+      "total": 0.08725574077524662
+    }
+  },
+  {
+    "candidate_index": 143,
+    "population": 3,
+    "density_scale": 1.041510560371,
+    "hmf2_shift_km": 6.508986851919,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.09023383361748391,
+      "nose": 0.0,
+      "ridge": 0.1445678577647762,
+      "total": 0.07854218004257141
+    }
+  },
+  {
+    "candidate_index": 144,
+    "population": 3,
+    "density_scale": 1.047398370963,
+    "hmf2_shift_km": 7.423637826018,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08299654769105105,
+      "nose": 0.06249999999999978,
+      "ridge": 0.12392974996911268,
+      "total": 0.08605905122390056
+    }
+  },
+  {
+    "candidate_index": 145,
+    "population": 3,
+    "density_scale": 1.0546014601,
+    "hmf2_shift_km": 6.586421273344,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.07689666692368353,
+      "nose": 0.06249999999999978,
+      "ridge": 0.1094459424095538,
+      "total": 0.07980735528993665
+    }
+  },
+  {
+    "candidate_index": 146,
+    "population": 3,
+    "density_scale": 1.057610668009,
+    "hmf2_shift_km": 5.588325833359,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08407732305475367,
+      "nose": 0.12500000000000067,
+      "ridge": 0.11383104195068786,
+      "total": 0.10025873607025226
+    }
+  },
+  {
+    "candidate_index": 147,
+    "population": 3,
+    "density_scale": 1.048247361254,
+    "hmf2_shift_km": 7.535831161303,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.0845321751966171,
+      "nose": 0.06249999999999978,
+      "ridge": 0.12464153479323753,
+      "total": 0.08704600331678686
+    }
+  },
+  {
+    "candidate_index": 148,
+    "population": 3,
+    "density_scale": 1.039585800784,
+    "hmf2_shift_km": 7.481035821418,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08300691487328327,
+      "nose": 0.0,
+      "ridge": 0.13319898551566367,
+      "total": 0.07229360028343854
+    }
+  },
+  {
+    "candidate_index": 149,
+    "population": 3,
+    "density_scale": 1.065455536057,
+    "hmf2_shift_km": 6.91683712122,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08593769468398084,
+      "nose": 0.12500000000000067,
+      "ridge": 0.10149748091927951,
+      "total": 0.09881522826004553
+    }
+  },
+  {
+    "candidate_index": 150,
+    "population": 3,
+    "density_scale": 1.044303087676,
+    "hmf2_shift_km": 7.204449753249,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08139072345897712,
+      "nose": 0.0,
+      "ridge": 0.1273698261240017,
+      "total": 0.07023886312723776
+    }
+  },
+  {
+    "candidate_index": 151,
+    "population": 3,
+    "density_scale": 1.053557174593,
+    "hmf2_shift_km": 8.966073108735,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.10859525648788315,
+      "nose": 0.06249999999999978,
+      "ridge": 0.1492822088198055,
+      "total": 0.10520883283229679
+    }
+  },
+  {
+    "candidate_index": 152,
+    "population": 3,
+    "density_scale": 1.038105921338,
+    "hmf2_shift_km": 7.421590425033,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08668170808778272,
+      "nose": 0.0,
+      "ridge": 0.13696014603022835,
+      "total": 0.07506696865432617
+    }
+  },
+  {
+    "candidate_index": 153,
+    "population": 3,
+    "density_scale": 1.028992500812,
+    "hmf2_shift_km": 4.3179954533,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.16236371283762746,
+      "nose": 0.06249999999999978,
+      "ridge": 0.24874807489281375,
+      "total": 0.1546746570392578
+    }
+  },
+  {
+    "candidate_index": 154,
+    "population": 3,
+    "density_scale": 1.047814902963,
+    "hmf2_shift_km": 8.533901904047,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.09710740970877105,
+      "nose": 0.06249999999999978,
+      "ridge": 0.1405614594021907,
+      "total": 0.09714636722026217
+    }
+  },
+  {
+    "candidate_index": 155,
+    "population": 3,
+    "density_scale": 1.100318402365,
+    "hmf2_shift_km": 6.432266077741,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.1322912976337831,
+      "nose": 0.3125000000000011,
+      "ridge": 0.1657374869040779,
+      "total": 0.18403271107939656
+    }
+  },
+  {
+    "candidate_index": 156,
+    "population": 3,
+    "density_scale": 1.072133624608,
+    "hmf2_shift_km": 4.197439825827,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.08611606679538489,
+      "nose": 0.18750000000000044,
+      "ridge": 0.09049898679606999,
+      "total": 0.1123386340966758
+    }
+  },
+  {
+    "candidate_index": 157,
+    "population": 3,
+    "density_scale": 1.041780982735,
+    "hmf2_shift_km": 9.903897146218,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.11147760088493526,
+      "nose": 0.0,
+      "ridge": 0.1655161632867581,
+      "total": 0.09441591314406603
+    }
+  },
+  {
+    "candidate_index": 158,
+    "population": 3,
+    "density_scale": 1.039005002837,
+    "hmf2_shift_km": 11.107103399007,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.13057429429274636,
+      "nose": 0.0,
+      "ridge": 0.1902239545048089,
+      "total": 0.1098606527619723
+    }
+  },
+  {
+    "candidate_index": 159,
+    "population": 3,
+    "density_scale": 1.038529986558,
+    "hmf2_shift_km": 10.951927220473,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.12762888755249518,
+      "nose": 0.0,
+      "ridge": 0.18553253002087977,
+      "total": 0.10730239415804832
+    }
+  },
+  {
+    "candidate_index": 160,
+    "population": 3,
+    "density_scale": 1.051375635551,
+    "hmf2_shift_km": 10.40470316847,
+    "f2_width_scale": 1.0,
+    "score": {
+      "return_distance": 0.13025146051632466,
+      "nose": 0.06249999999999978,
+      "ridge": 0.18189758112035545,
+      "total": 0.12364281950804962
+    }
+  }
+]

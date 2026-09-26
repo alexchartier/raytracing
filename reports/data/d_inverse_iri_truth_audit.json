@@ -1,0 +1,19 @@
+{
+  "truth_density_source": "IRI-2016 1.11.1",
+  "candidate_density_source": "PyIRI",
+  "truth_parameter_fields_exposed_to_fit": [],
+  "truth_candidate_grid_axes_identical": true,
+  "direct_iri_profile_vs_interpolated_grid_rms_relative_to_peak_150_to_600_km": 9.664850523626106e-05,
+  "direct_iri_invalid_samples_150_to_600_km": 0,
+  "truth_grid_repaired_samples": 459,
+  "truth_grid_total_samples": 19737,
+  "time_utc": "2010-01-01T12:00:00",
+  "sounder_latitude_deg": -53.67859907285381,
+  "sounder_longitude_deg": 7.7400542554165135,
+  "shared_components": [
+    "geometry",
+    "geomagnetic field",
+    "ray tracer",
+    "homing algorithm"
+  ]
+}
