@@ -30,7 +30,7 @@ The fixed ionogram score combines symmetric accepted-return distance (55%), refl
 
 Truth: density scale 1.000, F2-height shift +10.0 km, wave amplitude 0.18, phase 0.6 rad, bearing 45°. The candidates have zero wave amplitude. The selected scale is 1.0443 and height shift +7.20 km. Both O and X noses match the truth (8.1 and 8.4 MHz), but the selected ionogram has 165 returns versus 190 in the truth and mean range-curve errors of 8.8 km in each mode on shared frequencies. The residual and parameter bias show what the two-parameter model cannot absorb.
 
-![Wavy truth and selected ionograms. Each colored cell contains accepted returns: blue = 1, ochre = 2, red = 3 or more.](figures/d_inverse_wavy_ionograms.png){width=98%}
+![Wavy truth and selected ionograms. O-mode returns are blue and X-mode returns are red in each panel. Every accepted return is drawn; darker cells contain coincident returns.](figures/d_inverse_wavy_ionograms.png){width=98%}
 
 \clearpage
 
@@ -40,7 +40,7 @@ The IRI-2016 1.11.1 electron-density grid was generated at 2010-01-01 12:00 UTC 
 
 The selected candidate after 160 evaluations has 97 returns, O/X noses 5.2 / 5.6 MHz, and 15.1 (O) and 19.8 (X) km mean range-curve error on shared frequencies. The score fell from 0.7049 to 0.2014, but the remaining difference in this figure is substantial.
 
-![Independent IRI truth and ionogram-selected PyIRI result. Same binning and color scale as the wavy case; all accepted returns are shown.](figures/d_inverse_iri_ionograms.png){width=98%}
+![Independent IRI truth and ionogram-selected PyIRI result. O mode is blue and X mode is red in both panels; all accepted returns are shown at 0.1 MHz by 1 km resolution.](figures/d_inverse_iri_ionograms.png){width=98%}
 
 \clearpage
 

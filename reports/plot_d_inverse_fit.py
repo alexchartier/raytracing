@@ -8,20 +8,9 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.colors import ListedColormap, BoundaryNorm
 
 from fit_d_ionogram import Ionogram, score
-
-
-def _image(ionogram: Ionogram, mode: int, range_max_km: int) -> np.ndarray:
-    image = np.zeros((range_max_km - 150, 81), dtype=np.uint8)
-    records = ionogram.records[ionogram.records[:, 1] == mode]
-    for row in records:
-        index = int(row[0])
-        bin_km = int(np.floor(row[2])) - 150
-        if 0 <= index < 81 and 0 <= bin_km < image.shape[0]:
-            image[bin_km, index] = min(int(image[bin_km, index]) + 1, 3)
-    return image
+from plot_ionogram_pair import plot_pair
 
 
 def plot(state_path: Path, output_prefix: Path, *, truth_label: str = "Synthetic truth") -> None:
@@ -30,28 +19,10 @@ def plot(state_path: Path, output_prefix: Path, *, truth_label: str = "Synthetic
     best = min(evaluations, key=lambda row: row["score"]["total"])
     observed = Ionogram.read(Path(state["observed"]))
     retrieved = Ionogram.read(Path(best["path"]))
-    maximum_return_km = max(np.max(observed.records[:, 2]), np.max(retrieved.records[:, 2]))
-    range_max_km = max(1600, int(np.ceil((maximum_return_km + 1) / 100.0) * 100))
-    colors = ListedColormap(["white", "#253a5e", "#a25422", "#5e2319"])
-    norm = BoundaryNorm([-.5, .5, 1.5, 2.5, 3.5], colors.N)
-    fig, axes = plt.subplots(2, 2, figsize=(16, 15), sharex=True, sharey=True,
-                             constrained_layout=True)
-    for column, (ionogram, title) in enumerate(((observed, truth_label), (retrieved, "Retrieved"))):
-        for row, (mode, label) in enumerate(((1, "O mode"), (-1, "X mode"))):
-            ax = axes[row, column]
-            ax.imshow(_image(ionogram, mode, range_max_km), origin="lower", aspect="auto",
-                      interpolation="nearest", cmap=colors, norm=norm,
-                      extent=(1.95, 10.05, 150, range_max_km))
-            ax.set_title(f"{title}: {label} ({len(ionogram.records[ionogram.records[:, 1] == mode])} returns)")
-            ax.set_xlim(2, 10)
-            ax.set_ylim(150, range_max_km)
-            ax.set_xlabel("Frequency (MHz)")
-            ax.set_ylabel("Group range (km)")
-    fig.suptitle("D ionogram: 0.1 MHz × 1 km bins; blue = 1, ochre = 2, red = 3+ accepted returns", fontsize=15)
     output_prefix.parent.mkdir(parents=True, exist_ok=True)
     comparison = output_prefix.with_name(output_prefix.name + "_ionograms.png")
-    fig.savefig(comparison, dpi=300)
-    plt.close(fig)
+    plot_pair(Path(state["observed"]), Path(best["path"]), comparison,
+              truth_label=truth_label, retrieved_label="Retrieved PyIRI")
 
     costs = np.array([item["score"]["total"] for item in evaluations])
     best_so_far = np.minimum.accumulate(costs)
