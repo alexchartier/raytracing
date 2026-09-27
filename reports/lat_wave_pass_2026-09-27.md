@@ -17,6 +17,8 @@ spacing. The 20 interpolated sounder profiles have peak-density changes from
 [density figure](figures/lat_wave_pass_density.png) shows the wave and the
 sample positions; the [manifest](data/lat_wave_pass_manifest.json) records
 their coordinates, times, and wave parameters.
+The [latitude-altitude density contour](figures/lat_wave_pass_density_contour.png)
+shows the full electron-density section at the pass longitude.
 
 Each position has a 2–10 MHz vertical ionogram in 0.1 MHz steps. The option D
 equal-area fan, separate O/X modes, 1 km homing gate, and all accepted returns
