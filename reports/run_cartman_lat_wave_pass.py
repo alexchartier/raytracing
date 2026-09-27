@@ -48,6 +48,7 @@ __PYTHON__ reports/generate_lat_wave_ionogram.py \\
   --grid "$run/wave_forward_grid.nc" \\
   --latitude-deg "$latitude" --longitude-deg "$longitude" --altitude-km "$altitude" \\
   --profile-index "$task_id" \\
+  --density-source "__DENSITY_SOURCE__" \\
   --output "$run/results/ionogram_$task.npz"
 date -u +%s.%N > "$run/status/$task.finish"
 """
@@ -82,7 +83,7 @@ def _run_path(name: str) -> str:
     return f"{REMOTE_ROOT}/runs/{name}"
 
 
-def submit(name: str) -> None:
+def submit(name: str, grid_override: Path | None = None) -> None:
     manifest = json.loads(MANIFEST.read_text())
     profiles = manifest["profiles"]
     if len(profiles) != 20 or [row["index"] for row in profiles] != list(range(1, 21)):
@@ -97,7 +98,7 @@ def submit(name: str) -> None:
     _call_tool("cartman_write_file", {"zone": "repo",
                                        "path": "reports/generate_lat_wave_ionogram.py",
                                        "text": source})
-    grid = ROOT / manifest["forward_grid"]
+    grid = grid_override if grid_override is not None else ROOT / manifest["forward_grid"]
     with tempfile.TemporaryDirectory(prefix="lat_wave_stage_") as temporary:
         staged = Path(temporary) / "wave_forward_grid.nc"
         shutil.copyfile(grid, staged)
@@ -118,7 +119,11 @@ def submit(name: str) -> None:
                               f"chartat1 600 {run}/wave_forward_grid.nc",
                               f"chartat1 600 {REMOTE_ROOT}/repo/reports/generate_lat_wave_ionogram.py"]:
         raise RuntimeError(f"Private staging verification failed:\n{check}")
-    script = JOB.replace("__RUN__", run).replace("__ROOT__", REMOTE_ROOT).replace("__PYTHON__", REMOTE_PYTHON)
+    source_label = ("Ionogram-selected PyIRI latitude-wave fit" if grid_override is not None
+                    else "IRI-2016 with imposed wave")
+    script = (JOB.replace("__RUN__", run).replace("__ROOT__", REMOTE_ROOT)
+              .replace("__PYTHON__", REMOTE_PYTHON)
+              .replace("__DENSITY_SOURCE__", source_label))
     result = _call_tool("cartman_qsub_submit", {
         "zone": "sandbox", "cwd": name, "script_path": f"{name}/job.sh",
         "script_text": script,
@@ -250,13 +255,16 @@ PYREMOTE"""
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="action", required=True)
-    sub.add_parser("submit").add_argument("run_name")
+    submit_parser = sub.add_parser("submit")
+    submit_parser.add_argument("run_name")
+    submit_parser.add_argument("--grid", type=Path,
+                               help="Independent candidate forward grid")
     sub.add_parser("status").add_argument("run_name")
     sub.add_parser("recover").add_argument("run_name")
     sub.add_parser("recovery-status").add_argument("run_name")
     args = parser.parse_args()
     if args.action == "submit":
-        submit(args.run_name)
+        submit(args.run_name, args.grid)
     elif args.action == "recover":
         submit_recovery(args.run_name)
     elif args.action == "recovery-status":

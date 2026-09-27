@@ -40,7 +40,8 @@ def make_fan() -> tuple[TopsideInverseConfig, np.ndarray, np.ndarray]:
 
 
 def generate(grid_path: Path, latitude: float, longitude: float, altitude: float,
-             profile_index: int, output: Path) -> None:
+             profile_index: int, output: Path,
+             density_source: str = "IRI-2016 with imposed wave") -> None:
     start = time.perf_counter()
     grid = load_ionosphere_grid_netcdf(grid_path)
     if not (grid.latitudes_deg[0] < latitude < grid.latitudes_deg[-1]
@@ -91,7 +92,7 @@ def generate(grid_path: Path, latitude: float, longitude: float, altitude: float
         tx_lon_deg=np.array(longitude),
         tx_alt_km=np.array(altitude),
         profile_index=np.array(profile_index),
-        density_source=np.array("IRI-2016 with imposed wave"),
+        density_source=np.array(density_source),
         runtime_seconds=np.array(time.perf_counter() - start),
     )
     print(f"{output}: {len(records)} accepted returns", flush=True)
@@ -105,9 +106,10 @@ def main() -> None:
     parser.add_argument("--altitude-km", type=float, required=True)
     parser.add_argument("--profile-index", type=int, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--density-source", default="IRI-2016 with imposed wave")
     args = parser.parse_args()
     generate(args.grid, args.latitude_deg, args.longitude_deg, args.altitude_km,
-             args.profile_index, args.output)
+             args.profile_index, args.output, args.density_source)
 
 
 if __name__ == "__main__":

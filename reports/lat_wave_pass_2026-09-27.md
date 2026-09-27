@@ -50,5 +50,6 @@ grid's SHA-256 matched the local file.
 
 Only electron density comes from IRI-2016 and the imposed wave. The magnetic
 and collision fields are prepared with PyIRI and the same PyLap ray tracer
-used by candidate ionograms. This pass is a synthetic truth set ready for a
-multi-profile retrieval; no inversion has been run on it yet.
+used by candidate ionograms. The joint multi-profile inversion and independent
+density evaluation are documented in
+[the retrieval result](lat_wave_retrieval_2026-09-27.md).
