@@ -39,16 +39,20 @@ export XDG_CACHE_HOME="$run/cache/$task"
 export PYTHONDONTWRITEBYTECODE=1
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 line=$(sed -n "${task_id}p" "$run/candidates.tsv")
-read -r density shift width top_ratio <<< "$line"
+read -r density shift width top_ratio peak_fraction peak_width <<< "$line"
 test -n "$density" && test -n "$shift"
 width=${width:-1.0}
 top_ratio=${top_ratio:-1.0}
+peak_fraction=${peak_fraction:-0.0}
+peak_width=${peak_width:-40.0}
 cd "$repo"
 date -u +%s.%N > "$run/status/$task.start"
 __PYTHON__ reports/generate_synthetic_truth_returns.py --start 0 --stop 81 \
   --density-scale "$density" --hmf2-shift-km "$shift" \
   --f2-width-scale "$width" \
   --topside-width-ratio "$top_ratio" \
+  --peak-perturbation-fraction "$peak_fraction" \
+  --peak-width-km "$peak_width" \
   --output "$run/results/ionogram_$task.npz"
 date -u +%s.%N > "$run/status/$task.finish"
 """
@@ -70,7 +74,9 @@ def submit(workdir: Path, round_number: int, name: str, queues: str | None = Non
     _call_tool("cartman_mkdir", {"zone": "sandbox", "path": name})
     table = "".join(f"{c['density_scale']:.12f} {c['hmf2_shift_km']:.12f} "
                     f"{c.get('f2_width_scale', 1.0):.12f} "
-                    f"{c.get('topside_width_ratio', 1.0):.12f}\n" for c in candidates)
+                    f"{c.get('topside_width_ratio', 1.0):.12f} "
+                    f"{c.get('peak_perturbation_fraction', 0.0):.12f} "
+                    f"{c.get('peak_width_km', 40.0):.12f}\n" for c in candidates)
     _call_tool("cartman_write_file", {"zone": "sandbox", "path": f"{name}/candidates.tsv", "text": table})
     # Keep the exact local D generator in the private remote checkout.
     source = (ROOT / "reports" / "generate_synthetic_truth_returns.py").read_text()

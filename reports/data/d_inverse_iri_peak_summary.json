@@ -1,0 +1,81 @@
+{
+  "candidate_count": 256,
+  "best_score_by_population": [
+    0.624853104896444,
+    0.3282167781951082,
+    0.28170799613607045,
+    0.19366461717499014,
+    0.17065330339207882,
+    0.12649873264370903,
+    0.11179363146745797
+  ],
+  "retrieved": {
+    "density_scale": 0.44743694553079594,
+    "hmf2_shift_km": -59.800486404159784,
+    "score": {
+      "return_distance": 0.1379968492426991,
+      "nose": 0.0,
+      "ridge": 0.19433317708768494,
+      "total": 0.11179363146745797,
+      "legacy_total": 0.11476490250102149,
+      "count_penalty": 0.026190476190476188
+    },
+    "f2_width_scale": 1.2719685990314602,
+    "topside_width_ratio": 1.0730974572395404,
+    "peak_perturbation_fraction": 0.030645508303269953,
+    "peak_width_km": 20.0
+  },
+  "returns": {
+    "truth": {
+      "1": 56,
+      "-1": 60
+    },
+    "retrieved": {
+      "1": 54,
+      "-1": 59
+    }
+  },
+  "nose_mhz": {
+    "truth": {
+      "1": 5.400000000000003,
+      "-1": 5.400000000000003
+    },
+    "retrieved": {
+      "1": 5.400000000000003,
+      "-1": 5.400000000000003
+    }
+  },
+  "common_frequency_median_range_mae_km": {
+    "1": 12.901544573974217,
+    "-1": 13.89019382540821
+  },
+  "selection_rule": "Each O/X nose within 0.05 MHz and each mode's return count within 10% of observed; then minimum count-aware score",
+  "admissible_candidates": 6,
+  "unconstrained_lowest_score": 0.11179363146745797,
+  "density_at_sounder": {
+    "latitude_deg": -53.67859907285381,
+    "longitude_deg": 7.7400542554165135,
+    "truth_peak_cm3": 362539.1342868797,
+    "truth_peak_altitude_km": 260.0,
+    "retrieved_peak_cm3": 360674.8076293638,
+    "retrieved_peak_altitude_km": 260.0,
+    "rms_error_150_to_600_km_relative_to_truth_peak": 0.07363368934075344,
+    "median_absolute_percentage_error_150_to_600_km": 3.478025285060219,
+    "rms_error_peak_to_600_km_relative_to_truth_peak": 0.016828113079088415,
+    "median_absolute_percentage_error_peak_to_600_km": 2.221631292231178,
+    "rms_error_150_km_to_below_peak_relative_to_truth_peak": 0.1546653340085987
+  },
+  "profile_oracle_diagnostic": {
+    "uses_truth_density_for_selection": true,
+    "candidate": {
+      "density_scale": 0.4376035463679734,
+      "hmf2_shift_km": -77.55884635302968,
+      "f2_width_scale": 1.440713807154473,
+      "topside_width_ratio": 1.0132177634804531,
+      "peak_perturbation_fraction": 0.0,
+      "peak_width_km": 40.0
+    },
+    "ionogram_score": 0.3649439964609443,
+    "rms_error_150_to_600_km_relative_to_truth_peak": 0.03130487611471298
+  }
+}

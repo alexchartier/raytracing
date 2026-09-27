@@ -72,6 +72,20 @@ def stretch_f2_width(grid, width_scale: float, topside_width_ratio: float = 1.0)
     return replace(grid, iono_en_grid=stretched, iono_en_grid_5=stretched)
 
 
+def perturb_f2_peak(grid, fraction: float, half_width_km: float = 40.0):
+    """Apply a smooth, local fractional density correction at each F2 peak."""
+    if fraction == 0.0:
+        return grid
+    altitudes = np.asarray(grid.altitudes_km, dtype=float)
+    source = np.asarray(grid.iono_en_grid, dtype=float)
+    peak_indices = np.argmax(source, axis=2)
+    peak_altitudes = altitudes[peak_indices]
+    envelope = np.exp(-0.5 * ((altitudes[None, None, :] -
+                               peak_altitudes[:, :, None]) / half_width_km) ** 2)
+    corrected = source * (1.0 + fraction * envelope)
+    return replace(grid, iono_en_grid=corrected, iono_en_grid_5=corrected)
+
+
 def merge_chunks(method: str, anchor_stride: int, anchor_block_size: int,
                  anchor_elevation_stride: int,
                  anchor_optimizer: str, fan_layout: str,
@@ -142,6 +156,10 @@ def main() -> None:
                         help="Stretch the background profile around its F2 peak")
     parser.add_argument("--topside-width-ratio", type=float, default=1.0,
                         help="Topside width relative to --f2-width-scale")
+    parser.add_argument("--peak-perturbation-fraction", type=float, default=0.0,
+                        help="Local fractional F2 peak correction with a 40 km Gaussian width")
+    parser.add_argument("--peak-width-km", type=float, default=40.0,
+                        help="Gaussian width of the local F2 correction in km")
     parser.add_argument("--wave-amplitude-fraction", type=float, default=0.0)
     parser.add_argument("--wave-phase-rad", type=float, default=0.0)
     parser.add_argument("--wave-bearing-deg", type=float, default=0.0)
@@ -184,9 +202,15 @@ def main() -> None:
         parser.error("--f2-width-scale must be between 0.5 and 2.0")
     if not 0.5 <= args.topside_width_ratio <= 1.5:
         parser.error("--topside-width-ratio must be between 0.5 and 1.5")
+    if not -0.2 <= args.peak_perturbation_fraction <= 0.2:
+        parser.error("--peak-perturbation-fraction must be between -0.2 and 0.2")
+    if not 10.0 <= args.peak_width_km <= 100.0:
+        parser.error("--peak-width-km must be between 10 and 100")
     if (args.density_scale != 1.12 or args.hmf2_shift_km != 0.0
             or args.f2_width_scale != 1.0
             or args.topside_width_ratio != 1.0
+            or args.peak_perturbation_fraction != 0.0
+            or args.peak_width_km != 40.0
             or args.wave_amplitude_fraction != 0.0 or args.wave_phase_rad != 0.0
             or args.wave_bearing_deg != 0.0 or args.density_grid_npz is not None) and args.output is None:
         parser.error("non-default ionospheres require --output to keep each result separate")
@@ -274,6 +298,8 @@ def main() -> None:
                 wave_bearing_deg=args.wave_bearing_deg,
             ),
         )
+        grid = perturb_f2_peak(grid, args.peak_perturbation_fraction,
+                               args.peak_width_km)
         counts = np.zeros((FREQUENCIES.size, 2), dtype=int)
         records: list[tuple[float, float, float, float, float]] = []
         for mode_index, mode in enumerate((1, -1)):
@@ -332,6 +358,8 @@ def main() -> None:
             hmf2_shift_km=np.array(args.hmf2_shift_km),
             f2_width_scale=np.array(args.f2_width_scale),
             topside_width_ratio=np.array(args.topside_width_ratio),
+            peak_perturbation_fraction=np.array(args.peak_perturbation_fraction),
+            peak_width_km=np.array(args.peak_width_km),
             wave_amplitude_fraction=np.array(args.wave_amplitude_fraction),
             wave_phase_rad=np.array(args.wave_phase_rad),
             wave_bearing_deg=np.array(args.wave_bearing_deg),

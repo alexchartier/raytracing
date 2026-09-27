@@ -45,6 +45,8 @@ def _fitted_profile(background_path: Path, latitude: float, longitude: float,
     width = float(candidate.get("f2_width_scale", 1.0))
     top_ratio = float(candidate.get("topside_width_ratio", 1.0))
     shift = float(candidate["hmf2_shift_km"])
+    peak_fraction = float(candidate.get("peak_perturbation_fraction", 0.0))
+    peak_width_km = float(candidate.get("peak_width_km", 40.0))
     result = np.zeros_like(altitudes)
     for di, lat_weight in ((0, 1-u), (1, u)):
         for dj, lon_weight in ((0, 1-v), (1, v)):
@@ -55,6 +57,10 @@ def _fitted_profile(background_path: Path, latitude: float, longitude: float,
             stretched = np.interp(mapped, altitudes, base, left=base[0], right=base[-1])
             shifted = np.interp(altitudes - shift, altitudes, stretched,
                                 left=stretched[0], right=stretched[-1])
+            if peak_fraction:
+                peak = altitudes[np.argmax(shifted)]
+                shifted = shifted * (1.0 + peak_fraction * np.exp(
+                    -0.5 * ((altitudes - peak) / peak_width_km) ** 2))
             result += lat_weight * lon_weight * shifted
     return altitudes, float(candidate["density_scale"]) * result
 
@@ -73,7 +79,7 @@ def summarize(state_path: Path, output_prefix: Path, background_path: Path | Non
         "candidate_count": len(evaluations),
         "best_score_by_population": [
             float(min(row["score"]["total"] for row in evaluations[:stop]))
-            for stop in range(40, len(evaluations) + 1, 40)
+            for stop in sorted(set(range(40, len(evaluations) + 1, 40)) | {len(evaluations)})
         ],
         "retrieved": {key: best[key] for key in ("density_scale", "hmf2_shift_km", "score")},
         "returns": {
@@ -96,6 +102,9 @@ def summarize(state_path: Path, output_prefix: Path, background_path: Path | Non
         summary["retrieved"]["f2_width_scale"] = best["f2_width_scale"]
     if "topside_width_ratio" in best:
         summary["retrieved"]["topside_width_ratio"] = best["topside_width_ratio"]
+    if "peak_perturbation_fraction" in best:
+        summary["retrieved"]["peak_perturbation_fraction"] = best["peak_perturbation_fraction"]
+        summary["retrieved"]["peak_width_km"] = best.get("peak_width_km", 40.0)
     for mode in (1, -1):
         truth_ridge, fit_ridge = observed.ridge(mode), retrieved.ridge(mode)
         common = sorted(set(truth_ridge) & set(fit_ridge))
@@ -128,7 +137,6 @@ def summarize(state_path: Path, output_prefix: Path, background_path: Path | Non
             ((profile_error(row), row) for row in evaluations),
             key=lambda pair: pair[0],
         )
-        oracle_profile = _fitted_profile(background_path, latitude, longitude, oracle[1])[1]
         summary["density_at_sounder"] = {
             "latitude_deg": latitude, "longitude_deg": longitude,
             "truth_peak_cm3": float(np.max(truth)),
@@ -148,24 +156,29 @@ def summarize(state_path: Path, output_prefix: Path, background_path: Path | Non
         }
         summary["profile_oracle_diagnostic"] = {
             "uses_truth_density_for_selection": True,
-            "candidate": {key: oracle[1].get(key, 1.0) for key in
-                          ("density_scale", "hmf2_shift_km", "f2_width_scale",
-                           "topside_width_ratio")},
+            "candidate": {
+                "density_scale": oracle[1]["density_scale"],
+                "hmf2_shift_km": oracle[1]["hmf2_shift_km"],
+                "f2_width_scale": oracle[1].get("f2_width_scale", 1.0),
+                "topside_width_ratio": oracle[1].get("topside_width_ratio", 1.0),
+                "peak_perturbation_fraction": oracle[1].get("peak_perturbation_fraction", 0.0),
+                "peak_width_km": oracle[1].get("peak_width_km", 40.0),
+            },
             "ionogram_score": oracle[1]["score"]["total"],
             "rms_error_150_to_600_km_relative_to_truth_peak": oracle[0],
         }
         fig, ax = plt.subplots(figsize=(7, 6), constrained_layout=True)
         ax.plot(truth / 1e5, altitudes, color="#9a4522", linewidth=2.5, label="IRI-2016 truth")
         ax.plot(fit / 1e5, altitudes, color="#253a5e", linewidth=2.5,
-                label=("Retrieved PyIRI with topside width" if top_ratio != 1.0
+                label=("Retrieved PyIRI with local F2 peak" if best.get("peak_perturbation_fraction", 0.0)
+                       else "Retrieved PyIRI with topside width" if top_ratio != 1.0
                        else ("Retrieved PyIRI scale + height + width" if width != 1.0
                              else "Retrieved PyIRI scale + height")))
-        if oracle[1]["path"] != best["path"]:
-            ax.plot(oracle_profile / 1e5, altitudes, color="#4d7a55", linewidth=2,
-                    linestyle="--", label="Best profile among candidates (truth selected)")
         ax.axhline(peak_altitude, color="#777777", linestyle=":", linewidth=1)
         ax.set(xlabel="Electron density (100,000 cm$^{-3}$)", ylabel="Altitude (km)",
-               ylim=(150, 600), title="Electron density above the sounder")
+               ylim=(150, 600),
+               title=("Electron density above the sounder: "
+                      f"peak error {(np.max(fit) / np.max(truth) - 1) * 100:+.2f}%"))
         ax.grid(alpha=.25)
         ax.legend()
         profile_figure = (figure_output or output_prefix.with_name(
@@ -182,6 +195,8 @@ def summarize(state_path: Path, output_prefix: Path, background_path: Path | Non
          "hmf2_shift_km": row["hmf2_shift_km"],
          "f2_width_scale": row.get("f2_width_scale", 1.0),
          "topside_width_ratio": row.get("topside_width_ratio", 1.0),
+         "peak_perturbation_fraction": row.get("peak_perturbation_fraction", 0.0),
+         "peak_width_km": row.get("peak_width_km", 40.0),
          "score": row["score"]}
         for index, row in enumerate(evaluations, start=1)
     ], indent=2) + "\n")
