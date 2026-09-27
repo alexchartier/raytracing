@@ -51,9 +51,9 @@ def chunk_path(method: str, start: int, stop: int, fan_layout: str = "az_el") ->
     return DATA_DIR / f"synthetic_truth_{method}{suffix}_chunk_{start:02d}_{stop:02d}.npz"
 
 
-def stretch_f2_width(grid, width_scale: float):
-    """Stretch each background profile about its own F2 peak before shifting it."""
-    if abs(width_scale - 1.0) < 1e-12:
+def stretch_f2_width(grid, width_scale: float, topside_width_ratio: float = 1.0):
+    """Stretch each profile about F2, allowing a distinct topside width."""
+    if abs(width_scale - 1.0) < 1e-12 and abs(topside_width_ratio - 1.0) < 1e-12:
         return grid
     altitudes = np.asarray(grid.altitudes_km, dtype=float)
     source = np.asarray(grid.iono_en_grid, dtype=float)
@@ -62,7 +62,9 @@ def stretch_f2_width(grid, width_scale: float):
         for longitude in range(source.shape[1]):
             profile = source[latitude, longitude]
             peak_altitude = float(altitudes[np.argmax(profile)])
-            mapped_altitudes = peak_altitude + (altitudes - peak_altitude) / width_scale
+            side_width = np.where(altitudes >= peak_altitude,
+                                  width_scale * topside_width_ratio, width_scale)
+            mapped_altitudes = peak_altitude + (altitudes - peak_altitude) / side_width
             stretched[latitude, longitude] = np.interp(
                 mapped_altitudes, altitudes, profile,
                 left=float(profile[0]), right=float(profile[-1]),
@@ -138,6 +140,8 @@ def main() -> None:
                         help="Shift the background density profile in altitude")
     parser.add_argument("--f2-width-scale", type=float, default=1.0,
                         help="Stretch the background profile around its F2 peak")
+    parser.add_argument("--topside-width-ratio", type=float, default=1.0,
+                        help="Topside width relative to --f2-width-scale")
     parser.add_argument("--wave-amplitude-fraction", type=float, default=0.0)
     parser.add_argument("--wave-phase-rad", type=float, default=0.0)
     parser.add_argument("--wave-bearing-deg", type=float, default=0.0)
@@ -178,8 +182,11 @@ def main() -> None:
         parser.error("--density-scale must be between 0 and 5")
     if not 0.5 <= args.f2_width_scale <= 2.0:
         parser.error("--f2-width-scale must be between 0.5 and 2.0")
+    if not 0.5 <= args.topside_width_ratio <= 1.5:
+        parser.error("--topside-width-ratio must be between 0.5 and 1.5")
     if (args.density_scale != 1.12 or args.hmf2_shift_km != 0.0
             or args.f2_width_scale != 1.0
+            or args.topside_width_ratio != 1.0
             or args.wave_amplitude_fraction != 0.0 or args.wave_phase_rad != 0.0
             or args.wave_bearing_deg != 0.0 or args.density_grid_npz is not None) and args.output is None:
         parser.error("non-default ionospheres require --output to keep each result separate")
@@ -254,7 +261,8 @@ def main() -> None:
                 raise ValueError("Independent density grid has invalid shape or nonpositive density")
             background_grid = replace(background_grid, iono_en_grid=density,
                                       iono_en_grid_5=density)
-        background_grid = stretch_f2_width(background_grid, args.f2_width_scale)
+        background_grid = stretch_f2_width(
+            background_grid, args.f2_width_scale, args.topside_width_ratio)
         grid = _apply_fit_params_to_grid(
             problem,
             background_grid,
@@ -323,6 +331,7 @@ def main() -> None:
             density_scale=np.array(args.density_scale),
             hmf2_shift_km=np.array(args.hmf2_shift_km),
             f2_width_scale=np.array(args.f2_width_scale),
+            topside_width_ratio=np.array(args.topside_width_ratio),
             wave_amplitude_fraction=np.array(args.wave_amplitude_fraction),
             wave_phase_rad=np.array(args.wave_phase_rad),
             wave_bearing_deg=np.array(args.wave_bearing_deg),

@@ -36,6 +36,7 @@ class Ionogram:
     hmf2_shift_km: float | None
     settings: tuple
     f2_width_scale: float = 1.0
+    topside_width_ratio: float = 1.0
 
     @classmethod
     def read(cls, path: Path) -> "Ionogram":
@@ -45,6 +46,7 @@ class Ionogram:
             density = float(data["density_scale"]) if "density_scale" in data else None
             shift = float(data["hmf2_shift_km"]) if "hmf2_shift_km" in data else 0.0
             width = float(data["f2_width_scale"]) if "f2_width_scale" in data else 1.0
+            top_ratio = float(data["topside_width_ratio"]) if "topside_width_ratio" in data else 1.0
             settings = (str(data["method"]), str(data["vertical_fan_layout"]),
                         float(data["vertical_outer_ray_fraction"]),
                         int(data["vertical_guard_seed_limit"]),
@@ -57,7 +59,7 @@ class Ionogram:
             raise ValueError(f"Bad frequency indices in {path}")
         if settings != ("adaptive", "equal_area_guarded", .5, 4, 1000.0):
             raise ValueError(f"Expected the D generator and 1 km homing gate in {path}: {settings}")
-        return cls(frequencies, records, density, shift, settings, width)
+        return cls(frequencies, records, density, shift, settings, width, top_ratio)
 
     def nose(self, mode: int) -> float | None:
         indices = self.records[self.records[:, 1] == mode, 0].astype(int)

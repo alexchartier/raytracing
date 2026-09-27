@@ -1,0 +1,76 @@
+{
+  "candidate_count": 240,
+  "best_score_by_population": [
+    0.624853104896444,
+    0.3282167781951082,
+    0.28170799613607045,
+    0.19366461717499014,
+    0.17065330339207882,
+    0.12649873264370903
+  ],
+  "retrieved": {
+    "density_scale": 0.44743694553079594,
+    "hmf2_shift_km": -59.800486404159784,
+    "score": {
+      "return_distance": 0.14235469962679004,
+      "nose": 0.1250000000000001,
+      "ridge": 0.20116339101168984,
+      "total": 0.13533859944430443,
+      "legacy_total": 0.14977776299707252,
+      "count_penalty": 0.034523809523809526
+    },
+    "f2_width_scale": 1.2719685990314602,
+    "topside_width_ratio": 1.0730974572395404
+  },
+  "returns": {
+    "truth": {
+      "1": 56,
+      "-1": 60
+    },
+    "retrieved": {
+      "1": 54,
+      "-1": 58
+    }
+  },
+  "nose_mhz": {
+    "truth": {
+      "1": 5.400000000000003,
+      "-1": 5.400000000000003
+    },
+    "retrieved": {
+      "1": 5.200000000000003,
+      "-1": 5.400000000000003
+    }
+  },
+  "common_frequency_median_range_mae_km": {
+    "1": 10.538569465515641,
+    "-1": 13.952085594369452
+  },
+  "selection_rule": "Each O/X return count within 10% of observed; then minimum count-aware score",
+  "admissible_candidates": 34,
+  "unconstrained_lowest_score": 0.12649873264370903,
+  "density_at_sounder": {
+    "latitude_deg": -53.67859907285381,
+    "longitude_deg": 7.7400542554165135,
+    "truth_peak_cm3": 362539.1342868797,
+    "truth_peak_altitude_km": 260.0,
+    "retrieved_peak_cm3": 350853.27231001016,
+    "retrieved_peak_altitude_km": 260.0,
+    "rms_error_150_to_600_km_relative_to_truth_peak": 0.07473011489637035,
+    "median_absolute_percentage_error_150_to_600_km": 3.439679245627414,
+    "rms_error_peak_to_600_km_relative_to_truth_peak": 0.017643574232952236,
+    "median_absolute_percentage_error_peak_to_600_km": 2.511869047908672,
+    "rms_error_150_km_to_below_peak_relative_to_truth_peak": 0.15674326068761102
+  },
+  "profile_oracle_diagnostic": {
+    "uses_truth_density_for_selection": true,
+    "candidate": {
+      "density_scale": 0.4376035463679734,
+      "hmf2_shift_km": -77.55884635302968,
+      "f2_width_scale": 1.440713807154473,
+      "topside_width_ratio": 1.0132177634804531
+    },
+    "ionogram_score": 0.3649439964609443,
+    "rms_error_150_to_600_km_relative_to_truth_peak": 0.03130487611471298
+  }
+}
