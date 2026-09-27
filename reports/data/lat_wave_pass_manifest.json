@@ -1,0 +1,168 @@
+{
+  "description": "Frozen-epoch vertical sounder latitude pass through independent IRI-2016 density with an imposed wave",
+  "density_grid": "reports/data/lat_wave_pass_truth_density.npz",
+  "forward_grid": "reports/data/lat_wave_pass_forward_grid.nc",
+  "model_epoch_utc": "2010-01-01T12:00:00",
+  "latitude_center_deg": -53.67859907285381,
+  "longitude_deg": 7.7400542554165135,
+  "latitude_span_deg": 20.0,
+  "profile_count": 20,
+  "sounder_altitude_km": 800.0,
+  "wave": {
+    "amplitude_fraction_at_280_km": 0.18,
+    "wavelength_km": 900.0,
+    "bearing_deg": 0.0,
+    "phase_rad_at_center": 0.0,
+    "vertical_center_km": 280.0,
+    "vertical_sigma_km": 60.0
+  },
+  "frequency_sweep_mhz": [
+    2.0,
+    10.0,
+    0.1
+  ],
+  "homing_tolerance_m": 1000.0,
+  "vertical_fan_layout": "equal_area_guarded_D",
+  "profiles": [
+    {
+      "index": 1,
+      "latitude_deg": -63.67859907285381,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T11:57:28"
+    },
+    {
+      "index": 2,
+      "latitude_deg": -62.62596749390644,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T11:57:44"
+    },
+    {
+      "index": 3,
+      "latitude_deg": -61.57333591495907,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T11:58:00"
+    },
+    {
+      "index": 4,
+      "latitude_deg": -60.520704336011704,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T11:58:16"
+    },
+    {
+      "index": 5,
+      "latitude_deg": -59.468072757064334,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T11:58:32"
+    },
+    {
+      "index": 6,
+      "latitude_deg": -58.415441178116964,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T11:58:48"
+    },
+    {
+      "index": 7,
+      "latitude_deg": -57.362809599169594,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T11:59:04"
+    },
+    {
+      "index": 8,
+      "latitude_deg": -56.310178020222224,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T11:59:20"
+    },
+    {
+      "index": 9,
+      "latitude_deg": -55.25754644127486,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T11:59:36"
+    },
+    {
+      "index": 10,
+      "latitude_deg": -54.20491486232749,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T11:59:52"
+    },
+    {
+      "index": 11,
+      "latitude_deg": -53.15228328338012,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T12:00:08"
+    },
+    {
+      "index": 12,
+      "latitude_deg": -52.09965170443276,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T12:00:24"
+    },
+    {
+      "index": 13,
+      "latitude_deg": -51.04702012548539,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T12:00:40"
+    },
+    {
+      "index": 14,
+      "latitude_deg": -49.99438854653802,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T12:00:56"
+    },
+    {
+      "index": 15,
+      "latitude_deg": -48.94175696759065,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T12:01:12"
+    },
+    {
+      "index": 16,
+      "latitude_deg": -47.88912538864328,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T12:01:28"
+    },
+    {
+      "index": 17,
+      "latitude_deg": -46.83649380969591,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T12:01:44"
+    },
+    {
+      "index": 18,
+      "latitude_deg": -45.78386223074854,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T12:02:00"
+    },
+    {
+      "index": 19,
+      "latitude_deg": -44.73123065180118,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T12:02:16"
+    },
+    {
+      "index": 20,
+      "latitude_deg": -43.67859907285381,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0,
+      "time_utc": "2010-01-01T12:02:32"
+    }
+  ]
+}

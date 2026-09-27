@@ -57,7 +57,9 @@ class Ionogram:
             raise ValueError(f"Expected the complete 2–10 MHz, 100 kHz sweep in {path}")
         if len(records) and (np.min(records[:, 0]) < 0 or np.max(records[:, 0]) >= len(frequencies)):
             raise ValueError(f"Bad frequency indices in {path}")
-        if settings != ("adaptive", "equal_area_guarded", .5, 4, 1000.0):
+        if settings not in (("adaptive", "equal_area_guarded", .5, 4, 1000.0),
+                            ("adaptive_with_dense_gap_recovery", "equal_area_guarded",
+                             .5, 4, 1000.0)):
             raise ValueError(f"Expected the D generator and 1 km homing gate in {path}: {settings}")
         return cls(frequencies, records, density, shift, settings, width, top_ratio)
 
