@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -57,14 +58,19 @@ def draw_ionogram(ax, path: Path, title: str) -> None:
     ax.grid(alpha=.12)
 
 
-def evaluate() -> None:
-    fit = json.loads(FIT.read_text())
+def evaluate(truth_ionograms: Path = TRUTH_IONOGRAMS,
+             fit_ionograms: Path = FIT_IONOGRAMS,
+             fit_density: Path = FIT_DENSITY,
+             fit_path: Path = FIT,
+             output: Path = OUTPUT,
+             figure_prefix: str = "lat_wave_retrieval") -> None:
+    fit = json.loads(fit_path.read_text())
     manifest = json.loads(MANIFEST.read_text())
     profiles = manifest["profiles"]
     points = np.array([[p["latitude_deg"], p["longitude_deg"]] for p in profiles])
     latitudes = points[:, 0]
     altitudes, truth = density_at_positions(TRUTH_DENSITY, points)
-    fit_altitudes, retrieved = density_at_positions(FIT_DENSITY, points)
+    fit_altitudes, retrieved = density_at_positions(fit_density, points)
     if not np.array_equal(altitudes, fit_altitudes):
         raise ValueError("Truth and retrieved altitude grids differ")
     mask = (altitudes >= 150) & (altitudes <= 600)
@@ -88,8 +94,8 @@ def evaluate() -> None:
     common_ridge_mae = []
     for p in profiles:
         index = p["index"]
-        observed = Ionogram.read(TRUTH_IONOGRAMS / f"ionogram_{index:02d}.npz")
-        modeled = Ionogram.read(FIT_IONOGRAMS / f"ionogram_{index:02d}.npz")
+        observed = Ionogram.read(truth_ionograms / f"ionogram_{index:02d}.npz")
+        modeled = Ionogram.read(fit_ionograms / f"ionogram_{index:02d}.npz")
         ionogram_scores.append(score(observed, modeled))
         for name, ionogram in (("truth", observed), ("retrieved", modeled)):
             noses[name].append([ionogram.nose(1), ionogram.nose(-1)])
@@ -144,7 +150,8 @@ def evaluate() -> None:
         "truth_accepted_returns": int(np.sum(counts["truth"])),
         "retrieved_accepted_returns": int(np.sum(counts["retrieved"])),
     }
-    OUTPUT.write_text(json.dumps(result, indent=2) + "\n")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(result, indent=2) + "\n")
     FIGURES.mkdir(parents=True, exist_ok=True)
 
     fig, axes = plt.subplots(1, 3, figsize=(17, 5.3), constrained_layout=True,
@@ -167,22 +174,22 @@ def evaluate() -> None:
                  shrink=.8, pad=.01)
     axes[2].set(title="Retrieved minus truth", xlabel="Latitude (°)")
     axes[0].set_ylabel("Altitude (km)")
-    fig.savefig(FIGURES / "lat_wave_retrieval_density.png", dpi=220)
+    fig.savefig(FIGURES / f"{figure_prefix}_density.png", dpi=220)
     plt.close(fig)
 
     indices = (3, 10, 14, 18)
     fig, axes = plt.subplots(len(indices), 2, figsize=(13, 13), constrained_layout=True,
                              sharex=True, sharey=True)
     for row, index in enumerate(indices):
-        draw_ionogram(axes[row, 0], TRUTH_IONOGRAMS / f"ionogram_{index:02d}.npz",
+        draw_ionogram(axes[row, 0], truth_ionograms / f"ionogram_{index:02d}.npz",
                       f"Truth, profile {index:02d} ({latitudes[index-1]:.1f}°)")
-        draw_ionogram(axes[row, 1], FIT_IONOGRAMS / f"ionogram_{index:02d}.npz",
+        draw_ionogram(axes[row, 1], fit_ionograms / f"ionogram_{index:02d}.npz",
                       f"Retrieved, profile {index:02d}")
         axes[row, 0].set_ylabel("Group range (km)")
     for ax in axes[-1]:
         ax.set_xlabel("Frequency (MHz)")
     axes[0, 1].legend(loc="upper right", frameon=True)
-    fig.savefig(FIGURES / "lat_wave_retrieval_ionograms.png", dpi=220)
+    fig.savefig(FIGURES / f"{figure_prefix}_ionograms.png", dpi=220)
     plt.close(fig)
 
     fig, axes = plt.subplots(2, 1, figsize=(10, 8), constrained_layout=True,
@@ -203,7 +210,7 @@ def evaluate() -> None:
                 title="Independent peak-density check after ionogram selection")
     for ax in axes:
         ax.grid(alpha=.2)
-    fig.savefig(FIGURES / "lat_wave_retrieval_peaks.png", dpi=220)
+    fig.savefig(FIGURES / f"{figure_prefix}_peaks.png", dpi=220)
     plt.close(fig)
     print(json.dumps({key: value for key, value in result.items()
                       if not key.endswith("by_profile") and key not in
@@ -211,4 +218,13 @@ def evaluate() -> None:
 
 
 if __name__ == "__main__":
-    evaluate()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--truth-ionograms", type=Path, default=TRUTH_IONOGRAMS)
+    parser.add_argument("--fit-ionograms", type=Path, default=FIT_IONOGRAMS)
+    parser.add_argument("--fit-density", type=Path, default=FIT_DENSITY)
+    parser.add_argument("--fit", type=Path, default=FIT)
+    parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--figure-prefix", default="lat_wave_retrieval")
+    args = parser.parse_args()
+    evaluate(args.truth_ionograms, args.fit_ionograms, args.fit_density,
+             args.fit, args.output, args.figure_prefix)

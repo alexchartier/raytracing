@@ -59,7 +59,11 @@ class Ionogram:
             raise ValueError(f"Bad frequency indices in {path}")
         if settings not in (("adaptive", "equal_area_guarded", .5, 4, 1000.0),
                             ("adaptive_with_dense_gap_recovery", "equal_area_guarded",
-                             .5, 4, 1000.0)):
+                             .5, 4, 1000.0),
+                            ("adaptive_with_dense_gap_recovery_and_20khz_nose_continuation",
+                             "equal_area_guarded", .5, 4, 1000.0),
+                            ("adaptive_with_dense_gap_recovery_and_20khz_nose_continuation_and_above_nose_probes",
+                             "equal_area_guarded", .5, 4, 1000.0)):
             raise ValueError(f"Expected the D generator and 1 km homing gate in {path}: {settings}")
         return cls(frequencies, records, density, shift, settings, width, top_ratio)
 

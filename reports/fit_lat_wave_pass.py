@@ -8,6 +8,7 @@ between a plane-stratified approximation and PyLap's magnetoionic rays.
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
@@ -41,7 +42,7 @@ def plane_group_range(alt: np.ndarray, density: np.ndarray, frequency: float) ->
         fractions[1:] + fractions[:-1], 1e-8)))
 
 
-def load_observations() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray,
+def load_observations(observed_dir: Path = OBSERVED) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray,
                                  list[tuple[int, int, float, float]]]:
     # The manifest is used only for coordinates; its wave field is never read.
     manifest = json.loads(MANIFEST.read_text())
@@ -55,7 +56,7 @@ def load_observations() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray,
     noses = np.full((len(positions), 2), np.nan)
     ranges = []
     for row, position in enumerate(positions):
-        path = OBSERVED / f"ionogram_{position['index']:02d}.npz"
+        path = observed_dir / f"ionogram_{position['index']:02d}.npz"
         with np.load(path, allow_pickle=False) as data:
             records = np.asarray(data["records"], dtype=float)
             frequencies = np.asarray(data["frequencies_mhz"], dtype=float)
@@ -72,8 +73,8 @@ def load_observations() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray,
     return latitudes, altitude, profiles, noses, ranges
 
 
-def fit() -> dict:
-    latitudes, altitude, background, noses, ranges = load_observations()
+def fit(observed_dir: Path = OBSERVED, output: Path = OUTPUT) -> dict:
+    latitudes, altitude, background, noses, ranges = load_observations(observed_dir)
     latitude_center = float(np.mean(latitudes))
     x_km = 6371.0088 * np.deg2rad(latitudes - latitude_center)
     x_normal = x_km / max(abs(x_km))
@@ -154,7 +155,7 @@ def fit() -> dict:
         "method": "joint O/X noses and centered O/X group-range latitude variation",
         "selection_uses_truth_density": False,
         "background": str(BACKGROUND.relative_to(ROOT)),
-        "observed_ionograms": str(OBSERVED.relative_to(ROOT)),
+        "observed_ionograms": str(observed_dir.resolve().relative_to(ROOT)),
         "global_density_scale": float(chosen[0]),
         "linear_background_fraction_end_to_end_halfspan": float(chosen[1]),
         "wave_amplitude_fraction_at_local_f2_peak": float(chosen[2]),
@@ -170,7 +171,8 @@ def fit() -> dict:
         "pass_latitudes_deg": latitudes.tolist(),
         "range_samples": len(range_rows),
     }
-    OUTPUT.write_text(json.dumps(result, indent=2) + "\n")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps({key: value for key, value in result.items()
                       if key not in ("observed_noses_mhz", "modeled_noses_mhz",
                                      "fitted_peak_cm3", "pass_latitudes_deg")}, indent=2))
@@ -178,4 +180,8 @@ def fit() -> dict:
 
 
 if __name__ == "__main__":
-    fit()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--observed", type=Path, default=OBSERVED)
+    parser.add_argument("--output", type=Path, default=OUTPUT)
+    args = parser.parse_args()
+    fit(args.observed, args.output)
