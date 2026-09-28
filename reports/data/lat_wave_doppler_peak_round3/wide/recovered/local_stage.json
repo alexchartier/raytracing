@@ -1,0 +1,111 @@
+{
+  "stage": "recover",
+  "above_only": false,
+  "source_dir": "reports/data/lat_wave_doppler_peak_round3/wide/raw",
+  "grid": "reports/data/lat_wave_doppler_peak_round3/wide_grid.nc",
+  "output_dir": "reports/data/lat_wave_doppler_peak_round3/wide/recovered",
+  "workers": 4,
+  "elapsed_seconds": 114.7859462919987,
+  "profiles": [
+    {
+      "profile": 1,
+      "accepted_returns": 79,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_01.npz: checked 20 gaps, recovered 1 returns in 1 bins"
+    },
+    {
+      "profile": 2,
+      "accepted_returns": 94,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_02.npz: checked 20 gaps, recovered 2 returns in 2 bins"
+    },
+    {
+      "profile": 3,
+      "accepted_returns": 93,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_03.npz: checked 17 gaps, recovered 2 returns in 2 bins"
+    },
+    {
+      "profile": 4,
+      "accepted_returns": 84,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_04.npz: checked 9 gaps, recovered 0 returns in 0 bins"
+    },
+    {
+      "profile": 5,
+      "accepted_returns": 75,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_05.npz: checked 20 gaps, recovered 4 returns in 4 bins"
+    },
+    {
+      "profile": 6,
+      "accepted_returns": 92,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_06.npz: checked 9 gaps, recovered 0 returns in 0 bins"
+    },
+    {
+      "profile": 7,
+      "accepted_returns": 87,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_07.npz: checked 10 gaps, recovered 0 returns in 0 bins"
+    },
+    {
+      "profile": 8,
+      "accepted_returns": 78,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_08.npz: checked 24 gaps, recovered 0 returns in 0 bins"
+    },
+    {
+      "profile": 9,
+      "accepted_returns": 85,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_09.npz: checked 27 gaps, recovered 2 returns in 2 bins"
+    },
+    {
+      "profile": 10,
+      "accepted_returns": 118,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_10.npz: checked 10 gaps, recovered 0 returns in 0 bins"
+    },
+    {
+      "profile": 11,
+      "accepted_returns": 118,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_11.npz: checked 6 gaps, recovered 0 returns in 0 bins"
+    },
+    {
+      "profile": 12,
+      "accepted_returns": 95,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_12.npz: checked 11 gaps, recovered 1 returns in 1 bins"
+    },
+    {
+      "profile": 13,
+      "accepted_returns": 82,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_13.npz: checked 16 gaps, recovered 1 returns in 1 bins"
+    },
+    {
+      "profile": 14,
+      "accepted_returns": 102,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_14.npz: checked 10 gaps, recovered 0 returns in 0 bins"
+    },
+    {
+      "profile": 15,
+      "accepted_returns": 86,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_15.npz: checked 20 gaps, recovered 1 returns in 1 bins"
+    },
+    {
+      "profile": 16,
+      "accepted_returns": 100,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_16.npz: checked 13 gaps, recovered 0 returns in 0 bins"
+    },
+    {
+      "profile": 17,
+      "accepted_returns": 93,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_17.npz: checked 23 gaps, recovered 3 returns in 3 bins"
+    },
+    {
+      "profile": 18,
+      "accepted_returns": 114,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_18.npz: checked 24 gaps, recovered 6 returns in 6 bins"
+    },
+    {
+      "profile": 19,
+      "accepted_returns": 95,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_19.npz: checked 17 gaps, recovered 3 returns in 3 bins"
+    },
+    {
+      "profile": 20,
+      "accepted_returns": 82,
+      "message": "reports/data/lat_wave_doppler_peak_round3/wide/recovered/ionogram_20.npz: checked 29 gaps, recovered 3 returns in 3 bins"
+    }
+  ]
+}

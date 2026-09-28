@@ -1,0 +1,111 @@
+{
+  "stage": "continue",
+  "above_only": true,
+  "source_dir": "reports/data/lat_wave_doppler_peak_round3/wide/continued",
+  "grid": "reports/data/lat_wave_doppler_peak_round3/wide_grid.nc",
+  "output_dir": "reports/data/lat_wave_doppler_peak_round3/wide/final",
+  "workers": 4,
+  "elapsed_seconds": 40.35894337500031,
+  "profiles": [
+    {
+      "profile": 1,
+      "accepted_returns": 104,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 2,
+      "accepted_returns": 110,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 3,
+      "accepted_returns": 109,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 4,
+      "accepted_returns": 95,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 5,
+      "accepted_returns": 94,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 6,
+      "accepted_returns": 113,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 7,
+      "accepted_returns": 103,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 8,
+      "accepted_returns": 117,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 9,
+      "accepted_returns": 102,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 10,
+      "accepted_returns": 121,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 11,
+      "accepted_returns": 138,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 12,
+      "accepted_returns": 114,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 13,
+      "accepted_returns": 96,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 14,
+      "accepted_returns": 132,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 15,
+      "accepted_returns": 102,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 16,
+      "accepted_returns": 113,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 17,
+      "accepted_returns": 110,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 18,
+      "accepted_returns": 138,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 19,
+      "accepted_returns": 111,
+      "message": "added 0 returns"
+    },
+    {
+      "profile": 20,
+      "accepted_returns": 101,
+      "message": "added 0 returns"
+    }
+  ]
+}

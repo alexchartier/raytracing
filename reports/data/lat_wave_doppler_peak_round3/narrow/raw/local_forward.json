@@ -1,0 +1,50 @@
+{
+  "grid": "reports/data/lat_wave_doppler_peak_round3/narrow_grid.nc",
+  "output_dir": "reports/data/lat_wave_doppler_peak_round3/narrow/raw",
+  "workers": 4,
+  "elapsed_seconds": 134.76389183300125,
+  "profiles": [
+    {
+      "index": 1,
+      "returns": 78,
+      "runtime_seconds": 50.381757458999346,
+      "reused": false
+    },
+    {
+      "index": 4,
+      "returns": 85,
+      "runtime_seconds": 73.83854220799913,
+      "reused": false
+    },
+    {
+      "index": 8,
+      "returns": 81,
+      "runtime_seconds": 59.21410970800025,
+      "reused": false
+    },
+    {
+      "index": 10,
+      "returns": 110,
+      "runtime_seconds": 94.71717083299882,
+      "reused": false
+    },
+    {
+      "index": 14,
+      "returns": 109,
+      "runtime_seconds": 56.60237175000111,
+      "reused": false
+    },
+    {
+      "index": 17,
+      "returns": 96,
+      "runtime_seconds": 72.79475716699926,
+      "reused": false
+    },
+    {
+      "index": 20,
+      "returns": 76,
+      "runtime_seconds": 57.09592766700007,
+      "reused": false
+    }
+  ]
+}

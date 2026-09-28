@@ -1,0 +1,50 @@
+{
+  "grid": "reports/data/lat_wave_width_round3/width_minus5_grid.nc",
+  "output_dir": "reports/data/lat_wave_width_round3/width_minus5/raw",
+  "workers": 4,
+  "elapsed_seconds": 137.42055520899885,
+  "profiles": [
+    {
+      "index": 1,
+      "returns": 87,
+      "runtime_seconds": 62.378997583000455,
+      "reused": false
+    },
+    {
+      "index": 4,
+      "returns": 92,
+      "runtime_seconds": 71.71686737500022,
+      "reused": false
+    },
+    {
+      "index": 8,
+      "returns": 80,
+      "runtime_seconds": 65.36428354199961,
+      "reused": false
+    },
+    {
+      "index": 10,
+      "returns": 90,
+      "runtime_seconds": 70.53116825000143,
+      "reused": false
+    },
+    {
+      "index": 14,
+      "returns": 97,
+      "runtime_seconds": 54.4764867089998,
+      "reused": false
+    },
+    {
+      "index": 17,
+      "returns": 90,
+      "runtime_seconds": 68.86707820800075,
+      "reused": false
+    },
+    {
+      "index": 20,
+      "returns": 97,
+      "runtime_seconds": 62.189628499998435,
+      "reused": false
+    }
+  ]
+}

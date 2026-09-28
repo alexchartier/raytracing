@@ -1,0 +1,185 @@
+{
+  "selection_uses_truth_density": false,
+  "observed_ionograms": "reports/data/lat_wave_final_truth_ionograms",
+  "stage": "raw",
+  "profile_indices": [
+    1,
+    4,
+    8,
+    10,
+    14,
+    17,
+    20
+  ],
+  "raw_screen_uses_final_observations": true,
+  "doppler_limit_hz": 15.0,
+  "selection_rule": "lowest mean (0.7 standard O/X score + 0.3 low-Doppler cutoff score)",
+  "chosen_candidate": "wide",
+  "candidates": [
+    {
+      "name": "baseline",
+      "ionograms": "reports/data/lat_wave_joint_round2/peak_full/raw",
+      "standard_score": 0.27869915728375055,
+      "gated_cutoff_score": 0.20535714285714318,
+      "combined_score": 0.2566965529557683,
+      "gated_cutoff_mae_mhz_by_mode": [
+        0.17142857142857176,
+        0.15714285714285722
+      ],
+      "scores_by_profile": [
+        {
+          "return_distance": 0.22833475709608508,
+          "nose": 0.5624999999999998,
+          "ridge": 0.2624124533701385,
+          "total": 0.31869160707687444
+        },
+        {
+          "return_distance": 0.24977932837317493,
+          "nose": 0.3125,
+          "ridge": 0.43435166476991693,
+          "total": 0.30237396355922963
+        },
+        {
+          "return_distance": 0.2840895602646538,
+          "nose": 1.0,
+          "ridge": 0.34871538737866237,
+          "total": 0.4759923356212921
+        },
+        {
+          "return_distance": 0.15512877108858433,
+          "nose": 0.0,
+          "ridge": 0.27408572883890686,
+          "total": 0.1401379698665028
+        },
+        {
+          "return_distance": 0.18006013790393216,
+          "nose": 0.37500000000000033,
+          "ridge": 0.2630086019566472,
+          "total": 0.24538479623849224
+        },
+        {
+          "return_distance": 0.13174464194077562,
+          "nose": 0.2500000000000002,
+          "ridge": 0.18688070055156475,
+          "total": 0.1723356931777396
+        },
+        {
+          "return_distance": 0.21707245401861286,
+          "nose": 0.4375000000000001,
+          "ridge": 0.33606442867942865,
+          "total": 0.2959777354461228
+        }
+      ]
+    },
+    {
+      "name": "narrow",
+      "ionograms": "reports/data/lat_wave_doppler_peak_round3/narrow/raw",
+      "standard_score": 0.28938603791612605,
+      "gated_cutoff_score": 0.1875000000000002,
+      "combined_score": 0.2588202265412883,
+      "gated_cutoff_mae_mhz_by_mode": [
+        0.14285714285714304,
+        0.15714285714285722
+      ],
+      "scores_by_profile": [
+        {
+          "return_distance": 0.24773269720091334,
+          "nose": 1.0,
+          "ridge": 0.2479253136881378,
+          "total": 0.43583804619812994
+        },
+        {
+          "return_distance": 0.24846335189349808,
+          "nose": 0.18749999999999933,
+          "ridge": 0.4510505462242851,
+          "total": 0.2737399527862808
+        },
+        {
+          "return_distance": 0.28412918230412526,
+          "nose": 1.0,
+          "ridge": 0.3488005952794956,
+          "total": 0.476031169323168
+        },
+        {
+          "return_distance": 0.15521485516199005,
+          "nose": 0.0,
+          "ridge": 0.2794272810271602,
+          "total": 0.14125362654452658
+        },
+        {
+          "return_distance": 0.17457601085133045,
+          "nose": 0.37500000000000033,
+          "ridge": 0.24733836575881282,
+          "total": 0.2392344791199944
+        },
+        {
+          "return_distance": 0.12960735029010273,
+          "nose": 0.2500000000000002,
+          "ridge": 0.18861764561234068,
+          "total": 0.1715075717820247
+        },
+        {
+          "return_distance": 0.21284441226272544,
+          "nose": 0.4375000000000001,
+          "ridge": 0.3082899645712942,
+          "total": 0.28809741965875785
+        }
+      ]
+    },
+    {
+      "name": "wide",
+      "ionograms": "reports/data/lat_wave_doppler_peak_round3/wide/raw",
+      "standard_score": 0.2828633158532181,
+      "gated_cutoff_score": 0.13392857142857176,
+      "combined_score": 0.2381828925258242,
+      "gated_cutoff_mae_mhz_by_mode": [
+        0.10000000000000028,
+        0.11428571428571452
+      ],
+      "scores_by_profile": [
+        {
+          "return_distance": 0.2503015073817835,
+          "nose": 0.8125,
+          "ridge": 0.3161186824973077,
+          "total": 0.4040145655594425
+        },
+        {
+          "return_distance": 0.23558501965335585,
+          "nose": 0.18749999999999933,
+          "ridge": 0.4357511015492866,
+          "total": 0.2635969811192029
+        },
+        {
+          "return_distance": 0.264521429104051,
+          "nose": 1.0,
+          "ridge": 0.29591003744892064,
+          "total": 0.4546687934970122
+        },
+        {
+          "return_distance": 0.15627149062883228,
+          "nose": 0.0,
+          "ridge": 0.29463343586112467,
+          "total": 0.14487600701808268
+        },
+        {
+          "return_distance": 0.16043660205953256,
+          "nose": 0.3125,
+          "ridge": 0.18921749274115832,
+          "total": 0.20420862968097458
+        },
+        {
+          "return_distance": 0.1238953277787899,
+          "nose": 0.5625000000000008,
+          "ridge": 0.1622790154937091,
+          "total": 0.24122323337707646
+        },
+        {
+          "return_distance": 0.1935848924666752,
+          "nose": 0.4375000000000001,
+          "ridge": 0.25804154932031864,
+          "total": 0.26745500072073514
+        }
+      ]
+    }
+  ]
+}

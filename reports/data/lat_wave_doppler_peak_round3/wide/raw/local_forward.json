@@ -1,0 +1,121 @@
+{
+  "grid": "reports/data/lat_wave_doppler_peak_round3/wide_grid.nc",
+  "output_dir": "reports/data/lat_wave_doppler_peak_round3/wide/raw",
+  "workers": 4,
+  "elapsed_seconds": 223.77026179099994,
+  "profiles": [
+    {
+      "index": 1,
+      "returns": 78,
+      "reused": true
+    },
+    {
+      "index": 2,
+      "returns": 92,
+      "runtime_seconds": 50.44163437499992,
+      "reused": false
+    },
+    {
+      "index": 3,
+      "returns": 91,
+      "runtime_seconds": 54.650949791999665,
+      "reused": false
+    },
+    {
+      "index": 4,
+      "returns": 84,
+      "reused": true
+    },
+    {
+      "index": 5,
+      "returns": 71,
+      "runtime_seconds": 50.11377754200112,
+      "reused": false
+    },
+    {
+      "index": 6,
+      "returns": 92,
+      "runtime_seconds": 54.36446424999849,
+      "reused": false
+    },
+    {
+      "index": 7,
+      "returns": 87,
+      "runtime_seconds": 54.874382874999355,
+      "reused": false
+    },
+    {
+      "index": 8,
+      "returns": 78,
+      "reused": true
+    },
+    {
+      "index": 9,
+      "returns": 83,
+      "runtime_seconds": 60.55310504100089,
+      "reused": false
+    },
+    {
+      "index": 10,
+      "returns": 118,
+      "reused": true
+    },
+    {
+      "index": 11,
+      "returns": 118,
+      "runtime_seconds": 81.77352050000081,
+      "reused": false
+    },
+    {
+      "index": 12,
+      "returns": 94,
+      "runtime_seconds": 59.440091832999315,
+      "reused": false
+    },
+    {
+      "index": 13,
+      "returns": 81,
+      "runtime_seconds": 53.6055420419998,
+      "reused": false
+    },
+    {
+      "index": 14,
+      "returns": 102,
+      "reused": true
+    },
+    {
+      "index": 15,
+      "returns": 85,
+      "runtime_seconds": 56.24075500000072,
+      "reused": false
+    },
+    {
+      "index": 16,
+      "returns": 100,
+      "runtime_seconds": 59.873959083000955,
+      "reused": false
+    },
+    {
+      "index": 17,
+      "returns": 90,
+      "reused": true
+    },
+    {
+      "index": 18,
+      "returns": 108,
+      "runtime_seconds": 47.12586745800036,
+      "reused": false
+    },
+    {
+      "index": 19,
+      "returns": 92,
+      "runtime_seconds": 60.35150316700128,
+      "reused": false
+    },
+    {
+      "index": 20,
+      "returns": 79,
+      "reused": true
+    }
+  ]
+}

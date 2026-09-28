@@ -1,0 +1,21 @@
+{
+  "selection_uses_truth_density": false,
+  "starting_grid": "reports/data/lat_wave_joint_round2/peak_full_grid.nc",
+  "description": "Uniform +/-5% topside altitude-width pilots",
+  "candidates": [
+    {
+      "name": "width_plus5",
+      "grid": "reports/data/lat_wave_width_round3/width_plus5_grid.nc",
+      "density": "reports/data/lat_wave_width_round3/width_plus5_density.npz",
+      "width_fraction_min": 0.05,
+      "width_fraction_max": 0.05
+    },
+    {
+      "name": "width_minus5",
+      "grid": "reports/data/lat_wave_width_round3/width_minus5_grid.nc",
+      "density": "reports/data/lat_wave_width_round3/width_minus5_density.npz",
+      "width_fraction_min": -0.05,
+      "width_fraction_max": -0.05
+    }
+  ]
+}
