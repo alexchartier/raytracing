@@ -18,7 +18,8 @@ from python_raytrace.geometry import GeoPoint  # noqa: E402
 from python_raytrace.grid import load_ionosphere_grid_netcdf  # noqa: E402
 from python_raytrace.spacecraft_doppler import spacecraft_doppler  # noqa: E402
 from python_raytrace.multisat_topside_inverse_demo import (  # noqa: E402
-    TopsideInverseConfig, _equal_area_vertical_fan, home_frequency_sweep_adaptive,
+    TopsideInverseConfig, _equal_area_vertical_fan, _fan_mesh,
+    _vertical_search_arrays, home_frequency_sweep_adaptive,
 )
 
 FREQUENCIES = np.arange(2.0, 10.0001, 0.1)
@@ -26,32 +27,38 @@ SPACECRAFT_SPEED_MPS = 8000.0
 SPACECRAFT_TRACK_BEARING_DEG = 0.0
 
 
-def make_fan() -> tuple[TopsideInverseConfig, np.ndarray, np.ndarray]:
+def make_fan(option: str = "D") -> tuple[TopsideInverseConfig, np.ndarray, np.ndarray]:
+    if option not in ("A", "D"):
+        raise ValueError("fan option must be A or D")
     config = replace(
         TopsideInverseConfig(),
         vertical_elevation_count=24,
         vertical_azimuth_step_deg=30.0,
-        vertical_fan_layout="equal_area_guarded",
-        vertical_outer_ray_fraction=0.5,
-        vertical_guard_seed_limit=4,
+        vertical_fan_layout="az_el" if option == "A" else "equal_area_guarded",
+        vertical_outer_ray_fraction=1.0 if option == "A" else 0.5,
+        vertical_guard_seed_limit=None if option == "A" else 4,
         seed_max_candidates_per_frequency=32,
         homed_max_returns_per_frequency=64,
         d_region_model="none",
     )
-    elevations, bearings = _equal_area_vertical_fan(config, guard_nadir_rows=3)
+    if option == "A":
+        elevations, bearings = _fan_mesh(*_vertical_search_arrays(config))
+    else:
+        elevations, bearings = _equal_area_vertical_fan(config, guard_nadir_rows=3)
     return config, elevations, bearings
 
 
 def generate(grid_path: Path, latitude: float, longitude: float, altitude: float,
              profile_index: int, output: Path,
-             density_source: str = "IRI-2016 with imposed wave") -> None:
+             density_source: str = "IRI-2016 with imposed wave",
+             fan_option: str = "D") -> None:
     start = time.perf_counter()
     grid = load_ionosphere_grid_netcdf(grid_path)
     if not (grid.latitudes_deg[0] < latitude < grid.latitudes_deg[-1]
             and grid.longitudes_deg[0] < longitude < grid.longitudes_deg[-1]
             and grid.altitudes_km[0] < altitude < grid.altitudes_km[-1]):
         raise ValueError("Sounder must lie inside the prebuilt forward grid")
-    config, elevations, bearings = make_fan()
+    config, elevations, bearings = make_fan(fan_option)
     rows = np.unique(elevations)
     retained = np.zeros(rows.size, dtype=bool)
     retained[:2] = True
@@ -104,9 +111,11 @@ def generate(grid_path: Path, latitude: float, longitude: float, altitude: float
         count_array=counts,
         frequencies_mhz=FREQUENCIES,
         method=np.array("adaptive"),
-        vertical_fan_layout=np.array("equal_area_guarded"),
-        vertical_outer_ray_fraction=np.array(0.5),
-        vertical_guard_seed_limit=np.array(4),
+        vertical_fan_option=np.array(fan_option),
+        vertical_fan_layout=np.array(config.vertical_fan_layout),
+        vertical_outer_ray_fraction=np.array(config.vertical_outer_ray_fraction),
+        vertical_guard_seed_limit=np.array(-1 if config.vertical_guard_seed_limit is None
+                                           else config.vertical_guard_seed_limit),
         anchor_stride=np.array(5),
         anchor_block_size=np.array(10),
         anchor_elevation_stride=np.array(2),
@@ -133,9 +142,10 @@ def main() -> None:
     parser.add_argument("--profile-index", type=int, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--density-source", default="IRI-2016 with imposed wave")
+    parser.add_argument("--fan-option", choices=("A", "D"), default="D")
     args = parser.parse_args()
     generate(args.grid, args.latitude_deg, args.longitude_deg, args.altitude_km,
-             args.profile_index, args.output, args.density_source)
+             args.profile_index, args.output, args.density_source, args.fan_option)
 
 
 if __name__ == "__main__":

@@ -39,7 +39,10 @@ def recover(source: Path, grid_path: Path, output: Path) -> None:
     local_peak_mhz = float(0.00898 * np.sqrt(np.max(profile)))
     frequency_limit = min(10.0, local_peak_mhz + 0.6)
     point = GeoPoint(latitude, longitude, altitude)
-    config, elevations, bearings = make_fan()
+    fan_option = (str(payload["vertical_fan_option"])
+                  if "vertical_fan_option" in payload else
+                  "A" if str(payload["vertical_fan_layout"]) == "az_el" else "D")
+    config, elevations, bearings = make_fan(fan_option)
     frequencies = np.asarray(payload["frequencies_mhz"], dtype=float)
     counts = np.asarray(payload["count_array"], dtype=int).copy()
     records = np.asarray(payload["records"], dtype=float).tolist()
