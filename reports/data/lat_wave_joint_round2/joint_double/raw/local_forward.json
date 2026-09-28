@@ -1,0 +1,50 @@
+{
+  "grid": "reports/data/lat_wave_joint_round2/joint_double_grid.nc",
+  "output_dir": "reports/data/lat_wave_joint_round2/joint_double/raw",
+  "workers": 2,
+  "elapsed_seconds": 261.4117275839999,
+  "profiles": [
+    {
+      "index": 1,
+      "returns": 40,
+      "runtime_seconds": 56.170620666000104,
+      "reused": false
+    },
+    {
+      "index": 4,
+      "returns": 79,
+      "runtime_seconds": 95.18854775,
+      "reused": false
+    },
+    {
+      "index": 8,
+      "returns": 59,
+      "runtime_seconds": 50.22102870799972,
+      "reused": false
+    },
+    {
+      "index": 10,
+      "returns": 48,
+      "runtime_seconds": 78.48779850000028,
+      "reused": false
+    },
+    {
+      "index": 14,
+      "returns": 102,
+      "runtime_seconds": 69.02970249999998,
+      "reused": false
+    },
+    {
+      "index": 17,
+      "returns": 27,
+      "runtime_seconds": 57.34632912500001,
+      "reused": false
+    },
+    {
+      "index": 20,
+      "returns": 78,
+      "runtime_seconds": 79.0050941669997,
+      "reused": false
+    }
+  ]
+}

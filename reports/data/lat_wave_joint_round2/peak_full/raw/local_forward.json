@@ -1,0 +1,121 @@
+{
+  "grid": "reports/data/lat_wave_joint_round2/peak_full_grid.nc",
+  "output_dir": "reports/data/lat_wave_joint_round2/peak_full/raw",
+  "workers": 4,
+  "elapsed_seconds": 265.5147890420003,
+  "profiles": [
+    {
+      "index": 1,
+      "returns": 85,
+      "reused": true
+    },
+    {
+      "index": 2,
+      "returns": 112,
+      "runtime_seconds": 62.42881200000011,
+      "reused": false
+    },
+    {
+      "index": 3,
+      "returns": 90,
+      "runtime_seconds": 65.57686920800006,
+      "reused": false
+    },
+    {
+      "index": 4,
+      "returns": 83,
+      "reused": true
+    },
+    {
+      "index": 5,
+      "returns": 76,
+      "runtime_seconds": 59.59294920800039,
+      "reused": false
+    },
+    {
+      "index": 6,
+      "returns": 95,
+      "runtime_seconds": 65.48186716700002,
+      "reused": false
+    },
+    {
+      "index": 7,
+      "returns": 85,
+      "runtime_seconds": 68.1170952500006,
+      "reused": false
+    },
+    {
+      "index": 8,
+      "returns": 81,
+      "reused": true
+    },
+    {
+      "index": 9,
+      "returns": 94,
+      "runtime_seconds": 74.83052420799959,
+      "reused": false
+    },
+    {
+      "index": 10,
+      "returns": 110,
+      "reused": true
+    },
+    {
+      "index": 11,
+      "returns": 110,
+      "runtime_seconds": 90.69490929200037,
+      "reused": false
+    },
+    {
+      "index": 12,
+      "returns": 96,
+      "runtime_seconds": 75.17580433300009,
+      "reused": false
+    },
+    {
+      "index": 13,
+      "returns": 91,
+      "runtime_seconds": 63.393297749999874,
+      "reused": false
+    },
+    {
+      "index": 14,
+      "returns": 105,
+      "reused": true
+    },
+    {
+      "index": 15,
+      "returns": 87,
+      "runtime_seconds": 66.9852563330005,
+      "reused": false
+    },
+    {
+      "index": 16,
+      "returns": 101,
+      "runtime_seconds": 70.46759399999974,
+      "reused": false
+    },
+    {
+      "index": 17,
+      "returns": 98,
+      "reused": true
+    },
+    {
+      "index": 18,
+      "returns": 111,
+      "runtime_seconds": 60.560414250000576,
+      "reused": false
+    },
+    {
+      "index": 19,
+      "returns": 92,
+      "runtime_seconds": 66.6367439579999,
+      "reused": false
+    },
+    {
+      "index": 20,
+      "returns": 76,
+      "reused": true
+    }
+  ]
+}

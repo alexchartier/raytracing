@@ -1,0 +1,50 @@
+{
+  "grid": "reports/data/lat_wave_joint_round2/height_half_grid.nc",
+  "output_dir": "reports/data/lat_wave_joint_round2/height_half/raw",
+  "workers": 2,
+  "elapsed_seconds": 254.77234779100036,
+  "profiles": [
+    {
+      "index": 1,
+      "returns": 62,
+      "runtime_seconds": 57.216372500000034,
+      "reused": false
+    },
+    {
+      "index": 4,
+      "returns": 76,
+      "runtime_seconds": 70.15779599999951,
+      "reused": false
+    },
+    {
+      "index": 8,
+      "returns": 83,
+      "runtime_seconds": 49.37413741599994,
+      "reused": false
+    },
+    {
+      "index": 10,
+      "returns": 98,
+      "runtime_seconds": 85.21531737500027,
+      "reused": false
+    },
+    {
+      "index": 14,
+      "returns": 94,
+      "runtime_seconds": 70.47034366600019,
+      "reused": false
+    },
+    {
+      "index": 17,
+      "returns": 94,
+      "runtime_seconds": 82.07478429100047,
+      "reused": false
+    },
+    {
+      "index": 20,
+      "returns": 82,
+      "runtime_seconds": 71.25615595900035,
+      "reused": false
+    }
+  ]
+}

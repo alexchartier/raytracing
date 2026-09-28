@@ -1,0 +1,128 @@
+{
+  "grid": "reports/data/lat_wave_joint_round2/peak_half_grid.nc",
+  "output_dir": "reports/data/lat_wave_joint_round2/peak_half/raw",
+  "workers": 4,
+  "elapsed_seconds": 351.4811142919998,
+  "profiles": [
+    {
+      "index": 1,
+      "returns": 85,
+      "runtime_seconds": 51.85683108300054,
+      "reused": false
+    },
+    {
+      "index": 2,
+      "returns": 109,
+      "runtime_seconds": 61.78516541699992,
+      "reused": false
+    },
+    {
+      "index": 3,
+      "returns": 89,
+      "runtime_seconds": 65.28480095800023,
+      "reused": false
+    },
+    {
+      "index": 4,
+      "returns": 83,
+      "runtime_seconds": 70.34419345799961,
+      "reused": false
+    },
+    {
+      "index": 5,
+      "returns": 76,
+      "runtime_seconds": 59.44779133400061,
+      "reused": false
+    },
+    {
+      "index": 6,
+      "returns": 95,
+      "runtime_seconds": 67.47982566700011,
+      "reused": false
+    },
+    {
+      "index": 7,
+      "returns": 86,
+      "runtime_seconds": 68.81508187500003,
+      "reused": false
+    },
+    {
+      "index": 8,
+      "returns": 81,
+      "runtime_seconds": 61.27669041600075,
+      "reused": false
+    },
+    {
+      "index": 9,
+      "returns": 95,
+      "runtime_seconds": 76.92966166599945,
+      "reused": false
+    },
+    {
+      "index": 10,
+      "returns": 112,
+      "runtime_seconds": 92.27264758299953,
+      "reused": false
+    },
+    {
+      "index": 11,
+      "returns": 109,
+      "runtime_seconds": 89.24595095900077,
+      "reused": false
+    },
+    {
+      "index": 12,
+      "returns": 96,
+      "runtime_seconds": 73.9159213339999,
+      "reused": false
+    },
+    {
+      "index": 13,
+      "returns": 91,
+      "runtime_seconds": 58.037642625000444,
+      "reused": false
+    },
+    {
+      "index": 14,
+      "returns": 108,
+      "runtime_seconds": 49.158662165999885,
+      "reused": false
+    },
+    {
+      "index": 15,
+      "returns": 87,
+      "runtime_seconds": 58.688742625000486,
+      "reused": false
+    },
+    {
+      "index": 16,
+      "returns": 102,
+      "runtime_seconds": 62.698519083000065,
+      "reused": false
+    },
+    {
+      "index": 17,
+      "returns": 96,
+      "runtime_seconds": 66.48413820799942,
+      "reused": false
+    },
+    {
+      "index": 18,
+      "returns": 110,
+      "runtime_seconds": 54.02032283300014,
+      "reused": false
+    },
+    {
+      "index": 19,
+      "returns": 92,
+      "runtime_seconds": 64.54016283300007,
+      "reused": false
+    },
+    {
+      "index": 20,
+      "returns": 76,
+      "runtime_seconds": 53.1057541250002,
+      "reused": false
+    }
+  ]
+}

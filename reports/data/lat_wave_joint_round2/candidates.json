@@ -1,0 +1,138 @@
+{
+  "selection_uses_truth_density": false,
+  "observed_ionograms": "reports/data/lat_wave_final_truth_ionograms",
+  "starting_ionograms": "reports/data/lat_wave_peak_candidates/smooth_half/final",
+  "starting_grid": "reports/data/lat_wave_peak_candidates/smooth_half_grid.nc",
+  "starting_density": "reports/data/lat_wave_peak_candidates/smooth_half_density.npz",
+  "starting_wave_wavelength_km": 916.739856289144,
+  "range_samples": 805,
+  "range_mode_frequency_groups": 42,
+  "height_basis": "linear latitude + cosine and sine at starting wave wavelength",
+  "height_coefficients_km": [
+    -3.457824161390579,
+    5.0626923967072415,
+    1.4126720874584566
+  ],
+  "height_update_km_by_profile": [
+    3.25151281699865,
+    6.726146210395237,
+    7.985869862913992,
+    6.040579203534513,
+    1.8545265429045918,
+    -2.241661679804726,
+    -3.9721566536312243,
+    -2.5036843991796873,
+    1.0463595780673365,
+    4.291276853751509,
+    5.030429473436917,
+    2.5911471991225494,
+    -1.761090949960852,
+    -5.594321778738608,
+    -6.7930629029424034,
+    -4.848293745573903,
+    -1.1678466212360628,
+    1.7820626822607255,
+    1.980686471329331,
+    -0.9150412728131776
+  ],
+  "height_proxy": "two-way group-range change approximately -2 km per km layer shift",
+  "peak_basis": "constant + linear latitude + cosine and sine at starting wave wavelength",
+  "peak_coefficients_fraction": [
+    -0.003148419211063093,
+    0.012291867451952343,
+    0.0006580495998755705,
+    -0.0003070086601297635
+  ],
+  "remaining_mode_nose_offsets_mhz": [
+    0.008698786723322053,
+    0.04873520382289745
+  ],
+  "peak_update_fraction_by_profile": [
+    -0.01498971602408541,
+    -0.013423832412719265,
+    -0.012298560383120851,
+    -0.011511085517562298,
+    -0.010752611100608501,
+    -0.009696656493825418,
+    -0.008198138831011871,
+    -0.006381841795677348,
+    -0.004566324899798935,
+    -0.0030696719411239504,
+    -0.002015529541978747,
+    -0.0012577097863485085,
+    -0.0004693328357525143,
+    0.0006578479509141617,
+    0.0022254830675560514,
+    0.004066642319482316,
+    0.00584760568703602,
+    0.007271359458059342,
+    0.00825870955089826,
+    0.00899657256193187
+  ],
+  "peak_sigma_km": 20.0,
+  "candidates": [
+    {
+      "name": "height_half",
+      "height_strength": 0.5,
+      "peak_strength": 0.0,
+      "grid": "reports/data/lat_wave_joint_round2/height_half_grid.nc",
+      "density": "reports/data/lat_wave_joint_round2/height_half_density.npz"
+    },
+    {
+      "name": "height_full",
+      "height_strength": 1.0,
+      "peak_strength": 0.0,
+      "grid": "reports/data/lat_wave_joint_round2/height_full_grid.nc",
+      "density": "reports/data/lat_wave_joint_round2/height_full_density.npz"
+    },
+    {
+      "name": "height_double",
+      "height_strength": 2.0,
+      "peak_strength": 0.0,
+      "grid": "reports/data/lat_wave_joint_round2/height_double_grid.nc",
+      "density": "reports/data/lat_wave_joint_round2/height_double_density.npz"
+    },
+    {
+      "name": "peak_half",
+      "height_strength": 0.0,
+      "peak_strength": 0.5,
+      "grid": "reports/data/lat_wave_joint_round2/peak_half_grid.nc",
+      "density": "reports/data/lat_wave_joint_round2/peak_half_density.npz"
+    },
+    {
+      "name": "peak_full",
+      "height_strength": 0.0,
+      "peak_strength": 1.0,
+      "grid": "reports/data/lat_wave_joint_round2/peak_full_grid.nc",
+      "density": "reports/data/lat_wave_joint_round2/peak_full_density.npz"
+    },
+    {
+      "name": "peak_double",
+      "height_strength": 0.0,
+      "peak_strength": 2.0,
+      "grid": "reports/data/lat_wave_joint_round2/peak_double_grid.nc",
+      "density": "reports/data/lat_wave_joint_round2/peak_double_density.npz"
+    },
+    {
+      "name": "joint_half",
+      "height_strength": 0.5,
+      "peak_strength": 1.0,
+      "grid": "reports/data/lat_wave_joint_round2/joint_half_grid.nc",
+      "density": "reports/data/lat_wave_joint_round2/joint_half_density.npz"
+    },
+    {
+      "name": "joint_full",
+      "height_strength": 1.0,
+      "peak_strength": 1.0,
+      "grid": "reports/data/lat_wave_joint_round2/joint_full_grid.nc",
+      "density": "reports/data/lat_wave_joint_round2/joint_full_density.npz"
+    },
+    {
+      "name": "joint_double",
+      "height_strength": 2.0,
+      "peak_strength": 1.0,
+      "grid": "reports/data/lat_wave_joint_round2/joint_double_grid.nc",
+      "density": "reports/data/lat_wave_joint_round2/joint_double_density.npz"
+    }
+  ]
+}

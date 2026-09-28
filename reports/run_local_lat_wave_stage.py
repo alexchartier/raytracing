@@ -21,12 +21,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def run(stage: str, source_dir: Path, grid: Path, output_dir: Path,
-        workers: int, above_only: bool) -> dict:
+        workers: int, above_only: bool, indices: list[int] | None = None) -> dict:
     if not 1 <= workers <= 20:
         raise ValueError("workers must be between 1 and 20")
     if stage == "recover" and above_only:
         raise ValueError("above-only applies to continuation")
-    source = [source_dir / f"ionogram_{index:02d}.npz" for index in range(1, 21)]
+    indices = list(range(1, 21)) if indices is None else sorted(set(indices))
+    if not indices or any(index < 1 or index > 20 for index in indices):
+        raise ValueError("profile indices must be between 1 and 20")
+    source = [source_dir / f"ionogram_{index:02d}.npz" for index in indices]
     if any(not path.is_file() for path in source) or not grid.is_file():
         raise FileNotFoundError("Expected 20 source ionograms and the forward grid")
     output_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -83,7 +86,7 @@ def run(stage: str, source_dir: Path, grid: Path, output_dir: Path,
 
     completed = []
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        futures = {pool.submit(one, index): index for index in range(1, 21)}
+        futures = {pool.submit(one, index): index for index in indices}
         for future in as_completed(futures):
             item = future.result()
             completed.append(item)
@@ -111,7 +114,8 @@ if __name__ == "__main__":
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--above-only", action="store_true")
+    parser.add_argument("--indices", nargs="+", type=int)
     arguments = parser.parse_args()
     print(json.dumps(run(arguments.stage, arguments.source_dir, arguments.grid,
                          arguments.output_dir, arguments.workers,
-                         arguments.above_only), indent=2))
+                         arguments.above_only, arguments.indices), indent=2))
