@@ -1,0 +1,145 @@
+{
+  "spacecraft_speed_mps": 8000.0,
+  "spacecraft_track_bearing_deg": 0.0,
+  "ionosphere_temporally_frozen": true,
+  "truth_return_count": 2053,
+  "retrieved_return_count": 1911,
+  "truth_distinct_path_count_after_near_duplicate_grouping": 1449,
+  "retrieved_distinct_path_count_after_near_duplicate_grouping": 1395,
+  "matched_return_count_within_30_km": 1032,
+  "truth_absolute_doppler_median_hz": 3.4074144435338605,
+  "truth_absolute_doppler_p90_hz": 10.485956870769797,
+  "truth_absolute_doppler_max_hz": 49.98286976936013,
+  "matched_doppler_difference_median_absolute_hz": 1.678013117648975,
+  "matched_doppler_difference_p90_absolute_hz": 4.655895780437154,
+  "matched_doppler_difference_rms_hz": 3.1951917486381913,
+  "matched_group_range_difference_median_absolute_km": 9.672993661167311,
+  "range_doppler_residual_correlation": 0.12377297874585817,
+  "matched_returns_within_10_km": 527,
+  "within_10_km_but_doppler_difference_above_1_hz": 412,
+  "within_10_km_but_doppler_difference_above_1_hz_fraction": 0.7817836812144212,
+  "near_duplicate_grouping_range_tolerance_km": 1.0,
+  "near_duplicate_grouping_doppler_tolerance_hz": 0.1,
+  "per_profile": [
+    {
+      "index": 1,
+      "matched_returns_within_30_km": 53,
+      "median_absolute_doppler_difference_hz": 2.0652306829554083,
+      "median_absolute_group_range_difference_km": 13.60574774086217
+    },
+    {
+      "index": 2,
+      "matched_returns_within_30_km": 42,
+      "median_absolute_doppler_difference_hz": 1.7425527593868262,
+      "median_absolute_group_range_difference_km": 17.686427116113805
+    },
+    {
+      "index": 3,
+      "matched_returns_within_30_km": 41,
+      "median_absolute_doppler_difference_hz": 1.550105794384487,
+      "median_absolute_group_range_difference_km": 15.354188585293286
+    },
+    {
+      "index": 4,
+      "matched_returns_within_30_km": 43,
+      "median_absolute_doppler_difference_hz": 1.1940305206041377,
+      "median_absolute_group_range_difference_km": 11.025531974808018
+    },
+    {
+      "index": 5,
+      "matched_returns_within_30_km": 47,
+      "median_absolute_doppler_difference_hz": 0.9731782510483362,
+      "median_absolute_group_range_difference_km": 4.467755763286732
+    },
+    {
+      "index": 6,
+      "matched_returns_within_30_km": 42,
+      "median_absolute_doppler_difference_hz": 0.4356011480806554,
+      "median_absolute_group_range_difference_km": 8.784899653270088
+    },
+    {
+      "index": 7,
+      "matched_returns_within_30_km": 37,
+      "median_absolute_doppler_difference_hz": 0.1793217010092074,
+      "median_absolute_group_range_difference_km": 10.355160968156497
+    },
+    {
+      "index": 8,
+      "matched_returns_within_30_km": 41,
+      "median_absolute_doppler_difference_hz": 0.3873495412225916,
+      "median_absolute_group_range_difference_km": 15.919836409324262
+    },
+    {
+      "index": 9,
+      "matched_returns_within_30_km": 54,
+      "median_absolute_doppler_difference_hz": 0.31298665121530433,
+      "median_absolute_group_range_difference_km": 9.470900355307549
+    },
+    {
+      "index": 10,
+      "matched_returns_within_30_km": 65,
+      "median_absolute_doppler_difference_hz": 2.5608998651558057,
+      "median_absolute_group_range_difference_km": 8.894913151626042
+    },
+    {
+      "index": 11,
+      "matched_returns_within_30_km": 62,
+      "median_absolute_doppler_difference_hz": 6.532862599698154,
+      "median_absolute_group_range_difference_km": 7.138429198647316
+    },
+    {
+      "index": 12,
+      "matched_returns_within_30_km": 65,
+      "median_absolute_doppler_difference_hz": 4.202499813966439,
+      "median_absolute_group_range_difference_km": 12.8124561589716
+    },
+    {
+      "index": 13,
+      "matched_returns_within_30_km": 54,
+      "median_absolute_doppler_difference_hz": 1.027552465104431,
+      "median_absolute_group_range_difference_km": 15.285947428031818
+    },
+    {
+      "index": 14,
+      "matched_returns_within_30_km": 53,
+      "median_absolute_doppler_difference_hz": 1.3999837072073391,
+      "median_absolute_group_range_difference_km": 7.171950975871368
+    },
+    {
+      "index": 15,
+      "matched_returns_within_30_km": 45,
+      "median_absolute_doppler_difference_hz": 1.412220515404321,
+      "median_absolute_group_range_difference_km": 7.717828808039712
+    },
+    {
+      "index": 16,
+      "matched_returns_within_30_km": 64,
+      "median_absolute_doppler_difference_hz": 1.6579650967154616,
+      "median_absolute_group_range_difference_km": 8.414734227140116
+    },
+    {
+      "index": 17,
+      "matched_returns_within_30_km": 63,
+      "median_absolute_doppler_difference_hz": 1.7495028929200553,
+      "median_absolute_group_range_difference_km": 7.871270798237219
+    },
+    {
+      "index": 18,
+      "matched_returns_within_30_km": 65,
+      "median_absolute_doppler_difference_hz": 2.17863833983864,
+      "median_absolute_group_range_difference_km": 8.049067939663814
+    },
+    {
+      "index": 19,
+      "matched_returns_within_30_km": 54,
+      "median_absolute_doppler_difference_hz": 2.340283684999808,
+      "median_absolute_group_range_difference_km": 6.73827248454495
+    },
+    {
+      "index": 20,
+      "matched_returns_within_30_km": 42,
+      "median_absolute_doppler_difference_hz": 2.2274698704794207,
+      "median_absolute_group_range_difference_km": 10.319821819397134
+    }
+  ]
+}

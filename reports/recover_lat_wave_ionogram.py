@@ -15,10 +15,11 @@ from pathlib import Path
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator
 
-from generate_lat_wave_ionogram import make_fan
+from generate_lat_wave_ionogram import make_fan, SPACECRAFT_SPEED_MPS, SPACECRAFT_TRACK_BEARING_DEG
 from python_raytrace.geometry import GeoPoint
 from python_raytrace.grid import load_ionosphere_grid_netcdf
 from python_raytrace.multisat_topside_inverse_demo import _home_frequency_returns
+from python_raytrace.spacecraft_doppler import spacecraft_doppler
 from python_raytrace.tracer import PointToPointRayTracer
 
 
@@ -42,6 +43,13 @@ def recover(source: Path, grid_path: Path, output: Path) -> None:
     frequencies = np.asarray(payload["frequencies_mhz"], dtype=float)
     counts = np.asarray(payload["count_array"], dtype=int).copy()
     records = np.asarray(payload["records"], dtype=float).tolist()
+    has_spacecraft_doppler = "spacecraft_doppler_hz" in payload
+    if has_spacecraft_doppler:
+        dopplers = np.asarray(payload["spacecraft_doppler_hz"], dtype=float).tolist()
+        launch_angles = np.asarray(payload["launch_angles_deg"], dtype=float).tolist()
+        arrival_angles = np.asarray(payload["arrival_angles_deg"], dtype=float).tolist()
+        receiver_misses = np.asarray(
+            payload["spacecraft_doppler_receiver_miss_m"], dtype=float).tolist()
     tracer = PointToPointRayTracer()
     checks = 0
     recovered_bins = 0
@@ -62,8 +70,21 @@ def recover(source: Path, grid_path: Path, output: Path) -> None:
                 recovered_bins += 1
                 recovered_returns += len(reflected)
                 counts[index, mode_index] = len(reflected)
-                records.extend([float(index), float(mode), ray.group_range_km,
-                                ray.miss_m, ray.absorption_db] for ray in reflected)
+                for ray in reflected:
+                    records.append([float(index), float(mode), ray.group_range_km,
+                                    ray.miss_m, ray.absorption_db])
+                    if has_spacecraft_doppler:
+                        observable = spacecraft_doppler(
+                            ray.ray, point, point, float(frequency),
+                            speed_mps=SPACECRAFT_SPEED_MPS,
+                            track_bearing_deg=SPACECRAFT_TRACK_BEARING_DEG,
+                        )
+                        dopplers.append(observable.doppler_hz)
+                        launch_angles.append([observable.launch_elevation_deg,
+                                              observable.launch_bearing_deg])
+                        arrival_angles.append([observable.arrival_elevation_deg,
+                                               observable.arrival_bearing_deg])
+                        receiver_misses.append(observable.receiver_miss_m)
     payload.update(
         records=np.asarray(records, dtype=float).reshape(-1, 5),
         count_array=counts,
@@ -74,6 +95,13 @@ def recover(source: Path, grid_path: Path, output: Path) -> None:
         dense_recovered_return_count=np.array(recovered_returns),
         dense_recovery_runtime_seconds=np.array(time.perf_counter() - start),
     )
+    if has_spacecraft_doppler:
+        payload.update(
+            spacecraft_doppler_hz=np.asarray(dopplers, dtype=float),
+            launch_angles_deg=np.asarray(launch_angles, dtype=float).reshape(-1, 2),
+            arrival_angles_deg=np.asarray(arrival_angles, dtype=float).reshape(-1, 2),
+            spacecraft_doppler_receiver_miss_m=np.asarray(receiver_misses, dtype=float),
+        )
     output.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(output, **payload)
     print(f"{output}: checked {checks} gaps, recovered {recovered_returns} returns "

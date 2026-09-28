@@ -16,11 +16,14 @@ if str(ROOT) not in sys.path:
 
 from python_raytrace.geometry import GeoPoint  # noqa: E402
 from python_raytrace.grid import load_ionosphere_grid_netcdf  # noqa: E402
+from python_raytrace.spacecraft_doppler import spacecraft_doppler  # noqa: E402
 from python_raytrace.multisat_topside_inverse_demo import (  # noqa: E402
     TopsideInverseConfig, _equal_area_vertical_fan, home_frequency_sweep_adaptive,
 )
 
 FREQUENCIES = np.arange(2.0, 10.0001, 0.1)
+SPACECRAFT_SPEED_MPS = 8000.0
+SPACECRAFT_TRACK_BEARING_DEG = 0.0
 
 
 def make_fan() -> tuple[TopsideInverseConfig, np.ndarray, np.ndarray]:
@@ -58,6 +61,10 @@ def generate(grid_path: Path, latitude: float, longitude: float, altitude: float
     point = GeoPoint(latitude, longitude, altitude)
     counts = np.zeros((FREQUENCIES.size, 2), dtype=int)
     records = []
+    dopplers = []
+    launch_angles = []
+    arrival_angles = []
+    receiver_misses = []
     for mode_index, mode in enumerate((1, -1)):
         returns = home_frequency_sweep_adaptive(
             tx=point, rx=point, grid=grid,
@@ -68,13 +75,32 @@ def generate(grid_path: Path, latitude: float, longitude: float, altitude: float
         )
         for frequency_index, rays in enumerate(returns):
             counts[frequency_index, mode_index] = len(rays)
-            records.extend((float(frequency_index), float(mode), ray.group_range_km,
-                            ray.miss_m, ray.absorption_db) for ray in rays)
+            for ray in rays:
+                observable = spacecraft_doppler(
+                    ray.ray, point, point, float(FREQUENCIES[frequency_index]),
+                    speed_mps=SPACECRAFT_SPEED_MPS,
+                    track_bearing_deg=SPACECRAFT_TRACK_BEARING_DEG,
+                )
+                records.append((float(frequency_index), float(mode), ray.group_range_km,
+                                ray.miss_m, ray.absorption_db))
+                dopplers.append(observable.doppler_hz)
+                launch_angles.append((observable.launch_elevation_deg,
+                                      observable.launch_bearing_deg))
+                arrival_angles.append((observable.arrival_elevation_deg,
+                                       observable.arrival_bearing_deg))
+                receiver_misses.append(observable.receiver_miss_m)
         print(f"profile {profile_index:02d}: mode {mode} complete", flush=True)
     output.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
         output,
         records=np.asarray(records, dtype=float).reshape(-1, 5),
+        spacecraft_doppler_hz=np.asarray(dopplers, dtype=float),
+        launch_angles_deg=np.asarray(launch_angles, dtype=float).reshape(-1, 2),
+        arrival_angles_deg=np.asarray(arrival_angles, dtype=float).reshape(-1, 2),
+        spacecraft_doppler_receiver_miss_m=np.asarray(receiver_misses, dtype=float),
+        spacecraft_speed_mps=np.array(SPACECRAFT_SPEED_MPS),
+        spacecraft_track_bearing_deg=np.array(SPACECRAFT_TRACK_BEARING_DEG),
+        doppler_model=np.array("f/c times velocity dot launch-minus-arrival phase momentum"),
         count_array=counts,
         frequencies_mhz=FREQUENCIES,
         method=np.array("adaptive"),

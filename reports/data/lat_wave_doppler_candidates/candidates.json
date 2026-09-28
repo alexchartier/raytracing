@@ -1,0 +1,34 @@
+[
+  {
+    "name": "scale_low",
+    "fit": "reports/data/lat_wave_doppler_candidates/scale_low.json",
+    "density": "reports/data/lat_wave_doppler_candidates/scale_low_density.npz",
+    "grid": "reports/data/lat_wave_doppler_candidates/scale_low_grid.nc",
+    "parameter": "global_density_scale",
+    "offset": -0.02
+  },
+  {
+    "name": "scale_high",
+    "fit": "reports/data/lat_wave_doppler_candidates/scale_high.json",
+    "density": "reports/data/lat_wave_doppler_candidates/scale_high_density.npz",
+    "grid": "reports/data/lat_wave_doppler_candidates/scale_high_grid.nc",
+    "parameter": "global_density_scale",
+    "offset": 0.02
+  },
+  {
+    "name": "amplitude_low",
+    "fit": "reports/data/lat_wave_doppler_candidates/amplitude_low.json",
+    "density": "reports/data/lat_wave_doppler_candidates/amplitude_low_density.npz",
+    "grid": "reports/data/lat_wave_doppler_candidates/amplitude_low_grid.nc",
+    "parameter": "wave_amplitude_fraction_at_local_f2_peak",
+    "offset": -0.03
+  },
+  {
+    "name": "amplitude_high",
+    "fit": "reports/data/lat_wave_doppler_candidates/amplitude_high.json",
+    "density": "reports/data/lat_wave_doppler_candidates/amplitude_high_density.npz",
+    "grid": "reports/data/lat_wave_doppler_candidates/amplitude_high_grid.nc",
+    "parameter": "wave_amplitude_fraction_at_local_f2_peak",
+    "offset": 0.03
+  }
+]

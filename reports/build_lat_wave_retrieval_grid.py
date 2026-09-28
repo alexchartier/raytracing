@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import argparse
 import json
 import sys
 from dataclasses import replace
@@ -25,8 +26,9 @@ DENSITY_OUTPUT = DATA / "lat_wave_pass_retrieved_density.npz"
 GRID_OUTPUT = DATA / "lat_wave_pass_retrieved_forward_grid.nc"
 
 
-def build() -> None:
-    fit = json.loads(INITIAL_FIT.read_text())
+def build(fit_path: Path = INITIAL_FIT, density_output: Path = DENSITY_OUTPUT,
+          grid_output: Path = GRID_OUTPUT) -> None:
+    fit = json.loads(fit_path.read_text())
     prior = json.loads(PRIOR.read_text())["retrieved"]
     with np.load(BACKGROUND, allow_pickle=False) as source:
         latitudes = np.asarray(source["latitudes_deg"], dtype=float)
@@ -83,16 +85,23 @@ def build() -> None:
             density * 1e6, grid.neutral_species_cm3)
     candidate_grid = replace(grid, iono_en_grid=density,
                              iono_en_grid_5=density, collision_freq=collision)
-    save_ionosphere_grid_netcdf(GRID_OUTPUT, candidate_grid)
-    np.savez_compressed(DENSITY_OUTPUT, latitudes_deg=latitudes,
+    grid_output.parent.mkdir(parents=True, exist_ok=True)
+    density_output.parent.mkdir(parents=True, exist_ok=True)
+    save_ionosphere_grid_netcdf(grid_output, candidate_grid)
+    np.savez_compressed(density_output, latitudes_deg=latitudes,
                         longitudes_deg=longitudes, altitudes_km=altitudes,
                         electron_density_cm3=density,
                         model=np.array("Ionogram-selected PyIRI latitude-wave fit"),
                         time_utc=np.array(when.isoformat()))
-    print(json.dumps({"density": str(DENSITY_OUTPUT), "forward_grid": str(GRID_OUTPUT),
+    print(json.dumps({"density": str(density_output), "forward_grid": str(grid_output),
                       "density_min_cm3": float(np.min(density)),
                       "density_max_cm3": float(np.max(density))}, indent=2))
 
 
 if __name__ == "__main__":
-    build()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--fit", type=Path, default=INITIAL_FIT)
+    parser.add_argument("--density-output", type=Path, default=DENSITY_OUTPUT)
+    parser.add_argument("--grid-output", type=Path, default=GRID_OUTPUT)
+    args = parser.parse_args()
+    build(args.fit, args.density_output, args.grid_output)

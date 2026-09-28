@@ -83,7 +83,10 @@ def _run_path(name: str) -> str:
     return f"{REMOTE_ROOT}/runs/{name}"
 
 
-def submit(name: str, grid_override: Path | None = None) -> None:
+def submit(name: str, grid_override: Path | None = None,
+           max_concurrent: int = 20) -> None:
+    if not 1 <= max_concurrent <= 20:
+        raise ValueError("max_concurrent must be between 1 and 20")
     manifest = json.loads(MANIFEST.read_text())
     profiles = manifest["profiles"]
     if len(profiles) != 20 or [row["index"] for row in profiles] != list(range(1, 21)):
@@ -98,6 +101,9 @@ def submit(name: str, grid_override: Path | None = None) -> None:
     _call_tool("cartman_write_file", {"zone": "repo",
                                        "path": "reports/generate_lat_wave_ionogram.py",
                                        "text": source})
+    _call_tool("cartman_write_file", {"zone": "repo",
+                                       "path": "python_raytrace/spacecraft_doppler.py",
+                                       "text": (ROOT / "python_raytrace/spacecraft_doppler.py").read_text()})
     grid = grid_override if grid_override is not None else ROOT / manifest["forward_grid"]
     with tempfile.TemporaryDirectory(prefix="lat_wave_stage_") as temporary:
         staged = Path(temporary) / "wave_forward_grid.nc"
@@ -112,12 +118,14 @@ def submit(name: str, grid_override: Path | None = None) -> None:
     check = _call_tool("cartman_exec_remote", {
         "zone": "sandbox", "cwd": name,
         "command": (f"stat -c '%U %a %n' {run} {run}/wave_forward_grid.nc "
-                    f"{REMOTE_ROOT}/repo/reports/generate_lat_wave_ionogram.py"),
+                    f"{REMOTE_ROOT}/repo/reports/generate_lat_wave_ionogram.py "
+                    f"{REMOTE_ROOT}/repo/python_raytrace/spacecraft_doppler.py"),
         "timeout_seconds": 120,
     })["structuredContent"]["stdout"]
     if check.splitlines() != [f"chartat1 700 {run}",
                               f"chartat1 600 {run}/wave_forward_grid.nc",
-                              f"chartat1 600 {REMOTE_ROOT}/repo/reports/generate_lat_wave_ionogram.py"]:
+                              f"chartat1 600 {REMOTE_ROOT}/repo/reports/generate_lat_wave_ionogram.py",
+                              f"chartat1 600 {REMOTE_ROOT}/repo/python_raytrace/spacecraft_doppler.py"]:
         raise RuntimeError(f"Private staging verification failed:\n{check}")
     source_label = ("Ionogram-selected PyIRI latitude-wave fit" if grid_override is not None
                     else "IRI-2016 with imposed wave")
@@ -128,7 +136,7 @@ def submit(name: str, grid_override: Path | None = None) -> None:
         "zone": "sandbox", "cwd": name, "script_path": f"{name}/job.sh",
         "script_text": script,
         "qsub_args": ["-terse", "-cwd", "-S", "/bin/bash", "-N", "lat_wave_20",
-                       "-m", "n", "-t", "1-20", "-tc", "20",
+                       "-m", "n", "-t", "1-20", "-tc", str(max_concurrent),
                        "-o", "/dev/null", "-e", "/dev/null"],
         "timeout_seconds": 120,
     })["structuredContent"]
@@ -147,14 +155,20 @@ def submit_recovery(name: str) -> None:
             "zone": "repo", "path": f"reports/{filename}",
             "text": (ROOT / "reports" / filename).read_text(),
         })
+    _call_tool("cartman_write_file", {
+        "zone": "repo", "path": "python_raytrace/spacecraft_doppler.py",
+        "text": (ROOT / "python_raytrace/spacecraft_doppler.py").read_text(),
+    })
     check = _call_tool("cartman_exec_remote", {
         "zone": "sandbox", "cwd": name,
         "command": (f"stat -c '%U %a %n' {REMOTE_ROOT}/repo/reports/generate_lat_wave_ionogram.py "
-                    f"{REMOTE_ROOT}/repo/reports/recover_lat_wave_ionogram.py"),
+                    f"{REMOTE_ROOT}/repo/reports/recover_lat_wave_ionogram.py "
+                    f"{REMOTE_ROOT}/repo/python_raytrace/spacecraft_doppler.py"),
         "timeout_seconds": 120,
     })["structuredContent"]["stdout"]
     if check.splitlines() != [f"chartat1 600 {REMOTE_ROOT}/repo/reports/generate_lat_wave_ionogram.py",
-                              f"chartat1 600 {REMOTE_ROOT}/repo/reports/recover_lat_wave_ionogram.py"]:
+                              f"chartat1 600 {REMOTE_ROOT}/repo/reports/recover_lat_wave_ionogram.py",
+                              f"chartat1 600 {REMOTE_ROOT}/repo/python_raytrace/spacecraft_doppler.py"]:
         raise RuntimeError(f"Private recovery staging verification failed:\n{check}")
     script = RECOVERY_JOB.replace("__RUN__", run).replace("__ROOT__", REMOTE_ROOT).replace("__PYTHON__", REMOTE_PYTHON)
     result = _call_tool("cartman_qsub_submit", {
@@ -188,9 +202,15 @@ for path in (run/'results').glob('ionogram_*.npz'):
         continue
     with np.load(path, allow_pickle=False) as z:
         coordinates = (float(z['tx_lat_deg']), float(z['tx_lon_deg']), float(z['tx_alt_km']))
+        doppler_valid = ('spacecraft_doppler_hz' not in z or
+                         (len(z['spacecraft_doppler_hz']) == len(z['records'])
+                          and z['launch_angles_deg'].shape == (len(z['records']), 2)
+                          and z['arrival_angles_deg'].shape == (len(z['records']), 2)
+                          and np.all(np.isfinite(z['spacecraft_doppler_hz']))))
         if (len(z['frequencies_mhz']) == 81 and int(z['profile_index']) == task
                 and np.allclose(coordinates, positions[task-1], atol=1e-8)
-                and str(z['vertical_fan_layout']) == 'equal_area_guarded'):
+                and str(z['vertical_fan_layout']) == 'equal_area_guarded'
+                and doppler_valid):
             valid.append(task)
             return_counts[task] = len(z['records'])
 violations = []
@@ -227,9 +247,14 @@ recovered_counts = {{}}
 for path in (run/'recovered').glob('ionogram_*.npz'):
     task = int(path.stem.split('_')[-1])
     with np.load(path, allow_pickle=False) as z:
+        doppler_valid = ('spacecraft_doppler_hz' not in z or
+                         (len(z['spacecraft_doppler_hz']) == len(z['records'])
+                          and z['launch_angles_deg'].shape == (len(z['records']), 2)
+                          and z['arrival_angles_deg'].shape == (len(z['records']), 2)
+                          and np.all(np.isfinite(z['spacecraft_doppler_hz']))))
         if (1 <= task <= 20 and int(z['profile_index']) == task
                 and str(z['method']) == 'adaptive_with_dense_gap_recovery'
-                and len(z['frequencies_mhz']) == 81):
+                and len(z['frequencies_mhz']) == 81 and doppler_valid):
             valid.append(task)
             recovered_counts[task] = int(z['dense_recovered_return_count'])
 violations = []
@@ -259,12 +284,13 @@ def main() -> None:
     submit_parser.add_argument("run_name")
     submit_parser.add_argument("--grid", type=Path,
                                help="Independent candidate forward grid")
+    submit_parser.add_argument("--max-concurrent", type=int, default=20)
     sub.add_parser("status").add_argument("run_name")
     sub.add_parser("recover").add_argument("run_name")
     sub.add_parser("recovery-status").add_argument("run_name")
     args = parser.parse_args()
     if args.action == "submit":
-        submit(args.run_name, args.grid)
+        submit(args.run_name, args.grid, args.max_concurrent)
     elif args.action == "recover":
         submit_recovery(args.run_name)
     elif args.action == "recovery-status":
