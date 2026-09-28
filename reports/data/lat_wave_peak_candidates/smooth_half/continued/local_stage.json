@@ -1,0 +1,111 @@
+{
+  "stage": "continue",
+  "above_only": false,
+  "source_dir": "reports/data/lat_wave_peak_candidates/smooth_half/recovered",
+  "grid": "reports/data/lat_wave_peak_candidates/smooth_half_grid.nc",
+  "output_dir": "reports/data/lat_wave_peak_candidates/smooth_half/continued",
+  "workers": 4,
+  "elapsed_seconds": 316.3252480840001,
+  "profiles": [
+    {
+      "profile": 1,
+      "accepted_returns": 120,
+      "message": "added 31 returns"
+    },
+    {
+      "profile": 2,
+      "accepted_returns": 129,
+      "message": "added 11 returns"
+    },
+    {
+      "profile": 3,
+      "accepted_returns": 112,
+      "message": "added 21 returns"
+    },
+    {
+      "profile": 4,
+      "accepted_returns": 97,
+      "message": "added 12 returns"
+    },
+    {
+      "profile": 5,
+      "accepted_returns": 97,
+      "message": "added 17 returns"
+    },
+    {
+      "profile": 6,
+      "accepted_returns": 116,
+      "message": "added 18 returns"
+    },
+    {
+      "profile": 7,
+      "accepted_returns": 104,
+      "message": "added 19 returns"
+    },
+    {
+      "profile": 8,
+      "accepted_returns": 113,
+      "message": "added 29 returns"
+    },
+    {
+      "profile": 9,
+      "accepted_returns": 118,
+      "message": "added 23 returns"
+    },
+    {
+      "profile": 10,
+      "accepted_returns": 122,
+      "message": "added 13 returns"
+    },
+    {
+      "profile": 11,
+      "accepted_returns": 129,
+      "message": "added 19 returns"
+    },
+    {
+      "profile": 12,
+      "accepted_returns": 110,
+      "message": "added 12 returns"
+    },
+    {
+      "profile": 13,
+      "accepted_returns": 106,
+      "message": "added 14 returns"
+    },
+    {
+      "profile": 14,
+      "accepted_returns": 136,
+      "message": "added 30 returns"
+    },
+    {
+      "profile": 15,
+      "accepted_returns": 107,
+      "message": "added 14 returns"
+    },
+    {
+      "profile": 16,
+      "accepted_returns": 118,
+      "message": "added 15 returns"
+    },
+    {
+      "profile": 17,
+      "accepted_returns": 125,
+      "message": "added 28 returns"
+    },
+    {
+      "profile": 18,
+      "accepted_returns": 142,
+      "message": "added 33 returns"
+    },
+    {
+      "profile": 19,
+      "accepted_returns": 104,
+      "message": "added 9 returns"
+    },
+    {
+      "profile": 20,
+      "accepted_returns": 97,
+      "message": "added 16 returns"
+    }
+  ]
+}

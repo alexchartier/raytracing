@@ -144,12 +144,19 @@ def submit(name: str, grid_override: Path | None = None,
                       "remote_path": run, "staging": check.splitlines()}, indent=2))
 
 
-def submit_recovery(name: str) -> None:
+def submit_recovery(name: str, task_ids: list[int] | None = None,
+                    max_concurrent: int = 20) -> None:
+    if not 1 <= max_concurrent <= 20:
+        raise ValueError("max_concurrent must be between 1 and 20")
     run = _run_path(name)
     initial = status(name)
-    if (initial["expected"] != 20 or initial["finished"] != 20
-            or len(initial["valid_outputs"]) != 20 or initial["privacy_violations"]):
-        raise RuntimeError("The original 20-profile pass is incomplete or not private")
+    requested = sorted(set(task_ids if task_ids is not None else range(1, 21)))
+    if task_ids is not None and (not task_ids or requested != task_ids):
+        raise ValueError("Recovery task IDs must be unique and sorted")
+    if (not requested or any(not 1 <= task <= 20 for task in requested)
+            or initial["expected"] != 20 or initial["privacy_violations"]
+            or any(task not in initial["valid_outputs"] for task in requested)):
+        raise RuntimeError("Requested forward outputs are incomplete or not private")
     for filename in ("generate_lat_wave_ionogram.py", "recover_lat_wave_ionogram.py"):
         _call_tool("cartman_write_file", {
             "zone": "repo", "path": f"reports/{filename}",
@@ -171,15 +178,29 @@ def submit_recovery(name: str) -> None:
                               f"chartat1 600 {REMOTE_ROOT}/repo/python_raytrace/spacecraft_doppler.py"]:
         raise RuntimeError(f"Private recovery staging verification failed:\n{check}")
     script = RECOVERY_JOB.replace("__RUN__", run).replace("__ROOT__", REMOTE_ROOT).replace("__PYTHON__", REMOTE_PYTHON)
-    result = _call_tool("cartman_qsub_submit", {
-        "zone": "sandbox", "cwd": name, "script_path": f"{name}/recovery_job.sh",
-        "script_text": script,
-        "qsub_args": ["-terse", "-cwd", "-S", "/bin/bash", "-N", "lat_wave_recover",
-                       "-m", "n", "-t", "1-20", "-tc", "20",
-                       "-o", "/dev/null", "-e", "/dev/null"],
-        "timeout_seconds": 120,
-    })["structuredContent"]
-    print(json.dumps({"name": name, "recovery_job_id": result["job_id"]}, indent=2))
+    # This SGE installation accepts only one contiguous range per -t flag.
+    ranges = []
+    first = previous = requested[0]
+    for task in requested[1:]:
+        if task != previous + 1:
+            ranges.append((first, previous))
+            first = task
+        previous = task
+    ranges.append((first, previous))
+    submissions = []
+    for first, last in ranges:
+        task_range = str(first) if first == last else f"{first}-{last}"
+        result = _call_tool("cartman_qsub_submit", {
+            "zone": "sandbox", "cwd": name, "script_path": f"{name}/recovery_job.sh",
+            "script_text": script,
+            "qsub_args": ["-terse", "-cwd", "-S", "/bin/bash", "-N", "lat_wave_recover",
+                           "-m", "n", "-t", task_range, "-tc", str(max_concurrent),
+                           "-o", "/dev/null", "-e", "/dev/null"],
+            "timeout_seconds": 120,
+        })["structuredContent"]
+        submissions.append({"range": task_range, "job_id": result["job_id"]})
+    print(json.dumps({"name": name, "recovery_jobs": submissions,
+                      "task_ids": requested}, indent=2))
 
 
 def status(name: str) -> dict:
@@ -286,13 +307,17 @@ def main() -> None:
                                help="Independent candidate forward grid")
     submit_parser.add_argument("--max-concurrent", type=int, default=20)
     sub.add_parser("status").add_argument("run_name")
-    sub.add_parser("recover").add_argument("run_name")
+    recover_parser = sub.add_parser("recover")
+    recover_parser.add_argument("run_name")
+    recover_parser.add_argument("--task-ids", type=int, nargs="+",
+                                help="Recover completed forward tasks while the rest finish")
+    recover_parser.add_argument("--max-concurrent", type=int, default=20)
     sub.add_parser("recovery-status").add_argument("run_name")
     args = parser.parse_args()
     if args.action == "submit":
         submit(args.run_name, args.grid, args.max_concurrent)
     elif args.action == "recover":
-        submit_recovery(args.run_name)
+        submit_recovery(args.run_name, args.task_ids, args.max_concurrent)
     elif args.action == "recovery-status":
         recovery_status(args.run_name)
     else:

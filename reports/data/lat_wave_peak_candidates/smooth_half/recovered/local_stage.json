@@ -1,0 +1,111 @@
+{
+  "stage": "recover",
+  "above_only": false,
+  "source_dir": "reports/data/lat_wave_peak_candidates/smooth_half/raw",
+  "grid": "reports/data/lat_wave_peak_candidates/smooth_half_grid.nc",
+  "output_dir": "reports/data/lat_wave_peak_candidates/smooth_half/recovered",
+  "workers": 2,
+  "elapsed_seconds": 93.75966370900005,
+  "profiles": [
+    {
+      "profile": 1,
+      "accepted_returns": 89,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 2,
+      "accepted_returns": 118,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 3,
+      "accepted_returns": 91,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 4,
+      "accepted_returns": 85,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 5,
+      "accepted_returns": 80,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 6,
+      "accepted_returns": 98,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 7,
+      "accepted_returns": 85,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 8,
+      "accepted_returns": 84,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 9,
+      "accepted_returns": 95,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 10,
+      "accepted_returns": 109,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 11,
+      "accepted_returns": 110,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 12,
+      "accepted_returns": 98,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 13,
+      "accepted_returns": 92,
+      "message": "reports/data/lat_wave_peak_candidates/smooth_half/recovered/ionogram_13.npz: checked 15 gaps, recovered 1 returns in 1 bins"
+    },
+    {
+      "profile": 14,
+      "accepted_returns": 106,
+      "message": "reused completed output"
+    },
+    {
+      "profile": 15,
+      "accepted_returns": 93,
+      "message": "reports/data/lat_wave_peak_candidates/smooth_half/recovered/ionogram_15.npz: checked 17 gaps, recovered 1 returns in 1 bins"
+    },
+    {
+      "profile": 16,
+      "accepted_returns": 103,
+      "message": "reports/data/lat_wave_peak_candidates/smooth_half/recovered/ionogram_16.npz: checked 13 gaps, recovered 0 returns in 0 bins"
+    },
+    {
+      "profile": 17,
+      "accepted_returns": 97,
+      "message": "reports/data/lat_wave_peak_candidates/smooth_half/recovered/ionogram_17.npz: checked 18 gaps, recovered 0 returns in 0 bins"
+    },
+    {
+      "profile": 18,
+      "accepted_returns": 109,
+      "message": "reports/data/lat_wave_peak_candidates/smooth_half/recovered/ionogram_18.npz: checked 24 gaps, recovered 6 returns in 6 bins"
+    },
+    {
+      "profile": 19,
+      "accepted_returns": 95,
+      "message": "reports/data/lat_wave_peak_candidates/smooth_half/recovered/ionogram_19.npz: checked 17 gaps, recovered 3 returns in 3 bins"
+    },
+    {
+      "profile": 20,
+      "accepted_returns": 81,
+      "message": "reports/data/lat_wave_peak_candidates/smooth_half/recovered/ionogram_20.npz: checked 27 gaps, recovered 4 returns in 4 bins"
+    }
+  ]
+}
