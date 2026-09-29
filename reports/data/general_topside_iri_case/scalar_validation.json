@@ -1,0 +1,257 @@
+{
+  "basis_training_source": "IRI-2020 bridge; 2011 global 5x5x4 sample; F10.7=120",
+  "validation_density_source": "IRI-2016 1.11.1; eight separate positions",
+  "forward_model": "vertical scalar-plasma group range on PCHIP of tabulated IRI-2016 density",
+  "same_3d_ray_tracer_as_saved_ionograms": false,
+  "limitation": "This test checks profile flexibility; it does not validate 3-D magnetoionic O/X rays.",
+  "cases": [
+    {
+      "latitude_deg": -68.0,
+      "longitude_deg": -12.0,
+      "truth_hmf2_km": 260.0,
+      "truth_fof2_mhz": 5.1187008900934226,
+      "iri_basis": {
+        "hmf2_error_km": -6.074843106368661,
+        "fof2_error_mhz": 0.007009423960853134,
+        "topside_normalized_rms_percent": 0.12139196836687309,
+        "range_mae_km": 0.5886359119865098
+      },
+      "chapman": {
+        "hmf2_error_km": -29.681902018726674,
+        "fof2_error_mhz": -0.015239254939737101,
+        "topside_normalized_rms_percent": 13.124102043778873,
+        "range_mae_km": 3.583351426824716
+      },
+      "selected_family_by_ridge_mae": "iri_basis"
+    },
+    {
+      "latitude_deg": -68.0,
+      "longitude_deg": 16.0,
+      "truth_hmf2_km": 260.0,
+      "truth_fof2_mhz": 4.821459777142271,
+      "iri_basis": {
+        "hmf2_error_km": -8.06409551767382,
+        "fof2_error_mhz": 0.01224710582106514,
+        "topside_normalized_rms_percent": 0.13824286274288347,
+        "range_mae_km": 0.5162420936396513
+      },
+      "chapman": {
+        "hmf2_error_km": -34.45661670641644,
+        "fof2_error_mhz": -0.006012713373104717,
+        "topside_normalized_rms_percent": 14.086306611833512,
+        "range_mae_km": 2.793341104281964
+      },
+      "selected_family_by_ridge_mae": "iri_basis"
+    },
+    {
+      "latitude_deg": -58.0,
+      "longitude_deg": -12.0,
+      "truth_hmf2_km": 260.0,
+      "truth_fof2_mhz": 5.44589096663332,
+      "iri_basis": {
+        "hmf2_error_km": -1.5736187662321868,
+        "fof2_error_mhz": 0.008528503563315581,
+        "topside_normalized_rms_percent": 0.16221015083843465,
+        "range_mae_km": 0.7505740977658942
+      },
+      "chapman": {
+        "hmf2_error_km": -18.15175190177365,
+        "fof2_error_mhz": -0.049781198758211076,
+        "topside_normalized_rms_percent": 11.511920041806059,
+        "range_mae_km": 4.564934902880836
+      },
+      "selected_family_by_ridge_mae": "iri_basis"
+    },
+    {
+      "latitude_deg": -58.0,
+      "longitude_deg": 16.0,
+      "truth_hmf2_km": 260.0,
+      "truth_fof2_mhz": 5.172916766576976,
+      "iri_basis": {
+        "hmf2_error_km": -3.648700025116341,
+        "fof2_error_mhz": 0.006139376686272513,
+        "topside_normalized_rms_percent": 0.10882133740030221,
+        "range_mae_km": 0.5748158482285156
+      },
+      "chapman": {
+        "hmf2_error_km": -22.07828224519261,
+        "fof2_error_mhz": -0.04825359878830504,
+        "topside_normalized_rms_percent": 12.237620344100288,
+        "range_mae_km": 3.690061563513321
+      },
+      "selected_family_by_ridge_mae": "iri_basis"
+    },
+    {
+      "latitude_deg": -48.0,
+      "longitude_deg": -12.0,
+      "truth_hmf2_km": 260.0,
+      "truth_fof2_mhz": 5.743590541202359,
+      "iri_basis": {
+        "hmf2_error_km": 5.948053423672377,
+        "fof2_error_mhz": 0.006203662442683999,
+        "topside_normalized_rms_percent": 0.0895898089138481,
+        "range_mae_km": 0.4460161095706412
+      },
+      "chapman": {
+        "hmf2_error_km": -7.4812868791256335,
+        "fof2_error_mhz": -0.04678665176119612,
+        "topside_normalized_rms_percent": 10.113317159573882,
+        "range_mae_km": 6.042796030610794
+      },
+      "selected_family_by_ridge_mae": "iri_basis"
+    },
+    {
+      "latitude_deg": -48.0,
+      "longitude_deg": 16.0,
+      "truth_hmf2_km": 260.0,
+      "truth_fof2_mhz": 5.597871222447119,
+      "iri_basis": {
+        "hmf2_error_km": 6.770213904397053,
+        "fof2_error_mhz": -0.006797183925526085,
+        "topside_normalized_rms_percent": 0.15681170213343723,
+        "range_mae_km": 0.34500614716290395
+      },
+      "chapman": {
+        "hmf2_error_km": -6.16187420042678,
+        "fof2_error_mhz": -0.05674919854348737,
+        "topside_normalized_rms_percent": 10.136120530099614,
+        "range_mae_km": 5.348055677895847
+      },
+      "selected_family_by_ridge_mae": "iri_basis"
+    },
+    {
+      "latitude_deg": -38.0,
+      "longitude_deg": -12.0,
+      "truth_hmf2_km": 280.0,
+      "truth_fof2_mhz": 6.046380648436914,
+      "iri_basis": {
+        "hmf2_error_km": -5.284444051098433,
+        "fof2_error_mhz": 0.007519649389444716,
+        "topside_normalized_rms_percent": 0.05228985757548632,
+        "range_mae_km": 0.44861354789833285
+      },
+      "chapman": {
+        "hmf2_error_km": -15.277788761744318,
+        "fof2_error_mhz": -0.04885053886067592,
+        "topside_normalized_rms_percent": 9.156792582343249,
+        "range_mae_km": 7.629056609784421
+      },
+      "selected_family_by_ridge_mae": "iri_basis"
+    },
+    {
+      "latitude_deg": -38.0,
+      "longitude_deg": 16.0,
+      "truth_hmf2_km": 280.0,
+      "truth_fof2_mhz": 5.900290156388752,
+      "iri_basis": {
+        "hmf2_error_km": -1.0141916905679977,
+        "fof2_error_mhz": 0.0007098436112498163,
+        "topside_normalized_rms_percent": 0.051604641636677065,
+        "range_mae_km": 0.5766440952695138
+      },
+      "chapman": {
+        "hmf2_error_km": -11.552651921075267,
+        "fof2_error_mhz": -0.048439393466581215,
+        "topside_normalized_rms_percent": 8.935025581890459,
+        "range_mae_km": 7.2781664563850175
+      },
+      "selected_family_by_ridge_mae": "iri_basis"
+    }
+  ],
+  "analytic_chapman_cases": [
+    {
+      "truth_topside_scale_km": 45.0,
+      "truth_tail_curvature": 0.0,
+      "iri_basis": {
+        "fof2_error_mhz": 0.008494561953774848,
+        "hmf2_error_km": 27.12437542204941,
+        "topside_normalized_rms_percent": 14.48317953209047,
+        "range_mae_km": 3.7436071073121937
+      },
+      "chapman": {
+        "fof2_error_mhz": -0.031368220351279064,
+        "hmf2_error_km": 3.3488725408805067,
+        "topside_normalized_rms_percent": 0.36627757955018414,
+        "range_mae_km": 0.30128060625049713
+      },
+      "iri_basis_range_mae_km": 3.7436071073121937,
+      "chapman_range_mae_km": 0.30128060625049713,
+      "selected_family_by_ridge_mae": "chapman",
+      "selected_hmf2_error_km": 3.3488725408805067
+    },
+    {
+      "truth_topside_scale_km": 70.0,
+      "truth_tail_curvature": 0.0,
+      "iri_basis": {
+        "fof2_error_mhz": -0.05884364277584453,
+        "hmf2_error_km": 25.42279663508765,
+        "topside_normalized_rms_percent": 6.451877106496445,
+        "range_mae_km": 11.309485787264165
+      },
+      "chapman": {
+        "fof2_error_mhz": -0.024970885302281864,
+        "hmf2_error_km": 4.024170739918361,
+        "topside_normalized_rms_percent": 0.28929711918686124,
+        "range_mae_km": 0.4040193824406657
+      },
+      "iri_basis_range_mae_km": 11.309485787264165,
+      "chapman_range_mae_km": 0.4040193824406657,
+      "selected_family_by_ridge_mae": "chapman",
+      "selected_hmf2_error_km": 4.024170739918361
+    },
+    {
+      "truth_topside_scale_km": 95.0,
+      "truth_tail_curvature": 0.0,
+      "iri_basis": {
+        "fof2_error_mhz": -0.09899999999999931,
+        "hmf2_error_km": 47.407580804775876,
+        "topside_normalized_rms_percent": 7.006366699744043,
+        "range_mae_km": 73.15489594394126
+      },
+      "chapman": {
+        "fof2_error_mhz": -0.018157766628249306,
+        "hmf2_error_km": 3.6759888473878846,
+        "topside_normalized_rms_percent": 0.208397203187384,
+        "range_mae_km": 0.44725810655186926
+      },
+      "iri_basis_range_mae_km": 73.15489594394126,
+      "chapman_range_mae_km": 0.44725810655186926,
+      "selected_family_by_ridge_mae": "chapman",
+      "selected_hmf2_error_km": 3.6759888473878846
+    },
+    {
+      "truth_topside_scale_km": 75.0,
+      "truth_tail_curvature": 0.5,
+      "iri_basis": {
+        "fof2_error_mhz": -0.0989999999999931,
+        "hmf2_error_km": 24.189423717431623,
+        "topside_normalized_rms_percent": 5.86340927322024,
+        "range_mae_km": 100.75208525834834
+      },
+      "chapman": {
+        "fof2_error_mhz": 0.006641153438630809,
+        "hmf2_error_km": -1.543216341412176,
+        "topside_normalized_rms_percent": 0.05380790653470373,
+        "range_mae_km": 0.4602997989163392
+      },
+      "iri_basis_range_mae_km": 100.75208525834834,
+      "chapman_range_mae_km": 0.4602997989163392,
+      "selected_family_by_ridge_mae": "chapman",
+      "selected_hmf2_error_km": -1.543216341412176
+    }
+  ],
+  "iri_basis_aggregate": {
+    "hmf2_mae_km": 4.797270060640859,
+    "fof2_mae_mhz": 0.006894343675051373,
+    "topside_normalized_rms_mean_percent": 0.11012029120099276
+  },
+  "chapman_aggregate": {
+    "hmf2_mae_km": 18.105269329310172,
+    "fof2_mae_mhz": 0.04001406856141232,
+    "topside_normalized_rms_mean_percent": 11.16265061192824
+  },
+  "family_selection": {
+    "correct_iri2016_cases": 8,
+    "correct_chapman_cases": 4
+  }
+}

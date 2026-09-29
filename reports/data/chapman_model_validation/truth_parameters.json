@@ -1,0 +1,9 @@
+{
+  "source": "analytic generalized Chapman",
+  "fof2_mhz": 5.7,
+  "hmf2_km": 300.0,
+  "bottomside_scale_km": 70.0,
+  "topside_scale_km": 95.0,
+  "tail_curvature": 0.45,
+  "horizontal_field": "uniform"
+}

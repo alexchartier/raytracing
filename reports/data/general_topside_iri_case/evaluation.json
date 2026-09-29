@@ -1,0 +1,223 @@
+{
+  "selection": "minimum saved full-ray O/X accepted-return score",
+  "selected": "basis_flat_hm100",
+  "full_ray_scores": {
+    "o_ridge": {
+      "return_distance": 0.21502320640548342,
+      "nose": 0.1874999999999999,
+      "ridge": 0.3801413270005304,
+      "total": 0.24116602892312194
+    },
+    "ox_ridge": {
+      "return_distance": 0.2281771922556315,
+      "nose": 0.1874999999999999,
+      "ridge": 0.36411778469608597,
+      "total": 0.2451960126798145
+    },
+    "chapman_o_ridge": {
+      "return_distance": 0.18460381117454816,
+      "nose": 0.2500000000000002,
+      "ridge": 0.23949651480437154,
+      "total": 0.21193139910687586
+    },
+    "basis_fo0995": {
+      "return_distance": 0.23804504022092732,
+      "nose": 0.2500000000000002,
+      "ridge": 0.4425888147797466,
+      "total": 0.2819425350774594
+    },
+    "basis_fo0990": {
+      "return_distance": 0.25227762343851357,
+      "nose": 0.2500000000000002,
+      "ridge": 0.5076226982357381,
+      "total": 0.30277723253833017
+    },
+    "basis_fo0985": {
+      "return_distance": 0.2704477170178429,
+      "nose": 0.18750000000000044,
+      "ridge": 0.5659611980849137,
+      "total": 0.3088134839767965
+    },
+    "basis_fo0990_hmplus5": {
+      "return_distance": 0.21251842000556503,
+      "nose": 0.2500000000000002,
+      "ridge": 0.3251735799624574,
+      "total": 0.2444198469955523
+    },
+    "basis_gradient_015": {
+      "return_distance": 0.21343894644421435,
+      "nose": 0.0,
+      "ridge": 0.34543563238575703,
+      "total": 0.18647854702146932
+    },
+    "basis_gradient_030": {
+      "return_distance": 0.22440155064584993,
+      "nose": 0.1874999999999999,
+      "ridge": 0.36843480579785953,
+      "total": 0.24398281401478936
+    },
+    "basis_gradient_050": {
+      "return_distance": 0.22273897982706062,
+      "nose": 0.1874999999999999,
+      "ridge": 0.38050229633940125,
+      "total": 0.24548189817276359
+    },
+    "basis_gradient_000": {
+      "return_distance": 0.21392535453237072,
+      "nose": 0.06250000000000033,
+      "ridge": 0.3035789584260532,
+      "total": 0.19399973667801462
+    },
+    "basis_flat_hm075": {
+      "return_distance": 0.07648691977806313,
+      "nose": 0.2500000000000002,
+      "ridge": 0.06876753583066902,
+      "total": 0.1183213130440686
+    },
+    "basis_flat_hm100": {
+      "return_distance": 0.057585091450121834,
+      "nose": 0.1874999999999999,
+      "ridge": 0.04798008188858509,
+      "total": 0.08814281667528401
+    },
+    "basis_g015_hm075": {
+      "return_distance": 0.09417456918035548,
+      "nose": 0.1874999999999999,
+      "ridge": 0.09113841598806399,
+      "total": 0.11689869624680828
+    },
+    "basis_g015_hm100": {
+      "return_distance": 0.05835554223276486,
+      "nose": 0.1874999999999999,
+      "ridge": 0.0486174185968955,
+      "total": 0.08869403194739975
+    }
+  },
+  "best_iri_basis_by_full_ray_score": "basis_flat_hm100",
+  "post_selection_density_diagnostics": {
+    "o_ridge": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.013126987858330885,
+      "hmf2_error_km": -4.768623110444224,
+      "topside_normalized_rms_percent": 2.5742962997581813,
+      "full_150_to_600_normalized_rms_percent": 7.649351528321592
+    },
+    "ox_ridge": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.012655810037143667,
+      "hmf2_error_km": -4.963186756753856,
+      "topside_normalized_rms_percent": 3.9332566457563654,
+      "full_150_to_600_normalized_rms_percent": 8.101778299697596
+    },
+    "chapman_o_ridge": {
+      "model": "chapman",
+      "fof2_error_mhz": -0.059572163802270595,
+      "hmf2_error_km": -37.11243885852028,
+      "topside_normalized_rms_percent": 18.729876296732833,
+      "full_150_to_600_normalized_rms_percent": 17.387619517724026
+    },
+    "basis_fo0995": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.04010147819339771,
+      "hmf2_error_km": -4.768623110444338,
+      "topside_normalized_rms_percent": 3.0613464197424514,
+      "full_150_to_600_normalized_rms_percent": 7.919244459014409
+    },
+    "basis_fo0990": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.06707596852846365,
+      "hmf2_error_km": -4.768623110444196,
+      "topside_normalized_rms_percent": 3.5598937236388632,
+      "full_150_to_600_normalized_rms_percent": 8.220009129560536
+    },
+    "basis_fo0985": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.09405045886353047,
+      "hmf2_error_km": -4.7686231104443095,
+      "topside_normalized_rms_percent": 4.064654223008169,
+      "full_150_to_600_normalized_rms_percent": 8.547793869632795
+    },
+    "basis_fo0990_hmplus5": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.06476434324855429,
+      "hmf2_error_km": 0.8939106891102142,
+      "topside_normalized_rms_percent": 2.211393189720747,
+      "full_150_to_600_normalized_rms_percent": 9.616263380276662
+    },
+    "basis_gradient_015": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.012023141530656645,
+      "hmf2_error_km": -4.8468914725240495,
+      "topside_normalized_rms_percent": 2.5722150319449706,
+      "full_150_to_600_normalized_rms_percent": 7.6278311702020964
+    },
+    "basis_gradient_030": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.012221005873868762,
+      "hmf2_error_km": -4.835881067403903,
+      "topside_normalized_rms_percent": 2.5733442314482686,
+      "full_150_to_600_normalized_rms_percent": 7.6316221156508925
+    },
+    "basis_gradient_050": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.01248145108804355,
+      "hmf2_error_km": -4.819183889123536,
+      "topside_normalized_rms_percent": 2.574341557139398,
+      "full_150_to_600_normalized_rms_percent": 7.636682234467587
+    },
+    "basis_gradient_000": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.011822280246746253,
+      "hmf2_error_km": -4.856512344806362,
+      "topside_normalized_rms_percent": 2.5707589607735426,
+      "full_150_to_600_normalized_rms_percent": 7.624044519001368
+    },
+    "basis_flat_hm075": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.008521332033780027,
+      "hmf2_error_km": 2.1877442504387545,
+      "topside_normalized_rms_percent": 0.814532525784749,
+      "full_150_to_600_normalized_rms_percent": 9.587972454195642
+    },
+    "basis_flat_hm100": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.00653491660861949,
+      "hmf2_error_km": 4.261013381419332,
+      "topside_normalized_rms_percent": 0.24461527633154379,
+      "full_150_to_600_normalized_rms_percent": 10.351558405787948
+    },
+    "basis_g015_hm075": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.008218725120460846,
+      "hmf2_error_km": 2.7422118263167476,
+      "topside_normalized_rms_percent": 0.6669646108402597,
+      "full_150_to_600_normalized_rms_percent": 9.783865788500504
+    },
+    "basis_g015_hm100": {
+      "model": "iri_basis",
+      "fof2_error_mhz": -0.006234397711195605,
+      "hmf2_error_km": 4.947639305337589,
+      "topside_normalized_rms_percent": 0.10996793631616611,
+      "full_150_to_600_normalized_rms_percent": 10.625248412576747
+    }
+  },
+  "previous_full_ray_score": {
+    "return_distance": 0.14235469962679004,
+    "nose": 0.1250000000000001,
+    "ridge": 0.20116339101168984,
+    "total": 0.14977776299707252
+  },
+  "truth_density_source": "IRI-2016 1.11.1",
+  "candidate_basis_source": "IRI-2020 bridge; 2011 global 5x5x4 sample; F10.7=120",
+  "truth_fof2_mhz": 5.408025054871676,
+  "retrieved_fof2_mhz": 5.401490138263057,
+  "fof2_error_mhz": -0.00653491660861949,
+  "truth_hmf2_km": 257.2929520705181,
+  "retrieved_hmf2_km": 261.5539654519374,
+  "hmf2_error_km": 4.261013381419332,
+  "sampled_truth_hmf2_km": 260.0,
+  "sampled_retrieved_hmf2_km": 260.0,
+  "topside_normalized_rms_percent": 0.24461527633154379,
+  "full_150_to_600_normalized_rms_percent": 10.351558405787948,
+  "note": "Peak metrics use three-point quadratic vertices of the 20-km forward grids, not analytic fit parameters."
+}

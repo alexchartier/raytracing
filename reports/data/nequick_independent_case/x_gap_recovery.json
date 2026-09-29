@@ -1,0 +1,23 @@
+{
+  "source": "truth_ionogram.npz",
+  "continued_return_file": "continued_x_gap_2p5_to_2p9.npz",
+  "added_x_returns": 10,
+  "frequency_mhz": [
+    2.5,
+    2.6,
+    2.7,
+    2.8,
+    2.9
+  ],
+  "mode": -1,
+  "maximum_accepted_miss_m": 780.2927315617721,
+  "homing_tolerance_m": 1000.0,
+  "continuation_step_mhz": 0.02,
+  "seed_frequencies_mhz": [
+    2.4,
+    2.6,
+    2.8,
+    3.0
+  ],
+  "truth_density_used_only_by_forward_ray_tracer": true
+}

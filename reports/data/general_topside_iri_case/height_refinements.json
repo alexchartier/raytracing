@@ -1,0 +1,75 @@
+{
+  "observation": "reports/data/d_inverse_iri_truth_blind.npz",
+  "selection_uses_truth_density": false,
+  "geometric_two_way_range_derivative_km_per_km": -2.0,
+  "sources": {
+    "basis_gradient_000": {
+      "median_predicted_minus_observed_group_range_km": 16.835259859821463,
+      "full_height_step_km": 8.417629929910731,
+      "common_frequency_count": 43
+    },
+    "basis_gradient_015": {
+      "median_predicted_minus_observed_group_range_km": 18.27452823526528,
+      "full_height_step_km": 9.13726411763264,
+      "common_frequency_count": 48
+    }
+  },
+  "candidates": {
+    "basis_flat_hm075": {
+      "model": "iri_basis",
+      "fof2_mhz": 5.401000000000004,
+      "hmf2_km": 257.8008850357904,
+      "basis_scores": [
+        0.242816648260689,
+        -0.20667101481228142,
+        0.34710000329980134,
+        0.05421674365510711
+      ],
+      "height_step_factor": 0.75,
+      "horizontal_gradient_gain": 0.0,
+      "source_candidate": "basis_gradient_000"
+    },
+    "basis_flat_hm100": {
+      "model": "iri_basis",
+      "fof2_mhz": 5.401000000000004,
+      "hmf2_km": 259.9052925182681,
+      "basis_scores": [
+        0.242816648260689,
+        -0.20667101481228142,
+        0.34710000329980134,
+        0.05421674365510711
+      ],
+      "height_step_factor": 1.0,
+      "horizontal_gradient_gain": 0.0,
+      "source_candidate": "basis_gradient_000"
+    },
+    "basis_g015_hm075": {
+      "model": "iri_basis",
+      "fof2_mhz": 5.401000000000004,
+      "hmf2_km": 258.34061067658183,
+      "basis_scores": [
+        0.242816648260689,
+        -0.20667101481228142,
+        0.34710000329980134,
+        0.05421674365510711
+      ],
+      "height_step_factor": 0.75,
+      "horizontal_gradient_gain": 0.15,
+      "source_candidate": "basis_gradient_015"
+    },
+    "basis_g015_hm100": {
+      "model": "iri_basis",
+      "fof2_mhz": 5.401000000000004,
+      "hmf2_km": 260.62492670599,
+      "basis_scores": [
+        0.242816648260689,
+        -0.20667101481228142,
+        0.34710000329980134,
+        0.05421674365510711
+      ],
+      "height_step_factor": 1.0,
+      "horizontal_gradient_gain": 0.15,
+      "source_candidate": "basis_gradient_015"
+    }
+  }
+}

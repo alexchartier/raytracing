@@ -1,0 +1,57 @@
+{
+  "truth_model": "NeQuick-G, Galileo ionospheric correction model",
+  "source_commit": "1d1783412ed9811540b56d409a1dcf27d2413740",
+  "selection": "minimum completed full-ray O/X accepted-return score",
+  "selected": "flexible_refined",
+  "unscored_candidates": [
+    "chapman"
+  ],
+  "truth_fof2_mhz": 5.397984297608612,
+  "truth_hmf2_km": 256.86768500298433,
+  "scores": {
+    "iri_basis": {
+      "return_distance": 0.44733229044568257,
+      "nose": 0.5000000000000004,
+      "ridge": 0.6140059622052727,
+      "total": 0.49383395218618004
+    },
+    "flexible": {
+      "return_distance": 0.1322421942589127,
+      "nose": 0.1874999999999999,
+      "ridge": 0.1874871532150867,
+      "total": 0.1571056374854193
+    },
+    "flexible_refined": {
+      "return_distance": 0.12528259260402752,
+      "nose": 0.1874999999999999,
+      "ridge": 0.18643927950213687,
+      "total": 0.15306828183264248
+    }
+  },
+  "post_selection_density_diagnostics": {
+    "iri_basis": {
+      "fof2_error_mhz": 0.3520157023905135,
+      "hmf2_error_km": -2.7349205930422045,
+      "peak_density_error_percent": 13.467753256730507,
+      "topside_normalized_rms_percent": 21.904644473804485
+    },
+    "chapman": {
+      "fof2_error_mhz": -0.09156245287767639,
+      "hmf2_error_km": -27.579244789047067,
+      "peak_density_error_percent": -3.363696190163523,
+      "topside_normalized_rms_percent": 20.816083143146162
+    },
+    "flexible": {
+      "fof2_error_mhz": -0.04489823764772005,
+      "hmf2_error_km": 24.194968574283394,
+      "peak_density_error_percent": -1.6566004102229859,
+      "topside_normalized_rms_percent": 10.451240767166993
+    },
+    "flexible_refined": {
+      "fof2_error_mhz": -0.04489823764772005,
+      "hmf2_error_km": 25.471778334546684,
+      "peak_density_error_percent": -1.6566004102229859,
+      "topside_normalized_rms_percent": 10.917868742632804
+    }
+  }
+}

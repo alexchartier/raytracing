@@ -1,0 +1,78 @@
+{
+  "observation": "reports/data/nequick_independent_case/truth_ionogram.npz",
+  "truth_density_or_parameters_read_during_fit": false,
+  "candidates": {
+    "iri_basis": {
+      "fof2_mhz": 5.749999999999125,
+      "hmf2_km": 254.13276440994213,
+      "bottomside_scale_km": 55.0,
+      "surrogate_range_mae_km": {
+        "1": 40.25596890320719
+      },
+      "surrogate_objective": 0.623528688194716,
+      "basis_scores": [
+        2.4999999994060786,
+        -0.5190323570469195,
+        -0.9495333697924715,
+        0.0026400035720280765
+      ]
+    },
+    "chapman": {
+      "fof2_mhz": 5.306421844730935,
+      "hmf2_km": 229.28844021393726,
+      "bottomside_scale_km": 55.0,
+      "surrogate_range_mae_km": {
+        "1": 1.994097610894539
+      },
+      "surrogate_objective": 0.010948954719763017,
+      "topside_scale_km": 24.895973373730598,
+      "tail_curvature": -0.25335920413629665
+    },
+    "flexible": {
+      "fof2_mhz": 5.353086059960892,
+      "hmf2_km": 281.0626535772677,
+      "bottomside_scale_km": 55.0,
+      "surrogate_range_mae_km": {
+        "1": 1.908538781923846
+      },
+      "surrogate_objective": 0.005493946412017698,
+      "log_slope_per_km": [
+        0.005965783290264604,
+        0.010189846406246867,
+        0.011783563833690069,
+        0.010387253698260246,
+        0.008224998755419823,
+        0.0010370630465743656,
+        2.0000000000000005e-05,
+        6.999687675638914e-05
+      ]
+    },
+    "flexible_refined": {
+      "fof2_mhz": 5.353086059960892,
+      "hmf2_km": 282.339463337531,
+      "bottomside_scale_km": 55.0,
+      "surrogate_range_mae_km": {
+        "1": 1.908538781923846
+      },
+      "surrogate_objective": 0.005493946412017698,
+      "log_slope_per_km": [
+        0.005965783290264604,
+        0.010189846406246867,
+        0.011783563833690069,
+        0.010387253698260246,
+        0.008224998755419823,
+        0.0010370630465743656,
+        2.0000000000000005e-05,
+        6.999687675638914e-05
+      ],
+      "height_step_from_full_ray_residual_km": 1.2768097602632906,
+      "median_predicted_minus_observed_range_km": 2.5536195205265813,
+      "common_frequency_count": 47,
+      "frequency_window_mhz": [
+        2.4,
+        4.900000000000002
+      ],
+      "truth_density_or_parameters_read_during_refinement": false
+    }
+  }
+}

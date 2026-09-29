@@ -1,0 +1,19 @@
+{
+  "model": "NeQuick-G, Galileo ionospheric correction model",
+  "public_source": "https://github.com/tpl2go/NequickG",
+  "source_commit": "1d1783412ed9811540b56d409a1dcf27d2413740",
+  "conversion": "Python 2 to Python 3 via lib2to3; no model-equation edits",
+  "converted_nequickg_py_sha256": "751bd78e255ed3436b3d551b8bb79e5dedcdf2c19dabf7a56fea8fb7e598a50a",
+  "latitude_deg": -53.67859907285381,
+  "longitude_deg": 7.7400542554165135,
+  "month": 1,
+  "utc_hour": 12.0,
+  "galileo_broadcast_ai0": 64.0,
+  "galileo_broadcast_ai1": 0.0,
+  "galileo_broadcast_ai2": 0.0,
+  "model_fof2_mhz": 5.397984297608612,
+  "model_hmf2_km": 256.86768500298433,
+  "high_resolution_peak_altitude_km": 257.0,
+  "high_resolution_peak_density_cm3": 361312.3463581746,
+  "horizontal_field": "one NeQuick-G profile replicated across ray-tracing grid"
+}

@@ -1,0 +1,103 @@
+{
+  "fitted_from": "reports/data/chapman_model_validation/truth_ionogram.npz",
+  "truth_density_read_during_fit": false,
+  "candidates": {
+    "chapman_o": {
+      "fof2_mhz": 5.673500110599802,
+      "hmf2_km": 267.9611130298612,
+      "source_fit": "chapman_o",
+      "height_step_from_source_km": 0.0,
+      "surrogate_range_mae_km": {
+        "1": 3.8643814540690995
+      },
+      "surrogate_objective": 0.048019935545395985,
+      "x_nuisance_frequency_offset_mhz": 1.4907720543560452e-24,
+      "x_nuisance_range_offset_km": 0.0,
+      "topside_scale_km": 106.19027532131014,
+      "tail_curvature": 0.2252666117085034
+    },
+    "chapman_ox": {
+      "fof2_mhz": 5.677390073944219,
+      "hmf2_km": 267.68438402955803,
+      "source_fit": "chapman_ox",
+      "height_step_from_source_km": 0.0,
+      "surrogate_range_mae_km": {
+        "1": 6.063040869109006,
+        "-1": 2.596330263171365
+      },
+      "surrogate_objective": 0.1640060193407974,
+      "x_nuisance_frequency_offset_mhz": 0.5235167167801638,
+      "x_nuisance_range_offset_km": 73.96072104420841,
+      "topside_scale_km": 105.20477804919466,
+      "tail_curvature": 0.25401171662029953
+    },
+    "iri_basis": {
+      "fof2_mhz": 5.701000000000004,
+      "hmf2_km": 296.9061698179689,
+      "source_fit": "iri_basis",
+      "height_step_from_source_km": 0.0,
+      "surrogate_range_mae_km": {
+        "1": 169.2323509213905,
+        "-1": 137.52969696593564
+      },
+      "surrogate_objective": 12.367941903758512,
+      "x_nuisance_frequency_offset_mhz": -0.05936068274050486,
+      "x_nuisance_range_offset_km": -87.03476891882482,
+      "basis_scores": [
+        -2.4999999999999996,
+        2.4999999999999996,
+        2.4999999999999996,
+        0.06665691615576838
+      ]
+    },
+    "chapman_o_hm20": {
+      "fof2_mhz": 5.673500110599802,
+      "hmf2_km": 287.9611130298612,
+      "source_fit": "chapman_o",
+      "height_step_from_source_km": 20.0,
+      "surrogate_range_mae_km": {
+        "1": 3.8643814540690995
+      },
+      "surrogate_objective": 0.048019935545395985,
+      "x_nuisance_frequency_offset_mhz": 1.4907720543560452e-24,
+      "x_nuisance_range_offset_km": 0.0,
+      "topside_scale_km": 106.19027532131014,
+      "tail_curvature": 0.2252666117085034
+    },
+    "chapman_o_hm40": {
+      "fof2_mhz": 5.673500110599802,
+      "hmf2_km": 307.9611130298612,
+      "source_fit": "chapman_o",
+      "height_step_from_source_km": 40.0,
+      "surrogate_range_mae_km": {
+        "1": 3.8643814540690995
+      },
+      "surrogate_objective": 0.048019935545395985,
+      "x_nuisance_frequency_offset_mhz": 1.4907720543560452e-24,
+      "x_nuisance_range_offset_km": 0.0,
+      "topside_scale_km": 106.19027532131014,
+      "tail_curvature": 0.2252666117085034
+    },
+    "chapman_o_refined": {
+      "fof2_mhz": 5.673500110599802,
+      "hmf2_km": 300.10352756159796,
+      "source_fit": "chapman_o",
+      "height_step_from_source_km": 32.14241453173673,
+      "surrogate_range_mae_km": {
+        "1": 3.8643814540690995
+      },
+      "surrogate_objective": 0.048019935545395985,
+      "x_nuisance_frequency_offset_mhz": 1.4907720543560452e-24,
+      "x_nuisance_range_offset_km": 0.0,
+      "topside_scale_km": 106.19027532131014,
+      "tail_curvature": 0.2252666117085034,
+      "median_predicted_minus_observed_range_km": 64.28482906347347,
+      "shared_frequency_count": 37,
+      "refinement_frequency_window_mhz": [
+        3.2000000000000006,
+        5.200000000000003
+      ],
+      "selection_uses_truth_density": false
+    }
+  }
+}

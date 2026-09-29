@@ -1,0 +1,84 @@
+{
+  "truth_source": "analytic generalized Chapman; uniform 3-D field",
+  "selection": "minimum full-ray O/X accepted-return score",
+  "selected": "chapman_o_refined",
+  "truth_fof2_mhz": 5.7,
+  "truth_hmf2_km": 300.0,
+  "peak_metric_definition": "continuous analytic truth and fitted profile parameters; 20-km grid is used only for the RMS diagnostic",
+  "scores": {
+    "chapman_o": {
+      "return_distance": 0.35976324726280723,
+      "nose": 0.24999999999999967,
+      "ridge": 0.984138393591741,
+      "total": 0.45719746471289213
+    },
+    "chapman_ox": {
+      "return_distance": 0.3824212260902937,
+      "nose": 0.24999999999999967,
+      "ridge": 0.9969708393007058,
+      "total": 0.4722258422098027
+    },
+    "iri_basis": {
+      "return_distance": 0.7409339467542901,
+      "nose": 0.12499999999999956,
+      "ridge": 0.8991812231847437,
+      "total": 0.6185999153518082
+    },
+    "chapman_o_hm20": {
+      "return_distance": 0.2675085037720164,
+      "nose": 0.1250000000000001,
+      "ridge": 0.42558574261999793,
+      "total": 0.26349682559860865
+    },
+    "chapman_o_hm40": {
+      "return_distance": 0.24933414502407367,
+      "nose": 0.12499999999999956,
+      "ridge": 0.536102292047099,
+      "total": 0.2756042381726602
+    },
+    "chapman_o_refined": {
+      "return_distance": 0.228020962746967,
+      "nose": 0.06249999999999978,
+      "ridge": 0.2924632008807917,
+      "total": 0.19952916968699017
+    }
+  },
+  "post_selection_density_diagnostics": {
+    "chapman_o": {
+      "fof2_error_mhz": -0.026499889400198207,
+      "peak_density_error_percent": -0.927659264463021,
+      "hmf2_error_km": -32.038886970138776,
+      "topside_normalized_rms_percent": 5.825968991316247
+    },
+    "chapman_ox": {
+      "fof2_error_mhz": -0.022609926055781493,
+      "peak_density_error_percent": -0.7917573046465343,
+      "hmf2_error_km": -32.31561597044197,
+      "topside_normalized_rms_percent": 5.736454834470772
+    },
+    "iri_basis": {
+      "fof2_error_mhz": 0.0010000000000038867,
+      "peak_density_error_percent": 0.03509079716847996,
+      "hmf2_error_km": -3.0938301820311267,
+      "topside_normalized_rms_percent": 17.572311190751723
+    },
+    "chapman_o_hm20": {
+      "fof2_error_mhz": -0.026499889400198207,
+      "peak_density_error_percent": -0.927659264463021,
+      "hmf2_error_km": -12.038886970138776,
+      "topside_normalized_rms_percent": 2.0228719849814225
+    },
+    "chapman_o_hm40": {
+      "fof2_error_mhz": -0.026499889400198207,
+      "peak_density_error_percent": -0.927659264463021,
+      "hmf2_error_km": 7.961113029861224,
+      "topside_normalized_rms_percent": 1.8501870023404468
+    },
+    "chapman_o_refined": {
+      "fof2_error_mhz": -0.026499889400198207,
+      "peak_density_error_percent": -0.927659264463021,
+      "hmf2_error_km": 0.10352756159795717,
+      "topside_normalized_rms_percent": 0.5137500871226143
+    }
+  }
+}

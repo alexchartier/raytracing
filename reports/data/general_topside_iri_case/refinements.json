@@ -1,0 +1,119 @@
+{
+  "source_candidate": "o_ridge",
+  "reason": "Full-ray O/X noses of 5.4/5.7 MHz versus observed 5.4/5.4 MHz; test peak frequency, height, and horizontal prior-gradient gain separately.",
+  "selection_uses_truth_density": false,
+  "candidates": {
+    "basis_fo0995": {
+      "model": "iri_basis",
+      "fof2_mhz": 5.373995000000004,
+      "hmf2_km": 251.48766258835732,
+      "basis_scores": [
+        0.242816648260689,
+        -0.20667101481228142,
+        0.34710000329980134,
+        0.05421674365510711
+      ],
+      "frequency_factor_from_o_ridge": 0.995,
+      "height_delta_from_o_ridge_km": 0.0,
+      "horizontal_gradient_gain": 1.0
+    },
+    "basis_fo0990": {
+      "model": "iri_basis",
+      "fof2_mhz": 5.346990000000004,
+      "hmf2_km": 251.48766258835732,
+      "basis_scores": [
+        0.242816648260689,
+        -0.20667101481228142,
+        0.34710000329980134,
+        0.05421674365510711
+      ],
+      "frequency_factor_from_o_ridge": 0.99,
+      "height_delta_from_o_ridge_km": 0.0,
+      "horizontal_gradient_gain": 1.0
+    },
+    "basis_fo0985": {
+      "model": "iri_basis",
+      "fof2_mhz": 5.319985000000004,
+      "hmf2_km": 251.48766258835732,
+      "basis_scores": [
+        0.242816648260689,
+        -0.20667101481228142,
+        0.34710000329980134,
+        0.05421674365510711
+      ],
+      "frequency_factor_from_o_ridge": 0.985,
+      "height_delta_from_o_ridge_km": 0.0,
+      "horizontal_gradient_gain": 1.0
+    },
+    "basis_fo0990_hmplus5": {
+      "model": "iri_basis",
+      "fof2_mhz": 5.346990000000004,
+      "hmf2_km": 256.48766258835735,
+      "basis_scores": [
+        0.242816648260689,
+        -0.20667101481228142,
+        0.34710000329980134,
+        0.05421674365510711
+      ],
+      "frequency_factor_from_o_ridge": 0.99,
+      "height_delta_from_o_ridge_km": 5.0,
+      "horizontal_gradient_gain": 1.0
+    },
+    "basis_gradient_015": {
+      "model": "iri_basis",
+      "fof2_mhz": 5.401000000000004,
+      "hmf2_km": 251.48766258835732,
+      "basis_scores": [
+        0.242816648260689,
+        -0.20667101481228142,
+        0.34710000329980134,
+        0.05421674365510711
+      ],
+      "frequency_factor_from_o_ridge": 1.0,
+      "height_delta_from_o_ridge_km": 0.0,
+      "horizontal_gradient_gain": 0.15
+    },
+    "basis_gradient_030": {
+      "model": "iri_basis",
+      "fof2_mhz": 5.401000000000004,
+      "hmf2_km": 251.48766258835732,
+      "basis_scores": [
+        0.242816648260689,
+        -0.20667101481228142,
+        0.34710000329980134,
+        0.05421674365510711
+      ],
+      "frequency_factor_from_o_ridge": 1.0,
+      "height_delta_from_o_ridge_km": 0.0,
+      "horizontal_gradient_gain": 0.3
+    },
+    "basis_gradient_050": {
+      "model": "iri_basis",
+      "fof2_mhz": 5.401000000000004,
+      "hmf2_km": 251.48766258835732,
+      "basis_scores": [
+        0.242816648260689,
+        -0.20667101481228142,
+        0.34710000329980134,
+        0.05421674365510711
+      ],
+      "frequency_factor_from_o_ridge": 1.0,
+      "height_delta_from_o_ridge_km": 0.0,
+      "horizontal_gradient_gain": 0.5
+    },
+    "basis_gradient_000": {
+      "model": "iri_basis",
+      "fof2_mhz": 5.401000000000004,
+      "hmf2_km": 251.48766258835732,
+      "basis_scores": [
+        0.242816648260689,
+        -0.20667101481228142,
+        0.34710000329980134,
+        0.05421674365510711
+      ],
+      "frequency_factor_from_o_ridge": 1.0,
+      "height_delta_from_o_ridge_km": 0.0,
+      "horizontal_gradient_gain": 0.0
+    }
+  }
+}
