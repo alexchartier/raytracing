@@ -21,6 +21,7 @@ from python_raytrace.grid import load_ionosphere_grid_netcdf
 from python_raytrace.multisat_topside_inverse_demo import _home_frequency_returns
 from python_raytrace.spacecraft_doppler import spacecraft_doppler
 from python_raytrace.tracer import PointToPointRayTracer
+from local_ray_lock import local_ray_lock
 
 
 def recover(source: Path, grid_path: Path, output: Path) -> None:
@@ -117,7 +118,8 @@ def main() -> None:
     parser.add_argument("--grid", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    recover(args.source, args.grid, args.output)
+    with local_ray_lock():
+        recover(args.source, args.grid, args.output)
 
 
 if __name__ == "__main__":

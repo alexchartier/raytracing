@@ -17,14 +17,16 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST = ROOT / "reports/data/lat_wave_pass_manifest.json"
+DEFAULT_MANIFEST = ROOT / "reports/data/lat_wave_pass_manifest.json"
 
 
-def generate(grid: Path, output_dir: Path, workers: int, indices: list[int]) -> dict:
-    if not 1 <= workers <= 12:
-        raise ValueError("workers must be between 1 and 12")
+def generate(grid: Path, output_dir: Path, workers: int, indices: list[int],
+             manifest: Path = DEFAULT_MANIFEST,
+             density_source: str = "second-round joint wave candidate") -> dict:
+    if workers != 1:
+        raise ValueError("local memory safety requires exactly one ray worker")
     profiles = {int(row["index"]): row
-                for row in json.loads(MANIFEST.read_text())["profiles"]}
+                for row in json.loads(manifest.read_text())["profiles"]}
     if not indices or any(index not in profiles for index in indices):
         raise ValueError("Expected profile indices in 1..20")
     if not grid.is_file():
@@ -55,7 +57,7 @@ def generate(grid: Path, output_dir: Path, workers: int, indices: list[int]) -> 
                    "--longitude-deg", str(row["longitude_deg"]),
                    "--altitude-km", str(row["altitude_km"]),
                    "--profile-index", str(index), "--output", str(destination),
-                   "--density-source", "second-round joint wave candidate"]
+                   "--density-source", density_source]
         result = subprocess.run(command, cwd=ROOT, env=environment,
                                 capture_output=True, text=True)
         if result.returncode or not destination.is_file():
@@ -89,8 +91,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--grid", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--indices", nargs="+", type=int, default=list(range(1, 21)))
+    parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
+    parser.add_argument("--density-source", default="second-round joint wave candidate")
     arguments = parser.parse_args()
     print(json.dumps(generate(arguments.grid, arguments.output_dir,
-                              arguments.workers, arguments.indices), indent=2))
+                              arguments.workers, arguments.indices,
+                              arguments.manifest, arguments.density_source), indent=2))

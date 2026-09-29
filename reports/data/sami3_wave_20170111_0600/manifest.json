@@ -1,0 +1,174 @@
+{
+  "description": "Frozen remapped SAMI3/HIAMCM wave-rich latitude cut; PyIRI is an independent density prior",
+  "source_mat": "/Users/chartat1/data/sami3/2017_tid/sami_mat/2017-01-11_0600.mat",
+  "epoch_utc": "2017-01-11T06:00:00+00:00",
+  "latitude_center_deg": -60.0,
+  "longitude_deg": 190.0,
+  "latitude_span_deg": 20.0,
+  "profile_count": 20,
+  "sounder_altitude_km": 800.0,
+  "satellite_separation_km": 600.0,
+  "density_units": "cm^-3, as in source iono_en_grid raytracing field",
+  "source_altitude_km": [
+    92,
+    800
+  ],
+  "working_altitude_km": [
+    80,
+    820,
+    5
+  ],
+  "pyiri_f107": 75.0,
+  "pyiri_ap_daily": 5.0,
+  "frequency_sweep_mhz": [
+    2.0,
+    10.0,
+    0.1
+  ],
+  "homing_tolerance_m": 1000.0,
+  "vertical_fan_option": "D",
+  "profiles": [
+    {
+      "index": 1,
+      "latitude_deg": -70.0,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 2,
+      "latitude_deg": -68.94736842105263,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 3,
+      "latitude_deg": -67.89473684210526,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 4,
+      "latitude_deg": -66.84210526315789,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 5,
+      "latitude_deg": -65.78947368421052,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 6,
+      "latitude_deg": -64.73684210526316,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 7,
+      "latitude_deg": -63.68421052631579,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 8,
+      "latitude_deg": -62.631578947368425,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 9,
+      "latitude_deg": -61.578947368421055,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 10,
+      "latitude_deg": -60.526315789473685,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 11,
+      "latitude_deg": -59.473684210526315,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 12,
+      "latitude_deg": -58.421052631578945,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 13,
+      "latitude_deg": -57.368421052631575,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 14,
+      "latitude_deg": -56.31578947368421,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 15,
+      "latitude_deg": -55.26315789473684,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 16,
+      "latitude_deg": -54.21052631578947,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 17,
+      "latitude_deg": -53.15789473684211,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 18,
+      "latitude_deg": -52.10526315789474,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 19,
+      "latitude_deg": -51.05263157894737,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 20,
+      "latitude_deg": -50.0,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    }
+  ],
+  "provenance": "Repository remap_sami.m identifies 2017_tid/sami_mat as its HIAMCM-version output; original source NetCDF is not present locally",
+  "source_sha256": "bde22ecab1dbc21606b7ae74b8daa0ccc6d8fe1b3ac48423b0e5d2781c6614bc"
+}

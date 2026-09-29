@@ -10,6 +10,7 @@ import argparse
 import json
 import math
 import os
+import resource
 import subprocess
 import sys
 import time
@@ -37,15 +38,17 @@ from python_raytrace.multisat_topside_inverse_demo import (  # noqa: E402
 from python_raytrace.spacecraft_doppler import spacecraft_doppler  # noqa: E402
 from ionogram_metrics import Ionogram, score  # noqa: E402
 from build_lat_wave_doppler_peak_round3 import basis  # noqa: E402
+from local_ray_lock import local_ray_lock, require_remote_for_large_grid  # noqa: E402
 
 DATA = ROOT / "reports/data"
-RUN = DATA / "oblique_wave_600km"
-MANIFEST = DATA / "lat_wave_pass_manifest.json"
-TRUTH_GRID = DATA / "lat_wave_pass_forward_grid.nc"
-TRUTH_DENSITY = DATA / "lat_wave_pass_truth_density.npz"
-START_GRID = DATA / "lat_wave_doppler_peak_round3/wide_grid.nc"
-START_DENSITY = DATA / "lat_wave_doppler_peak_round3/wide_density.npz"
-FIT_METADATA = DATA / "lat_wave_pass_initial_fit.json"
+CASE_ROOT = Path(os.environ.get("SOUNDER_CASE_ROOT", str(DATA))).resolve()
+RUN = CASE_ROOT / "oblique_wave_600km"
+MANIFEST = CASE_ROOT / ("manifest.json" if CASE_ROOT != DATA else "lat_wave_pass_manifest.json")
+TRUTH_GRID = CASE_ROOT / ("truth_grid.nc" if CASE_ROOT != DATA else "lat_wave_pass_forward_grid.nc")
+TRUTH_DENSITY = CASE_ROOT / ("truth_density.npz" if CASE_ROOT != DATA else "lat_wave_pass_truth_density.npz")
+START_GRID = Path(os.environ.get("SOUNDER_START_GRID", str(DATA / "lat_wave_doppler_peak_round3/wide_grid.nc"))).resolve()
+START_DENSITY = Path(os.environ.get("SOUNDER_START_DENSITY", str(DATA / "lat_wave_doppler_peak_round3/wide_density.npz"))).resolve()
+FIT_METADATA = CASE_ROOT / ("vertical_fit.json" if CASE_ROOT != DATA else "lat_wave_pass_initial_fit.json")
 FIGURES = ROOT / "reports/figures"
 FREQUENCIES = np.round(np.arange(2.0, 10.0001, 0.1), 10)
 SEPARATION_KM = 600.0
@@ -78,6 +81,7 @@ def separation_km(tx: GeoPoint, rx: GeoPoint) -> float:
 
 def trace(grid_path: Path, index: int, output: Path, density_source: str) -> dict:
     started = time.perf_counter()
+    require_remote_for_large_grid(grid_path)
     tx, rx = endpoints(index)
     if not math.isclose(separation_km(tx, rx), SEPARATION_KM, abs_tol=0.01):
         raise ValueError("Satellite spacing is not 600 km")
@@ -143,6 +147,7 @@ def trace(grid_path: Path, index: int, output: Path, density_source: str) -> dic
         fan_launch_directions=np.array(len(elevations)),
         homing_tolerance_m=np.array(config.homing_tolerance_m),
         runtime_seconds=np.array(time.perf_counter() - started),
+        peak_rss_mb=np.array(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1048576.0),
     )
     return {"profile": index, "accepted_returns": len(records),
             "runtime_seconds": time.perf_counter() - started,
@@ -152,8 +157,8 @@ def trace(grid_path: Path, index: int, output: Path, density_source: str) -> dic
 
 def batch(grid: Path, output_dir: Path, workers: int, indices: list[int],
           density_source: str) -> dict:
-    if not 1 <= workers <= 12:
-        raise ValueError("workers must be in 1..12")
+    if workers != 1:
+        raise ValueError("local memory safety requires exactly one ray worker")
     if not indices or any(index < 1 or index > 20 for index in indices):
         raise ValueError("profile index must be in 1..20")
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -219,9 +224,13 @@ def build_candidate(gain: float, vertical_sigma_km: float,
     halfspan_km = float(np.max(abs(6371.0088 * np.deg2rad(tx_latitudes - center))))
     wavelength_km = float(json.loads(FIT_METADATA.read_text())["wave_wavelength_km"])
     design = basis(mid_latitudes, center, halfspan_km, wavelength_km)
+    available = sorted(int(path.stem.split("_")[-1]) for path in (RUN / "truth").glob("ionogram_*.npz")
+                       if (RUN / "baseline" / path.name).is_file())
+    if len(available) < 4:
+        raise ValueError("At least four paired oblique ionograms are required")
     noses = np.full((20, 2, 2), np.nan)
     low_frequency_range_residual_km = np.full(20, np.nan)
-    for index in range(1, 21):
+    for index in available:
         observed_ionogram = Ionogram.read(RUN / "truth" / f"ionogram_{index:02d}.npz")
         modeled_ionogram = Ionogram.read(RUN / "baseline" / f"ionogram_{index:02d}.npz")
         for source_column, source in enumerate(("truth", "baseline")):
@@ -245,7 +254,7 @@ def build_candidate(gain: float, vertical_sigma_km: float,
     valid = np.isfinite(observed) & np.isfinite(modeled) & (modeled < 9.9)
     proxy = np.clip(2.0 * (observed - modeled) / modeled, -.20, .20)
     rows = np.flatnonzero(np.any(valid, axis=1))
-    if len(rows) < 10:
+    if len(rows) < 4:
         raise ValueError("Too few paired oblique cutoffs for a wave fit")
     target = np.array([np.mean(proxy[i, valid[i]]) for i in rows])
     # Soft prior limits extrapolation at the ends of the pass.
@@ -254,7 +263,7 @@ def build_candidate(gain: float, vertical_sigma_km: float,
         np.vstack((design[rows], ridge)),
         np.r_[target, np.zeros(4)], rcond=None)[0]
     height_rows = np.flatnonzero(np.isfinite(low_frequency_range_residual_km))
-    if len(height_rows) < 10:
+    if len(height_rows) < 4:
         raise ValueError("Too few common low-frequency ranges for height fit")
     height_target_km = -low_frequency_range_residual_km[height_rows] / 1.7
     height_coefficients = np.linalg.lstsq(
@@ -686,7 +695,7 @@ def main() -> None:
     many = commands.add_parser("batch")
     many.add_argument("--grid", type=Path, required=True)
     many.add_argument("--output-dir", type=Path, required=True)
-    many.add_argument("--workers", type=int, default=4)
+    many.add_argument("--workers", type=int, default=1)
     many.add_argument("--indices", nargs="+", type=int, default=list(range(1, 21)))
     many.add_argument("--density-source", required=True)
     candidate = commands.add_parser("build")
@@ -703,7 +712,8 @@ def main() -> None:
     commands.add_parser("evaluate")
     args = parser.parse_args()
     if args.command == "trace":
-        result = trace(args.grid, args.index, args.output, args.density_source)
+        with local_ray_lock():
+            result = trace(args.grid, args.index, args.output, args.density_source)
     elif args.command == "batch":
         result = batch(args.grid, args.output_dir, args.workers, args.indices,
                        args.density_source)

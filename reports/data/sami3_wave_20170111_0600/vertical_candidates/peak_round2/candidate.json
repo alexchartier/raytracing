@@ -1,0 +1,104 @@
+{
+  "name": "peak_round2",
+  "start_name": "peak_topside_full",
+  "gain": 1.0,
+  "sigma_km": 60.0,
+  "selection_uses_truth_density": false,
+  "applied_peak_factor_range": [
+    0.9233743237990856,
+    1.0313560503623322
+  ],
+  "profiles": [
+    {
+      "index": 1,
+      "latitude_deg": -70.0,
+      "observed_noses_mhz": [
+        4.700000000000003,
+        5.600000000000003
+      ],
+      "modeled_noses_mhz": [
+        4.700000000000003,
+        5.600000000000003
+      ],
+      "peak_factor_proposal": 1.0
+    },
+    {
+      "index": 5,
+      "latitude_deg": -65.78947368421052,
+      "observed_noses_mhz": [
+        4.600000000000002,
+        5.400000000000003
+      ],
+      "modeled_noses_mhz": [
+        4.600000000000002,
+        5.5000000000000036
+      ],
+      "peak_factor_proposal": 0.9818181818181817
+    },
+    {
+      "index": 9,
+      "latitude_deg": -61.578947368421055,
+      "observed_noses_mhz": [
+        4.500000000000002,
+        5.200000000000003
+      ],
+      "modeled_noses_mhz": [
+        4.700000000000003,
+        5.400000000000003
+      ],
+      "peak_factor_proposal": 0.9219858156028367
+    },
+    {
+      "index": 12,
+      "latitude_deg": -58.421052631578945,
+      "observed_noses_mhz": [
+        5.200000000000003,
+        5.800000000000003
+      ],
+      "modeled_noses_mhz": [
+        5.200000000000003,
+        5.900000000000004
+      ],
+      "peak_factor_proposal": 0.983050847457627
+    },
+    {
+      "index": 14,
+      "latitude_deg": -56.31578947368421,
+      "observed_noses_mhz": [
+        5.3000000000000025,
+        6.100000000000003
+      ],
+      "modeled_noses_mhz": [
+        5.3000000000000025,
+        6.100000000000003
+      ],
+      "peak_factor_proposal": 1.0
+    },
+    {
+      "index": 17,
+      "latitude_deg": -53.15789473684211,
+      "observed_noses_mhz": [
+        5.3000000000000025,
+        6.100000000000003
+      ],
+      "modeled_noses_mhz": [
+        5.200000000000003,
+        6.0000000000000036
+      ],
+      "peak_factor_proposal": 1.0362179487179486
+    },
+    {
+      "index": 20,
+      "latitude_deg": -50.0,
+      "observed_noses_mhz": [
+        5.3000000000000025,
+        6.0000000000000036
+      ],
+      "modeled_noses_mhz": [
+        5.400000000000003,
+        6.0000000000000036
+      ],
+      "peak_factor_proposal": 0.9814814814814814
+    }
+  ]
+}

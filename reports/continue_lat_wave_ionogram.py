@@ -29,6 +29,7 @@ from python_raytrace.multisat_topside_inverse_demo import (  # noqa: E402
 )
 from python_raytrace.spacecraft_doppler import spacecraft_doppler  # noqa: E402
 from python_raytrace.tracer import PointToPointRayTracer  # noqa: E402
+from reports.local_ray_lock import local_ray_lock  # noqa: E402
 
 
 def direction(elevation_deg: float, bearing_deg: float) -> np.ndarray:
@@ -197,8 +198,9 @@ def main() -> None:
     parser.add_argument("--above-only", action="store_true",
                         help="Probe 0.2, 0.4, and 0.6 MHz above the source noses")
     args = parser.parse_args()
-    print(json.dumps(continue_ionogram(args.source, args.grid, args.output,
-                                       args.above_only), indent=2))
+    with local_ray_lock():
+        print(json.dumps(continue_ionogram(args.source, args.grid, args.output,
+                                           args.above_only), indent=2))
 
 
 if __name__ == "__main__":

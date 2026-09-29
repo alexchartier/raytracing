@@ -1,0 +1,197 @@
+{
+  "selection_uses_truth_density": false,
+  "selection_rule": "minimum 0.8 O/X ionogram + 0.2 1-Hz Doppler score",
+  "stage": "pilot",
+  "profiles": [
+    1,
+    5,
+    9,
+    12,
+    14,
+    17,
+    20
+  ],
+  "chosen_candidate": "gain1_sigma60_height0.15_spline",
+  "candidates": [
+    {
+      "name": "baseline",
+      "ionograms": "reports/data/sami3_wave_20170111_0600/oblique_wave_600km/baseline",
+      "mean_ionogram_score": 0.6374016673431411,
+      "mean_1hz_doppler_score": 0.9656526375801666,
+      "combined_score": 0.7030518613905462,
+      "ionogram_scores_by_profile": [
+        {
+          "return_distance": 0.8310698533276855,
+          "nose": 0.0,
+          "ridge": 0.9446117543100021,
+          "total": 0.6460107701922275
+        },
+        {
+          "return_distance": 0.840650023836487,
+          "nose": 0.0,
+          "ridge": 0.9487747277147077,
+          "total": 0.6521124586530095
+        },
+        {
+          "return_distance": 0.7232536903377382,
+          "nose": 0.06249999999999978,
+          "ridge": 0.898923071898057,
+          "total": 0.5931991440653674
+        },
+        {
+          "return_distance": 0.5732630870276437,
+          "nose": 0.12499999999999956,
+          "ridge": 0.8672930237383822,
+          "total": 0.5200033026128804
+        },
+        {
+          "return_distance": 0.7304346789743358,
+          "nose": 0.06249999999999978,
+          "ridge": 0.876196826915857,
+          "total": 0.5926034388190561
+        },
+        {
+          "return_distance": 0.8565224669140914,
+          "nose": 0.06250000000000033,
+          "ridge": 0.9451229620553483,
+          "total": 0.6757369492138201
+        },
+        {
+          "return_distance": 0.9448101960829565,
+          "nose": 0.24999999999999967,
+          "ridge": 1.0,
+          "total": 0.7821456078456259
+        }
+      ],
+      "doppler_scores_by_profile": [
+        0.9439655172413793,
+        0.9367924528301886,
+        0.9303030303030303,
+        1.0,
+        1.0,
+        0.9485074626865673,
+        1.0
+      ]
+    },
+    {
+      "name": "gain0_sigma60_height0.15_spline",
+      "ionograms": "reports/data/sami3_wave_20170111_0600/oblique_wave_600km/gain0_sigma60_height0.15_spline/ionograms",
+      "mean_ionogram_score": 0.5914067074298627,
+      "mean_1hz_doppler_score": 0.9595145580683894,
+      "combined_score": 0.665028277557568,
+      "ionogram_scores_by_profile": [
+        {
+          "return_distance": 0.7733108950522198,
+          "nose": 0.0,
+          "ridge": 0.9669609421644152,
+          "total": 0.618713180711604
+        },
+        {
+          "return_distance": 0.78734294889044,
+          "nose": 0.0,
+          "ridge": 0.9098630378778968,
+          "total": 0.6150112294653214
+        },
+        {
+          "return_distance": 0.6683851367030802,
+          "nose": 0.06249999999999978,
+          "ridge": 0.9008390467269546,
+          "total": 0.563404634532085
+        },
+        {
+          "return_distance": 0.42943334933555705,
+          "nose": 0.12499999999999956,
+          "ridge": 0.8121707312412036,
+          "total": 0.429872488382797
+        },
+        {
+          "return_distance": 0.6242015769727127,
+          "nose": 0.06249999999999978,
+          "ridge": 0.8378838703901368,
+          "total": 0.5265126414130193
+        },
+        {
+          "return_distance": 0.7988944704422295,
+          "nose": 0.06250000000000033,
+          "ridge": 0.9274273883346884,
+          "total": 0.640502436410164
+        },
+        {
+          "return_distance": 0.9071915292619057,
+          "nose": 0.18749999999999933,
+          "ridge": 1.0,
+          "total": 0.7458303410940481
+        }
+      ],
+      "doppler_scores_by_profile": [
+        0.9689655172413794,
+        0.8933962264150942,
+        0.9340909090909091,
+        1.0,
+        1.0,
+        0.9201492537313433,
+        1.0
+      ]
+    },
+    {
+      "name": "gain1_sigma60_height0.15_spline",
+      "ionograms": "reports/data/sami3_wave_20170111_0600/oblique_wave_600km/gain1_sigma60_height0.15_spline/ionograms",
+      "mean_ionogram_score": 0.5885731652799138,
+      "mean_1hz_doppler_score": 0.9619856982955284,
+      "combined_score": 0.6632556718830367,
+      "ionogram_scores_by_profile": [
+        {
+          "return_distance": 0.7873455997508761,
+          "nose": 0.0,
+          "ridge": 0.9816682682528954,
+          "total": 0.629373733513561
+        },
+        {
+          "return_distance": 0.789743261310462,
+          "nose": 0.06249999999999978,
+          "ridge": 0.9144266570250191,
+          "total": 0.6328691251257579
+        },
+        {
+          "return_distance": 0.6550572682623735,
+          "nose": 0.06249999999999978,
+          "ridge": 0.8998890186414069,
+          "total": 0.5558843012725868
+        },
+        {
+          "return_distance": 0.4568741415686254,
+          "nose": 0.06249999999999978,
+          "ridge": 0.8028020800899358,
+          "total": 0.42746619388073115
+        },
+        {
+          "return_distance": 0.6039932344811654,
+          "nose": 0.06249999999999978,
+          "ridge": 0.8166818825590074,
+          "total": 0.5111576554764424
+        },
+        {
+          "return_distance": 0.7998733357239644,
+          "nose": 0.06250000000000033,
+          "ridge": 0.928212686230352,
+          "total": 0.6411978718942509
+        },
+        {
+          "return_distance": 0.9006068524596782,
+          "nose": 0.12499999999999956,
+          "ridge": 0.977397534716218,
+          "total": 0.7220632757960666
+        }
+      ],
+      "doppler_scores_by_profile": [
+        0.9836206896551724,
+        0.8999999999999999,
+        0.9340909090909091,
+        1.0,
+        1.0,
+        0.9238805970149254,
+        0.9923076923076923
+      ]
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "indices": [
+    1,
+    5,
+    9,
+    12,
+    14,
+    17,
+    20
+  ],
+  "selection_uses_truth_density": false,
+  "method": "O/X nose ratio for peak scaling; low-frequency O group-range residual for topside stretch proposal; all candidates forward checked",
+  "profiles": [
+    {
+      "index": 1,
+      "latitude_deg": -70.0,
+      "o_nose_mhz": 4.700000000000003,
+      "x_nose_mhz": 5.600000000000003,
+      "prior_o_nose_mhz": 4.600000000000002,
+      "prior_x_nose_mhz": 5.400000000000003,
+      "peak_density_factor": 1.0595813204508857,
+      "low_frequency_range_residual_km": 159.11070159604265,
+      "prior_3p2mhz_crossing_km": 360.44646156028483,
+      "proposed_topside_stretch": 1.6364428063841707,
+      "prior_score": {
+        "return_distance": 0.8719757721667711,
+        "nose": 0.18750000000000044,
+        "ridge": 0.9582600076325258,
+        "total": 0.7181136762182295
+      }
+    },
+    {
+      "index": 5,
+      "latitude_deg": -65.78947368421052,
+      "o_nose_mhz": 4.600000000000002,
+      "x_nose_mhz": 5.400000000000003,
+      "prior_o_nose_mhz": 4.600000000000002,
+      "prior_x_nose_mhz": 5.400000000000003,
+      "peak_density_factor": 1.0,
+      "low_frequency_range_residual_km": 139.78236474213907,
+      "prior_3p2mhz_crossing_km": 362.70813353835297,
+      "proposed_topside_stretch": 1.5591294589685563,
+      "prior_score": {
+        "return_distance": 0.8618660597377026,
+        "nose": 0.0,
+        "ridge": 0.940933021057184,
+        "total": 0.6622129370671733
+      }
+    },
+    {
+      "index": 9,
+      "latitude_deg": -61.578947368421055,
+      "o_nose_mhz": 4.500000000000002,
+      "x_nose_mhz": 5.200000000000003,
+      "prior_o_nose_mhz": 4.8000000000000025,
+      "prior_x_nose_mhz": 5.600000000000003,
+      "peak_density_factor": 0.8705357142857142,
+      "low_frequency_range_residual_km": 142.75309011547176,
+      "prior_3p2mhz_crossing_km": 371.8667761362592,
+      "proposed_topside_stretch": 1.571012360461887,
+      "prior_score": {
+        "return_distance": 0.8900700977358453,
+        "nose": 0.43750000000000067,
+        "ridge": 0.9435304193387568,
+        "total": 0.7876196376224666
+      }
+    },
+    {
+      "index": 12,
+      "latitude_deg": -58.421052631578945,
+      "o_nose_mhz": 5.200000000000003,
+      "x_nose_mhz": 5.800000000000003,
+      "prior_o_nose_mhz": 5.000000000000003,
+      "prior_x_nose_mhz": 5.800000000000003,
+      "peak_density_factor": 1.04,
+      "low_frequency_range_residual_km": 67.96035217852,
+      "prior_3p2mhz_crossing_km": 382.0842304106248,
+      "proposed_topside_stretch": 1.27184140871408,
+      "prior_score": {
+        "return_distance": 0.7347388188893447,
+        "nose": 0.1250000000000001,
+        "ridge": 0.9130772378639003,
+        "total": 0.6179717979619197
+      }
+    },
+    {
+      "index": 14,
+      "latitude_deg": -56.31578947368421,
+      "o_nose_mhz": 5.3000000000000025,
+      "x_nose_mhz": 6.100000000000003,
+      "prior_o_nose_mhz": 5.200000000000003,
+      "prior_x_nose_mhz": 5.900000000000004,
+      "peak_density_factor": 1.0537809647979137,
+      "low_frequency_range_residual_km": 206.204038561488,
+      "prior_3p2mhz_crossing_km": 389.84604459326204,
+      "proposed_topside_stretch": 1.824816154245952,
+      "prior_score": {
+        "return_distance": 0.8871879649884113,
+        "nose": 0.18749999999999933,
+        "ridge": 0.9586561637704005,
+        "total": 0.7265596134977061
+      }
+    },
+    {
+      "index": 17,
+      "latitude_deg": -53.15789473684211,
+      "o_nose_mhz": 5.3000000000000025,
+      "x_nose_mhz": 6.100000000000003,
+      "prior_o_nose_mhz": 5.5000000000000036,
+      "prior_x_nose_mhz": 6.200000000000004,
+      "peak_density_factor": 0.9480938416422285,
+      "low_frequency_range_residual_km": 339.679184224874,
+      "prior_3p2mhz_crossing_km": 402.4405864727846,
+      "proposed_topside_stretch": 2.3587167368994963,
+      "prior_score": {
+        "return_distance": 0.9493864454727593,
+        "nose": 0.187500000000001,
+        "ridge": 0.9790994937232554,
+        "total": 0.764857443754669
+      }
+    },
+    {
+      "index": 20,
+      "latitude_deg": -50.0,
+      "o_nose_mhz": 5.3000000000000025,
+      "x_nose_mhz": 6.0000000000000036,
+      "prior_o_nose_mhz": 5.800000000000003,
+      "prior_x_nose_mhz": 6.400000000000004,
+      "peak_density_factor": 0.8566810344827586,
+      "low_frequency_range_residual_km": 211.30027814375217,
+      "prior_3p2mhz_crossing_km": 415.12072652998313,
+      "proposed_topside_stretch": 1.8452011125750087,
+      "prior_score": {
+        "return_distance": 0.9620203207567295,
+        "nose": 0.5625000000000008,
+        "ridge": 0.983700687127891,
+        "total": 0.8664763138417797
+      }
+    }
+  ],
+  "wave_wavelength_km": 1300.0
+}

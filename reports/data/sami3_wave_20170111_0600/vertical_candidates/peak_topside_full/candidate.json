@@ -1,0 +1,12 @@
+{
+  "name": "peak_topside_full",
+  "stretch_gain": 1.0,
+  "peak_factor_range": [
+    0.8566810344827586,
+    1.0595813204508857
+  ],
+  "stretch_range": [
+    1.3152884702117262,
+    2.299441160419456
+  ]
+}

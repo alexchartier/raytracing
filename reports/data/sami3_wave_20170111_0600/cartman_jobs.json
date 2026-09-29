@@ -1,0 +1,29 @@
+{
+  "private_run": "/homes/chartat1/private_raytracing/runs/sami3_wave_20170111_0600",
+  "vertical_single_success": 3396359,
+  "oblique_single_success": 3396360,
+  "vertical_array": 3396361,
+  "oblique_truth_array": 3396362,
+  "vertical_profile14_linux_retrace": 3396363,
+  "vertical_peak_topside_full_array": 3396366,
+  "vertical_peak_round2_array": 3396367,
+  "provisional_oblique_baseline_profile14": 3396368,
+  "oblique_selected_vertical_baseline_array": 3396369,
+  "array_indices": [
+    1,
+    5,
+    9,
+    12,
+    14,
+    17,
+    20
+  ],
+  "vertical_max_concurrent": 2,
+  "oblique_max_concurrent": 1,
+  "failed_4gb_vmem_check": 3396357,
+  "failed_16gb_vmem_check": 3396358,
+  "notes": "One vertical SAMI3 ionogram peaked at 27955576 kB RSS; keep all large-grid ray tracing off the 16 GB laptop. Mac-generated profile-14 vertical ionograms were preserved as .local_macos.npz and will be replaced by Linux traces before fitting. Array logs, temporary files, and results are private to chartat1.",
+  "oblique_height_spline_array": 3396370,
+  "oblique_peak_height_spline_array": 3396371,
+  "oblique_max_concurrent_total": 2
+}

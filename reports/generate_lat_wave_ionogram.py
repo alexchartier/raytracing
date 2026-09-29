@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import resource
 import sys
 import time
 from dataclasses import replace
@@ -21,6 +22,7 @@ from python_raytrace.multisat_topside_inverse_demo import (  # noqa: E402
     TopsideInverseConfig, _equal_area_vertical_fan, _fan_mesh,
     _vertical_search_arrays, home_frequency_sweep_adaptive,
 )
+from local_ray_lock import local_ray_lock, require_remote_for_large_grid  # noqa: E402
 
 FREQUENCIES = np.arange(2.0, 10.0001, 0.1)
 SPACECRAFT_SPEED_MPS = 8000.0
@@ -53,6 +55,7 @@ def generate(grid_path: Path, latitude: float, longitude: float, altitude: float
              density_source: str = "IRI-2016 with imposed wave",
              fan_option: str = "D") -> None:
     start = time.perf_counter()
+    require_remote_for_large_grid(grid_path)
     grid = load_ionosphere_grid_netcdf(grid_path)
     if not (grid.latitudes_deg[0] < latitude < grid.latitudes_deg[-1]
             and grid.longitudes_deg[0] < longitude < grid.longitudes_deg[-1]
@@ -129,6 +132,7 @@ def generate(grid_path: Path, latitude: float, longitude: float, altitude: float
         profile_index=np.array(profile_index),
         density_source=np.array(density_source),
         runtime_seconds=np.array(time.perf_counter() - start),
+        peak_rss_mb=np.array(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1048576.0),
     )
     print(f"{output}: {len(records)} accepted returns", flush=True)
 
@@ -144,8 +148,9 @@ def main() -> None:
     parser.add_argument("--density-source", default="IRI-2016 with imposed wave")
     parser.add_argument("--fan-option", choices=("A", "D"), default="D")
     args = parser.parse_args()
-    generate(args.grid, args.latitude_deg, args.longitude_deg, args.altitude_km,
-             args.profile_index, args.output, args.density_source, args.fan_option)
+    with local_ray_lock():
+        generate(args.grid, args.latitude_deg, args.longitude_deg, args.altitude_km,
+                 args.profile_index, args.output, args.density_source, args.fan_option)
 
 
 if __name__ == "__main__":

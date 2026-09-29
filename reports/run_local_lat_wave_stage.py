@@ -22,8 +22,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def run(stage: str, source_dir: Path, grid: Path, output_dir: Path,
         workers: int, above_only: bool, indices: list[int] | None = None) -> dict:
-    if not 1 <= workers <= 20:
-        raise ValueError("workers must be between 1 and 20")
+    if workers != 1:
+        raise ValueError("local memory safety requires exactly one ray worker")
     if stage == "recover" and above_only:
         raise ValueError("above-only applies to continuation")
     indices = list(range(1, 21)) if indices is None else sorted(set(indices))
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     parser.add_argument("--source-dir", type=Path, required=True)
     parser.add_argument("--grid", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--above-only", action="store_true")
     parser.add_argument("--indices", nargs="+", type=int)
     arguments = parser.parse_args()
