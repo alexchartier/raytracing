@@ -13,6 +13,9 @@ case "${SGE_TASK_ID:?}" in
     4) name=x_anchor_low ;;
     5) name=x_anchor_mid ;;
     6) name=x_anchor_high ;;
+    7) name=tail_freq_04 ;;
+    8) name=tail_freq_08 ;;
+    9) name=tail_freq_12 ;;
     *) exit 2 ;;
 esac
 mkdir -p -m 0700 "$run/tmp/$name" "$run/cache/$name" "$run/logs" "$run/status"

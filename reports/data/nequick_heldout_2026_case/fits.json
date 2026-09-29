@@ -93,6 +93,66 @@
       "tail_regularized": true,
       "x_nose_mhz": 5.100000000000003,
       "assumed_x_cutoff_minus_fof2_mhz": 0.25
+    },
+    "tail_freq_04": {
+      "fof2_mhz": 4.749221550704638,
+      "hmf2_km": 201.44807484064904,
+      "bottomside_scale_km": 55.0,
+      "log_slope_per_km": [
+        0.011374287656381087,
+        0.007289921259890459,
+        0.008940908961734209,
+        0.010125826538512463,
+        0.011276346171124744,
+        0.007389925695341993,
+        0.006240165988639759,
+        0.005988377388045235
+      ],
+      "surrogate_range_mae_km": 1.2431429698188032,
+      "tail_regularized": true,
+      "x_nose_mhz": 5.100000000000003,
+      "assumed_x_cutoff_minus_fof2_mhz": 0.35,
+      "spacecraft_plasma_mhz_anchor": 0.4
+    },
+    "tail_freq_08": {
+      "fof2_mhz": 4.749120501148931,
+      "hmf2_km": 214.40517958353567,
+      "bottomside_scale_km": 55.0,
+      "log_slope_per_km": [
+        0.011865969180074746,
+        0.0070967846046479915,
+        0.008428899960034849,
+        0.00935079799361169,
+        0.010242012949116846,
+        0.004410125269493884,
+        0.0021099839238147944,
+        0.002000000012598458
+      ],
+      "surrogate_range_mae_km": 1.1656894383448904,
+      "tail_regularized": true,
+      "x_nose_mhz": 5.100000000000003,
+      "assumed_x_cutoff_minus_fof2_mhz": 0.35,
+      "spacecraft_plasma_mhz_anchor": 0.8
+    },
+    "tail_freq_12": {
+      "fof2_mhz": 4.746303341614624,
+      "hmf2_km": 266.95545455510586,
+      "bottomside_scale_km": 55.0,
+      "log_slope_per_km": [
+        0.017719103070581995,
+        0.007542053814370663,
+        0.007405083676448629,
+        0.007386015715605558,
+        0.0071865564980800375,
+        0.0020000000000000013,
+        0.0020000000000000005,
+        0.0045229882583405516
+      ],
+      "surrogate_range_mae_km": 2.25418897463103,
+      "tail_regularized": true,
+      "x_nose_mhz": 5.100000000000003,
+      "assumed_x_cutoff_minus_fof2_mhz": 0.35,
+      "spacecraft_plasma_mhz_anchor": 1.2
     }
   }
 }

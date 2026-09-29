@@ -223,6 +223,7 @@ def fit_spline_ionogram(
     bottomside_scale_km: float = 55.0,
     regularize_tail: bool = False,
     fof2_anchor_mhz: float | None = None,
+    spacecraft_plasma_mhz_anchor: float | None = None,
 ) -> FitResult:
     """Fit O-mode group ranges with a free, monotone topside profile.
 
@@ -240,6 +241,8 @@ def fit_spline_ionogram(
     anchor = nose + 0.5 * df if fof2_anchor_mhz is None else float(fof2_anchor_mhz)
     if not np.isfinite(anchor) or anchor < nose - df:
         raise ValueError("foF2 anchor must be finite and near or above the O nose")
+    if spacecraft_plasma_mhz_anchor is not None and not 0.0 < spacecraft_plasma_mhz_anchor < 2.0:
+        raise ValueError("Spacecraft plasma-frequency anchor must be in (0, 2) MHz")
     keep = observed_f <= nose - df
     fit_f, fit_r = observed_f[keep], observed_r[keep]
     if len(fit_f) < 8:
@@ -278,9 +281,13 @@ def fit_spline_ionogram(
         # Normalize adjacent slope differences by their characteristic
         # topside gradient; this remains weak relative to a 30-km range miss.
         smoothness = np.diff(slopes) / 0.018
+        tail_frequency = (PLASMA_MHZ_PER_SQRT_CM3
+                          * np.sqrt(layer.density_cm3(spacecraft_altitude_km)))
+        tail_anchor = ([] if spacecraft_plasma_mhz_anchor is None else
+                       [np.log(tail_frequency / spacecraft_plasma_mhz_anchor) / 0.05])
         return np.r_[(predicted - fit_r) / 30.0,
                      (x[0] - anchor) / (0.20 if fof2_anchor_mhz is None else 0.15),
-                     0.35 * smoothness]
+                     0.35 * smoothness, tail_anchor]
 
     trials = []
     for scale in (55.0, 85.0, 125.0):

@@ -1,0 +1,82 @@
+{
+  "observation": "truth_ionogram_recovered.npz",
+  "selection_used_truth_density_or_peak_parameters": false,
+  "selected": "tail_spline",
+  "scores": {
+    "legacy_spline": {
+      "return_distance": 0.1880987710829025,
+      "nose": 0.06250000000000033,
+      "ridge": 0.31582549215257394,
+      "total": 0.18224442252611125
+    },
+    "tail_spline": {
+      "return_distance": 0.1869215681033634,
+      "nose": 0.06250000000000033,
+      "ridge": 0.3136810941819219,
+      "total": 0.18116808129323436
+    },
+    "x_anchor_low": {
+      "return_distance": 0.1824281869789665,
+      "nose": 0.31250000000000056,
+      "ridge": 0.27404977356908283,
+      "total": 0.2332704575522483
+    },
+    "x_anchor_mid": {
+      "return_distance": 0.20702254143733517,
+      "nose": 0.1874999999999999,
+      "ridge": 0.3378546781338623,
+      "total": 0.22830833341730677
+    },
+    "x_anchor_high": {
+      "return_distance": 0.2203965207812177,
+      "nose": 0.24999999999999967,
+      "ridge": 0.29442056450348963,
+      "total": 0.24260219933036756
+    },
+    "tail_freq_04": {
+      "return_distance": 0.19753661924520055,
+      "nose": 0.1874999999999999,
+      "ridge": 0.30984407521063484,
+      "total": 0.21748895562698728
+    },
+    "tail_freq_08": {
+      "return_distance": 0.2362531510755578,
+      "nose": 0.1874999999999999,
+      "ridge": 0.31854118113612917,
+      "total": 0.24052246931878263
+    },
+    "tail_freq_12": {
+      "return_distance": 0.22390249582843016,
+      "nose": 0.1874999999999999,
+      "ridge": 0.3552092576847463,
+      "total": 0.2410632242425858
+    }
+  },
+  "candidate_unrecovered_interior_bins": {
+    "legacy_spline": [],
+    "tail_spline": [],
+    "x_anchor_low": [],
+    "x_anchor_mid": [],
+    "x_anchor_high": [],
+    "tail_freq_04": [],
+    "tail_freq_08": [],
+    "tail_freq_12": [
+      [
+        29,
+        -1
+      ],
+      [
+        29,
+        1
+      ],
+      [
+        30,
+        -1
+      ],
+      [
+        30,
+        1
+      ]
+    ]
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "independent_model": "NeQuick-G, Galileo ionospheric correction model",
+  "source_commit": "1d1783412ed9811540b56d409a1dcf27d2413740",
+  "selection_used_truth_density": false,
+  "observation_internal_gaps_mhz": {
+    "1": [],
+    "-1": []
+  },
+  "x_minus_o_nose_mhz": 0.2999999999999998,
+  "preliminary_due_to_observation_qc": false,
+  "selected": "tail_spline",
+  "truth_fof2_mhz": 5.531971414335089,
+  "truth_hmf2_km": 243.2330017014528,
+  "scores": {
+    "legacy_spline": {
+      "return_distance": 0.1880987710829025,
+      "nose": 0.06250000000000033,
+      "ridge": 0.31582549215257394,
+      "total": 0.18224442252611125
+    },
+    "tail_spline": {
+      "return_distance": 0.1869215681033634,
+      "nose": 0.06250000000000033,
+      "ridge": 0.3136810941819219,
+      "total": 0.18116808129323436
+    },
+    "x_anchor_low": {
+      "return_distance": 0.1824281869789665,
+      "nose": 0.31250000000000056,
+      "ridge": 0.27404977356908283,
+      "total": 0.2332704575522483
+    },
+    "x_anchor_mid": {
+      "return_distance": 0.20702254143733517,
+      "nose": 0.1874999999999999,
+      "ridge": 0.3378546781338623,
+      "total": 0.22830833341730677
+    },
+    "x_anchor_high": {
+      "return_distance": 0.2203965207812177,
+      "nose": 0.24999999999999967,
+      "ridge": 0.29442056450348963,
+      "total": 0.24260219933036756
+    },
+    "tail_freq_04": {
+      "return_distance": 0.19753661924520055,
+      "nose": 0.1874999999999999,
+      "ridge": 0.30984407521063484,
+      "total": 0.21748895562698728
+    },
+    "tail_freq_08": {
+      "return_distance": 0.2362531510755578,
+      "nose": 0.1874999999999999,
+      "ridge": 0.31854118113612917,
+      "total": 0.24052246931878263
+    },
+    "tail_freq_12": {
+      "return_distance": 0.22390249582843016,
+      "nose": 0.1874999999999999,
+      "ridge": 0.3552092576847463,
+      "total": 0.2410632242425858
+    }
+  },
+  "candidate_unrecovered_interior_bins": {
+    "legacy_spline": [],
+    "tail_spline": [],
+    "x_anchor_low": [],
+    "x_anchor_mid": [],
+    "x_anchor_high": [],
+    "tail_freq_04": [],
+    "tail_freq_08": [],
+    "tail_freq_12": [
+      [
+        29,
+        -1
+      ],
+      [
+        29,
+        1
+      ],
+      [
+        30,
+        -1
+      ],
+      [
+        30,
+        1
+      ]
+    ]
+  },
+  "post_selection_density_diagnostics": {
+    "legacy_spline": {
+      "fof2_error_mhz": -0.0317823807686306,
+      "hmf2_error_km": -13.89957071527067,
+      "peak_density_error_percent": -1.1457428119124535,
+      "topside_peak_normalized_rms_percent": 7.949886377173086,
+      "density_at_800km_cm3": 13542.362991768094
+    },
+    "tail_spline": {
+      "fof2_error_mhz": -0.031789863533737694,
+      "hmf2_error_km": -13.88968101885419,
+      "peak_density_error_percent": -1.146011785461798,
+      "topside_peak_normalized_rms_percent": 7.946690442323044,
+      "density_at_800km_cm3": 13548.428399357761
+    },
+    "x_anchor_low": {
+      "fof2_error_mhz": -0.023831098926069494,
+      "hmf2_error_km": -44.202476251018,
+      "peak_density_error_percent": -0.8597212936713228,
+      "topside_peak_normalized_rms_percent": 20.26412155500326,
+      "density_at_800km_cm3": 1022.5374142344137
+    },
+    "x_anchor_mid": {
+      "fof2_error_mhz": 0.1200968378326861,
+      "hmf2_error_km": -27.845931994330613,
+      "peak_density_error_percent": 4.389048871216694,
+      "topside_peak_normalized_rms_percent": 7.2940388885285286,
+      "density_at_800km_cm3": 14266.491804706537
+    },
+    "x_anchor_high": {
+      "fof2_error_mhz": 0.2164250150838738,
+      "hmf2_error_km": -49.07148937422872,
+      "peak_density_error_percent": 7.9775744105838875,
+      "topside_peak_normalized_rms_percent": 16.805840287114563,
+      "density_at_800km_cm3": 10509.716423231528
+    },
+    "tail_freq_04": {
+      "fof2_error_mhz": 0.1187332230233018,
+      "hmf2_error_km": -56.20821000334578,
+      "peak_density_error_percent": 4.338685260794595,
+      "topside_peak_normalized_rms_percent": 19.714017302342306,
+      "density_at_800km_cm3": 1984.3462163462323
+    },
+    "tail_freq_08": {
+      "fof2_error_mhz": 0.12005025826890225,
+      "hmf2_error_km": -35.622736324112765,
+      "peak_density_error_percent": 4.387328305891791,
+      "topside_peak_normalized_rms_percent": 10.367577967043399,
+      "density_at_800km_cm3": 7938.7957508479185
+    },
+    "tail_freq_12": {
+      "fof2_error_mhz": 0.12013992702163456,
+      "hmf2_error_km": -23.43957046095369,
+      "peak_density_error_percent": 4.390640520997269,
+      "topside_peak_normalized_rms_percent": 5.6087960031740245,
+      "density_at_800km_cm3": 17852.920154840253
+    }
+  }
+}

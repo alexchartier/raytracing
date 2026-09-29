@@ -1,0 +1,14 @@
+{
+  "independent_truth": "NeQuick-G; source commit 1d1783412ed9811540b56d409a1dcf27d2413740",
+  "latitude_deg": -62.0,
+  "longitude_deg": -8.0,
+  "month": 4,
+  "utc_hour": 13.0,
+  "broadcast_az": 64.0,
+  "profile_or_peak_parameters_inspected_before_fit": false,
+  "candidate_rule": "Fit legacy O-nose spline, tail-regularized O-nose spline, three X-anchored splines, and three upper-plasma-frequency variants (0.4, 0.8, 1.2 MHz at 800 km). If X nose minus O nose is at least 0.55 MHz, X offsets are 0.45, 0.35, 0.25 MHz; otherwise offsets are 0.25, 0.15, 0.05 MHz. Clamp every foF2 anchor to at least O nose plus 0.02 MHz. Broad-tail variants use the central X offset.",
+  "selection": "minimum full-ray O/X accepted-return score before opening truth density or peak parameters",
+  "full_ray_concurrency_limit": 2,
+  "upper_anchor_note": "The three upper-frequency anchors form a generic broad-tail ensemble; this altitude is above the 2 MHz sweep turning height and remains weakly identified.",
+  "rule_adjustment_reason": "Observed O and X noses were only 0.3 MHz apart; fixed larger X offsets implied foF2 below an accepted O return and were physically infeasible. This correction uses observation frequencies only, before any truth density or peak parameters are opened."
+}

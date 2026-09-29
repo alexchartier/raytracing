@@ -89,6 +89,23 @@ original `evaluation.json` used the incomplete truth and must not be cited as
 a score against the corrected truth. `generate_synthetic_truth_returns.py` is
 restored here because it is the active full-ray forward generator.
 
+The [independent-model report](independent_nequick_retrieval_report.pdf) and
+[Markdown source](independent_nequick_retrieval_report.md) document a separate,
+prospectively selected April NeQuick-G profile. The eight-slope monotone
+spline was fit from saved O/X returns without using NeQuick density, then eight
+candidate profiles were checked with full O/X rays. The minimum-score candidate
+has foF2 error −0.032 MHz, hmF2 error −13.9 km, peak density error −1.1%, and
+peak-normalized topside RMS 7.9% through 600 km; its 800 km density is 42.5%
+low. The [paired ionograms and density cut](data/nequick_prospective_case/nequick_prospective_case_validation.png)
+show both the near-peak fit and upper-tail limitation. This controlled test
+replicates one independent vertical profile over the ray grid; it does not
+test horizontal structure. `nequick_heldout_fit.py` with `--run
+reports/data/nequick_prospective_case` fits or evaluates the saved case;
+`recover_missing_ionogram_returns.py` performs the exact-frequency gap check
+before full-ray scoring. The July NeQuick-G case in
+`data/nequick_heldout_2026_case/` was used during method development, so its
+scores are not a prospective validation result.
+
 ## SAMI3 wave pilot
 
 `setup_sami3_wave_case.py` prepares the frozen 2017-01-11 06:00 SAMI3 trough and

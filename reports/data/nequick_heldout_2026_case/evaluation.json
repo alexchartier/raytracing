@@ -1,0 +1,122 @@
+{
+  "independent_model": "NeQuick-G, Galileo ionospheric correction model",
+  "source_commit": "1d1783412ed9811540b56d409a1dcf27d2413740",
+  "selection_used_truth_density": false,
+  "observation_internal_gaps_mhz": {
+    "1": [],
+    "-1": []
+  },
+  "x_minus_o_nose_mhz": 1.2000000000000015,
+  "preliminary_due_to_observation_qc": true,
+  "selected": "tail_freq_04",
+  "truth_fof2_mhz": 4.74226753310436,
+  "truth_hmf2_km": 207.63485937227654,
+  "scores": {
+    "legacy_spline": {
+      "return_distance": 0.28363152745945147,
+      "nose": 0.5,
+      "ridge": 0.4374565631088248,
+      "total": 0.3684886527244633
+    },
+    "tail_spline": {
+      "return_distance": 0.2703735877817451,
+      "nose": 0.5,
+      "ridge": 0.4346149544750322,
+      "total": 0.36062846417496625
+    },
+    "x_anchor_low": {
+      "return_distance": 0.9284572839943036,
+      "nose": 0.5625000000000003,
+      "ridge": 1.0,
+      "total": 0.8512765061968672
+    },
+    "x_anchor_mid": {
+      "return_distance": 0.9753705756313169,
+      "nose": 0.5,
+      "ridge": 1.0,
+      "total": 0.8614538165972243
+    },
+    "x_anchor_high": {
+      "return_distance": 0.7743321219013491,
+      "nose": 0.43750000000000094,
+      "ridge": 0.9001562998551816,
+      "total": 0.7152889270167786
+    },
+    "tail_freq_04": {
+      "return_distance": 0.23660231578518126,
+      "nose": 0.5,
+      "ridge": 0.2907041453303788,
+      "total": 0.3132721027479255
+    },
+    "tail_freq_08": {
+      "return_distance": 0.2497775815054108,
+      "nose": 0.5625000000000003,
+      "ridge": 0.27121171364578933,
+      "total": 0.3322450125571339
+    },
+    "tail_freq_12": {
+      "return_distance": 0.3431618940526724,
+      "nose": 0.6250000000000007,
+      "ridge": 0.27817652688562966,
+      "total": 0.40062434710609596
+    }
+  },
+  "post_selection_density_diagnostics": {
+    "legacy_spline": {
+      "fof2_error_mhz": -0.8031682068175838,
+      "hmf2_error_km": 4.912266522199985,
+      "peak_density_error_percent": -31.00434180517607,
+      "topside_peak_normalized_rms_percent": 31.93925647359803,
+      "density_at_800km_cm3": 6.703069628602653
+    },
+    "tail_spline": {
+      "fof2_error_mhz": -0.8031700019422945,
+      "hmf2_error_km": 4.913210990930935,
+      "peak_density_error_percent": -31.004404690507194,
+      "topside_peak_normalized_rms_percent": 31.93891465322371,
+      "density_at_800km_cm3": 6.702287802587525
+    },
+    "x_anchor_low": {
+      "fof2_error_mhz": -0.09369829445239031,
+      "hmf2_error_km": -0.7234922811885269,
+      "peak_density_error_percent": -3.9125858124952173,
+      "topside_peak_normalized_rms_percent": 24.47980411263483,
+      "density_at_800km_cm3": 89.75463560752
+    },
+    "x_anchor_mid": {
+      "fof2_error_mhz": 0.005945157676208623,
+      "hmf2_error_km": -2.086548786137371,
+      "peak_density_error_percent": 0.250887754303486,
+      "topside_peak_normalized_rms_percent": 24.895209164893092,
+      "density_at_800km_cm3": 69.32255670362505
+    },
+    "x_anchor_high": {
+      "fof2_error_mhz": 0.10564253335293561,
+      "hmf2_error_km": -3.1327359084640705,
+      "peak_density_error_percent": 4.504985063233247,
+      "topside_peak_normalized_rms_percent": 25.222719029554852,
+      "density_at_800km_cm3": 55.75322409009506
+    },
+    "tail_freq_04": {
+      "fof2_error_mhz": 0.0069540176002780285,
+      "hmf2_error_km": -6.186784531627495,
+      "peak_density_error_percent": 0.2934931952067954,
+      "topside_peak_normalized_rms_percent": 20.372926660716082,
+      "density_at_800km_cm3": 1984.0649849611937
+    },
+    "tail_freq_08": {
+      "fof2_error_mhz": 0.006852968044571028,
+      "hmf2_error_km": 6.770320211259133,
+      "peak_density_error_percent": 0.28922533572621756,
+      "topside_peak_normalized_rms_percent": 16.1428767817452,
+      "density_at_800km_cm3": 7935.74011658896
+    },
+    "tail_freq_12": {
+      "fof2_error_mhz": 0.004035808510264083,
+      "hmf2_error_km": 59.32059518282932,
+      "peak_density_error_percent": 0.170278280492564,
+      "topside_peak_normalized_rms_percent": 7.982539585335101,
+      "density_at_800km_cm3": 17748.169314845476
+    }
+  }
+}
