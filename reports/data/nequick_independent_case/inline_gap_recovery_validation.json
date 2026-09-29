@@ -1,0 +1,26 @@
+{
+  "test": "Deliberately mask January X-mode 2.5-2.9 MHz bins after the adaptive sweep, then invoke default inline recovery",
+  "masked_mode": -1,
+  "masked_frequency_mhz": [
+    2.5,
+    2.6,
+    2.7,
+    2.8,
+    2.9
+  ],
+  "accepted_x_returns_per_exact_display_bin": [
+    3,
+    3,
+    3,
+    3,
+    3
+  ],
+  "accepted_added": 15,
+  "maximum_miss_m": 994.9505182517208,
+  "homing_gate_m": 1000.0,
+  "dense_fallback_bins": 0,
+  "unrecovered_bins": [],
+  "gap_recovery_runtime_seconds": 2.7975780237466097,
+  "total_sweep_runtime_seconds": 132.12543100118637,
+  "note": "The masked gap is a controlled software test; all added rays are traced at the 100 kHz display frequencies."
+}

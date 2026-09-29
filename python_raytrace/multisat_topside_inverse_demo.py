@@ -7,6 +7,7 @@ import hashlib
 import json
 import math
 import multiprocessing as mp
+import time
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Callable, Sequence
@@ -1631,6 +1632,94 @@ def home_frequency_sweep_adaptive(
                     results[back_index] = global_search(float(frequencies[back_index]))
             previous_anchor = frequency_index
     return tuple(results)
+
+
+def recover_interior_frequency_gaps(
+    returns_by_frequency: Sequence[Sequence[HomedRayReturn]],
+    *,
+    tx: GeoPoint,
+    rx: GeoPoint,
+    grid: IonosphereGrid,
+    fan_elevations_deg: np.ndarray,
+    fan_bearings_deg: np.ndarray,
+    frequencies_mhz: Sequence[float],
+    ox_mode: int,
+    config: TopsideInverseConfig,
+    range_min_km: float = 150.0,
+    continuation_step_mhz: float = 0.02,
+    tracer_factory: Callable[[], PointToPointRayTracer] = _cached_topside_tracer,
+) -> tuple[tuple[tuple[HomedRayReturn, ...], ...], dict]:
+    """Repair only empty mode-frequency bins between accepted returns.
+
+    Continue the already homed paths from both neighboring frequencies at
+    20 kHz steps. A full fan at the missing display frequency is a fallback.
+    Every added return is traced at its exact display frequency and satisfies
+    the ordinary homing gate. This pass never traces if there are no gaps.
+    """
+    started = time.perf_counter()
+    frequencies = np.asarray(frequencies_mhz, dtype=float)
+    results = [tuple(rays) for rays in returns_by_frequency]
+    if len(results) != len(frequencies) or frequencies.ndim != 1:
+        raise ValueError("Frequency and return counts differ")
+    if len(frequencies) > 1 and not np.allclose(np.diff(frequencies), 0.1, atol=1e-8):
+        raise ValueError("Interior gap recovery expects a 100 kHz sweep")
+    if not 0.0 < continuation_step_mhz < 0.1:
+        raise ValueError("Continuation step must be between 0 and 100 kHz")
+    present = np.flatnonzero([bool(rays) for rays in results])
+    gaps = ([] if len(present) < 2 else
+            [int(i) for i in range(int(present[0]) + 1, int(present[-1]))
+             if not results[i]])
+    stats = {"mode": int(ox_mode), "interior_gap_bins": len(gaps),
+             "added_returns": 0, "dense_fallback_bins": 0,
+             "unrecovered_bins": [], "continuation_step_mhz": continuation_step_mhz}
+    if not gaps:
+        stats["runtime_seconds"] = time.perf_counter() - started
+        return tuple(results), stats
+
+    groups: list[list[int]] = []
+    for index in gaps:
+        if not groups or index != groups[-1][-1] + 1:
+            groups.append([index])
+        else:
+            groups[-1].append(index)
+    tracer = tracer_factory()
+    for group in groups:
+        recovered: dict[int, list[HomedRayReturn]] = {index: [] for index in group}
+        for seed_index, direction in ((group[0] - 1, 1), (group[-1] + 1, -1)):
+            paths = results[seed_index]
+            end_index = group[-1] if direction > 0 else group[0]
+            steps = int(round(abs(frequencies[end_index] - frequencies[seed_index])
+                              / continuation_step_mhz))
+            for step in range(1, steps + 1):
+                frequency = round(float(frequencies[seed_index])
+                                  + direction * continuation_step_mhz * step, 8)
+                paths = _continue_homed_returns(
+                    tracer, paths, tx=tx, rx=rx, grid=grid,
+                    frequency_mhz=frequency, ox_mode=ox_mode, config=config,
+                    range_min_km=range_min_km)
+                if not paths:
+                    break
+                match = np.flatnonzero(np.isclose(frequencies[group], frequency,
+                                                   rtol=0.0, atol=1e-8))
+                for local_index in match:
+                    recovered[group[int(local_index)]].extend(paths)
+        for index in group:
+            if not recovered[index]:
+                stats["dense_fallback_bins"] += 1
+                recovered[index].extend(ray for ray in _home_frequency_returns(
+                    tracer, tx=tx, rx=rx, grid=grid,
+                    fan_elevations_deg=fan_elevations_deg,
+                    fan_bearings_deg=fan_bearings_deg,
+                    frequency_mhz=float(frequencies[index]), ox_mode=ox_mode,
+                    config=config, optimizer_method="Powell")
+                    if ray.group_range_km >= range_min_km)
+            results[index] = _deduplicate_homed_returns(
+                recovered[index], config.homed_max_returns_per_frequency)
+            stats["added_returns"] += len(results[index])
+            if not results[index]:
+                stats["unrecovered_bins"].append([index, int(ox_mode)])
+    stats["runtime_seconds"] = time.perf_counter() - started
+    return tuple(results), stats
 
 
 def _estimate_return_doppler_hz(

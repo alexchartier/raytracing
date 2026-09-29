@@ -1,0 +1,65 @@
+{
+  "observation": "truth_ionogram_recovered.npz",
+  "selection_used_truth_density_or_peak_parameters": false,
+  "selected": "height_full",
+  "scores": {
+    "local_o_tail": {
+      "return_distance": 0.21001223574069108,
+      "nose": 0.06250000000000033,
+      "ridge": 0.37490881552896704,
+      "total": 0.2061134927631736
+    },
+    "local_o_free": {
+      "return_distance": 0.197130021768623,
+      "nose": 0.06250000000000033,
+      "ridge": 0.37205815972211254,
+      "total": 0.19845814391716524
+    },
+    "local_x_low": {
+      "return_distance": 0.2085935289277463,
+      "nose": 0.0,
+      "ridge": 0.380506986751906,
+      "total": 0.19082783826064167
+    },
+    "local_x_mid": {
+      "return_distance": 0.20892613153821743,
+      "nose": 0.1874999999999999,
+      "ridge": 0.38483669942921606,
+      "total": 0.23875171223186276
+    },
+    "local_x_high": {
+      "return_distance": 0.20661746730116776,
+      "nose": 0.31249999999999944,
+      "ridge": 0.37982005528195534,
+      "total": 0.2677286180720332
+    },
+    "height_half": {
+      "return_distance": 0.16544204195703816,
+      "nose": 0.06250000000000033,
+      "ridge": 0.284159026656151,
+      "total": 0.16344992840760128
+    },
+    "height_full": {
+      "return_distance": 0.15798022045089694,
+      "nose": 0.06250000000000033,
+      "ridge": 0.24440787972489747,
+      "total": 0.1513956971929729
+    },
+    "height_onehalf": {
+      "return_distance": 0.171333679312933,
+      "nose": 0.06250000000000033,
+      "ridge": 0.2477789244720579,
+      "total": 0.15941430851652483
+    }
+  },
+  "candidate_unrecovered_interior_bins": {
+    "local_o_tail": [],
+    "local_o_free": [],
+    "local_x_low": [],
+    "local_x_mid": [],
+    "local_x_high": [],
+    "height_half": [],
+    "height_full": [],
+    "height_onehalf": []
+  }
+}

@@ -106,6 +106,34 @@ before full-ray scoring. The July NeQuick-G case in
 `data/nequick_heldout_2026_case/` was used during method development, so its
 scores are not a prospective validation result.
 
+The complete adaptive forward generator now checks for empty interior
+mode-frequency bins before writing an ionogram. It continues already accepted
+rays through those gaps at 20 kHz steps and uses a full fan only where
+continuation fails. The 1 km homing gate and exact 100 kHz output frequencies
+are unchanged. `--no-gap-recovery` disables the check for a baseline timing
+run; short frequency chunks retain their existing behavior.
+In a [controlled five-bin X-gap test](data/nequick_independent_case/inline_gap_recovery_validation.json),
+the inline pass recovered 15 exact-frequency accepted returns in 2.8 seconds
+of a 132-second full sweep, with no dense-fan fallback. With no interior gaps,
+the pass took less than 1 ms on the April candidate sweeps.
+
+`prepare_nequick_local_density_case.py` freezes one synthetic 800 km in situ
+density observation from the April NeQuick-G truth. The local-density branch
+of `nequick_heldout_fit.py fit --run reports/data/nequick_local_density_case`
+reads that scalar and the saved O/X ionogram, without opening the profile or
+peak parameters. `height-refine` uses the first round's full-ray O/X range
+residual to propose bounded peak-height steps while preserving the measured
+800 km density. `evaluate` selects by full-ray score before opening the
+remaining truth. `nequick_local_density_cartman_job.sh` traces the candidates
+privately on Cartman. The [paired result](data/nequick_local_density_case/nequick_local_density_case_validation.png)
+and [direct A/B comparison](data/nequick_local_density_case/nequick_local_density_comparison.png)
+show the selected profile. Score improved from 0.181 to 0.151; peak-to-600 km
+normalized topside RMS fell from 7.9% to 1.8%, and hmF2 error moved from
+−13.9 to +3.4 km. The 800 km agreement is imposed by the synthetic scalar
+measurement; relative density RMS from 600 to 800 km is still 6.5%. This
+April case was already inspected during the prior study, so these updated
+results are a development-case check rather than a new held-out validation.
+
 ## SAMI3 wave pilot
 
 `setup_sami3_wave_case.py` prepares the frozen 2017-01-11 06:00 SAMI3 trough and

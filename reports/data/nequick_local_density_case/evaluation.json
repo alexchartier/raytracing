@@ -1,0 +1,150 @@
+{
+  "independent_model": "NeQuick-G, Galileo ionospheric correction model",
+  "source_commit": "1d1783412ed9811540b56d409a1dcf27d2413740",
+  "selection_used_truth_density": false,
+  "observation_internal_gaps_mhz": {
+    "1": [],
+    "-1": []
+  },
+  "x_minus_o_nose_mhz": 0.2999999999999998,
+  "preliminary_due_to_observation_qc": false,
+  "selected": "height_full",
+  "truth_fof2_mhz": 5.531971414335089,
+  "truth_hmf2_km": 243.2330017014528,
+  "scores": {
+    "local_o_tail": {
+      "return_distance": 0.21001223574069108,
+      "nose": 0.06250000000000033,
+      "ridge": 0.37490881552896704,
+      "total": 0.2061134927631736
+    },
+    "local_o_free": {
+      "return_distance": 0.197130021768623,
+      "nose": 0.06250000000000033,
+      "ridge": 0.37205815972211254,
+      "total": 0.19845814391716524
+    },
+    "local_x_low": {
+      "return_distance": 0.2085935289277463,
+      "nose": 0.0,
+      "ridge": 0.380506986751906,
+      "total": 0.19082783826064167
+    },
+    "local_x_mid": {
+      "return_distance": 0.20892613153821743,
+      "nose": 0.1874999999999999,
+      "ridge": 0.38483669942921606,
+      "total": 0.23875171223186276
+    },
+    "local_x_high": {
+      "return_distance": 0.20661746730116776,
+      "nose": 0.31249999999999944,
+      "ridge": 0.37982005528195534,
+      "total": 0.2677286180720332
+    },
+    "height_half": {
+      "return_distance": 0.16544204195703816,
+      "nose": 0.06250000000000033,
+      "ridge": 0.284159026656151,
+      "total": 0.16344992840760128
+    },
+    "height_full": {
+      "return_distance": 0.15798022045089694,
+      "nose": 0.06250000000000033,
+      "ridge": 0.24440787972489747,
+      "total": 0.1513956971929729
+    },
+    "height_onehalf": {
+      "return_distance": 0.171333679312933,
+      "nose": 0.06250000000000033,
+      "ridge": 0.2477789244720579,
+      "total": 0.15941430851652483
+    }
+  },
+  "candidate_unrecovered_interior_bins": {
+    "local_o_tail": [],
+    "local_o_free": [],
+    "local_x_low": [],
+    "local_x_mid": [],
+    "local_x_high": [],
+    "height_half": [],
+    "height_full": [],
+    "height_onehalf": []
+  },
+  "post_selection_density_diagnostics": {
+    "local_o_tail": {
+      "fof2_error_mhz": -0.03738337521678492,
+      "hmf2_error_km": -1.0445054329844368,
+      "peak_density_error_percent": -1.3469723432601333,
+      "topside_peak_normalized_rms_percent": 3.360577534490256,
+      "high_topside_relative_rms_percent": 8.339299203813383,
+      "density_at_800km_cm3": 23530.42951282298,
+      "density_at_800km_error_percent": -0.15535750595911946
+    },
+    "local_o_free": {
+      "fof2_error_mhz": -0.03622659905493553,
+      "hmf2_error_km": -3.2460035109763794,
+      "peak_density_error_percent": -1.3054291073826607,
+      "topside_peak_normalized_rms_percent": 4.114509589135635,
+      "high_topside_relative_rms_percent": 13.011036476633404,
+      "density_at_800km_cm3": 23530.16724251826,
+      "density_at_800km_error_percent": -0.15647037492724225
+    },
+    "local_x_low": {
+      "fof2_error_mhz": -0.030065682193641585,
+      "hmf2_error_km": -2.588313234415182,
+      "peak_density_error_percent": -1.0840251345963559,
+      "topside_peak_normalized_rms_percent": 3.3396739446998174,
+      "high_topside_relative_rms_percent": 8.237702379895882,
+      "density_at_800km_cm3": 23531.455129225837,
+      "density_at_800km_error_percent": -0.15100559631703314
+    },
+    "local_x_mid": {
+      "fof2_error_mhz": 0.1202009059519975,
+      "hmf2_error_km": -17.28037021617382,
+      "peak_density_error_percent": 4.39289301163408,
+      "topside_peak_normalized_rms_percent": 3.205607338497007,
+      "high_topside_relative_rms_percent": 7.712716392458968,
+      "density_at_800km_cm3": 23547.624516798536,
+      "density_at_800km_error_percent": -0.08239542833585745
+    },
+    "local_x_high": {
+      "fof2_error_mhz": 0.2166439733713732,
+      "hmf2_error_km": -16.67140132923069,
+      "peak_density_error_percent": 7.9858003690223445,
+      "topside_peak_normalized_rms_percent": 3.207291951395024,
+      "high_topside_relative_rms_percent": 7.727286614374493,
+      "density_at_800km_cm3": 23545.15821853019,
+      "density_at_800km_error_percent": -0.09286045910602558
+    },
+    "height_half": {
+      "fof2_error_mhz": -0.030065682193641585,
+      "hmf2_error_km": 0.39405568053931006,
+      "peak_density_error_percent": -1.0840251345963559,
+      "topside_peak_normalized_rms_percent": 2.560784644110409,
+      "high_topside_relative_rms_percent": 7.384462732348804,
+      "density_at_800km_cm3": 23567.042682559008,
+      "density_at_800km_error_percent": -1.6642243139131097e-11
+    },
+    "height_full": {
+      "fof2_error_mhz": -0.030065682193641585,
+      "hmf2_error_km": 3.376424595493802,
+      "peak_density_error_percent": -1.0840251345963559,
+      "topside_peak_normalized_rms_percent": 1.7982565289968,
+      "high_topside_relative_rms_percent": 6.529138207121217,
+      "density_at_800km_cm3": 23567.04268256001,
+      "density_at_800km_error_percent": -1.2378986724570495e-11
+    },
+    "height_onehalf": {
+      "fof2_error_mhz": -0.030065682193641585,
+      "hmf2_error_km": 6.358793510448294,
+      "peak_density_error_percent": -1.0840251345963559,
+      "topside_peak_normalized_rms_percent": 1.0912354086708318,
+      "high_topside_relative_rms_percent": 5.638136191976583,
+      "density_at_800km_cm3": 23567.04268256085,
+      "density_at_800km_error_percent": -8.826273045769994e-12
+    }
+  },
+  "local_density_observation_cm3": 23567.04268256293,
+  "selection_used_local_density_observation": true
+}

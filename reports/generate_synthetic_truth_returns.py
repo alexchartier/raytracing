@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import json
 import math
 import sys
 import tempfile
@@ -36,6 +37,7 @@ from python_raytrace.multisat_topside_inverse_demo import (  # noqa: E402
     _subset_problem_cases,
     build_inverse_problem,
     home_frequency_sweep_adaptive,
+    recover_interior_frequency_gaps,
 )
 from python_raytrace.tracer import PointToPointRayTracer  # noqa: E402
 
@@ -179,6 +181,8 @@ def main() -> None:
     parser.add_argument("--output", type=Path,
                         help="Output NPZ for a complete 2–10 MHz sweep")
     parser.add_argument("--method", choices=("adaptive", "dense"), default="adaptive")
+    parser.add_argument("--no-gap-recovery", action="store_true",
+                        help="Disable selective 20 kHz recovery of interior gaps in a complete adaptive sweep")
     parser.add_argument("--density-scale", type=float, default=1.12,
                         help="Synthetic electron-density multiplier (default: 1.12)")
     parser.add_argument("--hmf2-shift-km", type=float, default=0.0,
@@ -264,6 +268,8 @@ def main() -> None:
         parser.error("choose a batch with --start and --stop between 0 and 81")
     if args.output is not None and (args.start != 0 or args.stop != FREQUENCIES.size):
         parser.error("--output requires the complete 0–81 frequency sweep")
+    full_sweep = args.start == 0 and args.stop == FREQUENCIES.size
+    recover_gaps = full_sweep and args.method == "adaptive" and not args.no_gap_recovery
     sweep_start = time.perf_counter()
     with tempfile.TemporaryDirectory(prefix="topside_truth_sweep_") as directory:
         temporary = Path(directory)
@@ -333,6 +339,7 @@ def main() -> None:
                                args.peak_width_km)
         counts = np.zeros((FREQUENCIES.size, 2), dtype=int)
         records: list[tuple[float, float, float, float, float]] = []
+        gap_stats = []
         for mode_index, mode in enumerate((1, -1)):
             if args.method == "adaptive":
                 return_sets = home_frequency_sweep_adaptive(
@@ -358,6 +365,15 @@ def main() -> None:
                     )
                     for frequency_index in range(args.start, args.stop)
                 )
+            if recover_gaps:
+                return_sets, mode_gap_stats = recover_interior_frequency_gaps(
+                    return_sets, tx=case.tx_points[1], rx=case.rx_points[1],
+                    grid=grid, fan_elevations_deg=case.fan_elevations_deg,
+                    fan_bearings_deg=case.fan_bearings_deg,
+                    frequencies_mhz=FREQUENCIES, ox_mode=mode, config=config,
+                    range_min_km=150.0)
+                gap_stats.append(mode_gap_stats)
+                print("gap recovery", mode_gap_stats, flush=True)
             for frequency_index, returns in zip(range(args.start, args.stop), return_sets):
                 counts[frequency_index, mode_index] = len(returns)
                 records.extend(
@@ -369,13 +385,12 @@ def main() -> None:
 
         records_array = np.asarray(records, dtype=float).reshape(-1, 5)
         DATA_DIR.mkdir(parents=True, exist_ok=True)
-        full_sweep = args.start == 0 and args.stop == FREQUENCIES.size
         destination = (args.output or output_path(args.method, args.vertical_fan_layout)) if full_sweep else chunk_path(
             args.method, args.start, args.stop, args.vertical_fan_layout)
         metadata = dict(
             records=records_array,
             count_array=counts,
-            method=np.array(args.method),
+            method=np.array("adaptive_with_dense_gap_recovery" if recover_gaps else args.method),
             vertical_fan_layout=np.array(args.vertical_fan_layout),
             anchor_stride=np.array(args.anchor_stride),
             anchor_block_size=np.array(args.anchor_block_size),
@@ -402,6 +417,15 @@ def main() -> None:
                 frequencies_mhz=FREQUENCIES,
                 homing_tolerance_m=np.array(config.homing_tolerance_m),
             )
+        if recover_gaps:
+            metadata["gap_recovery_json"] = np.array(json.dumps({
+                "source": "inline_adaptive_sweep",
+                "accepted_added": sum(row["added_returns"] for row in gap_stats),
+                "unrecovered_bins": [item for row in gap_stats
+                                     for item in row["unrecovered_bins"]],
+                "runtime_seconds": sum(row["runtime_seconds"] for row in gap_stats),
+                "by_mode": gap_stats,
+            }))
         destination.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(destination, **metadata)
         print(destination, flush=True)

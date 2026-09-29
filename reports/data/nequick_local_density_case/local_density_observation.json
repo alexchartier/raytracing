@@ -1,0 +1,7 @@
+{
+  "spacecraft_altitude_km": 800.0,
+  "electron_density_cm3": 23567.04268256293,
+  "measurement_type": "assumed exact local in situ electron density",
+  "source": "April independent NeQuick-G truth profile at spacecraft altitude",
+  "use_during_fit": "one scalar only; no other truth density or peak parameter"
+}

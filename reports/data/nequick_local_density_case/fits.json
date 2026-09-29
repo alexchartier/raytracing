@@ -1,0 +1,181 @@
+{
+  "observation": "truth_ionogram_recovered.npz",
+  "local_density_observation": "local_density_observation.json",
+  "truth_profile_or_peak_parameters_read_during_fit": false,
+  "selection_rule": "minimum full-ray O/X accepted-return score among candidates satisfying the local density",
+  "candidates": {
+    "local_o_tail": {
+      "fof2_mhz": 5.494588039118304,
+      "hmf2_km": 242.18849626846836,
+      "bottomside_scale_km": 55.0,
+      "log_slope_per_km": [
+        0.0021365580529248535,
+        0.0036262359788226087,
+        0.00553343514819778,
+        0.006710571961757796,
+        0.006451453053932136,
+        0.00524284924029438,
+        0.0033877260554944096,
+        0.0020000000000002212
+      ],
+      "surrogate_range_mae_km": 2.140481610871221,
+      "tail_regularized": true,
+      "fof2_anchor_mhz": null,
+      "spacecraft_density_observation_cm3": 23567.04268256293,
+      "spacecraft_plasma_frequency_mhz": 1.378570182739692
+    },
+    "local_o_free": {
+      "fof2_mhz": 5.495744815280154,
+      "hmf2_km": 239.9869981904764,
+      "bottomside_scale_km": 55.0,
+      "log_slope_per_km": [
+        0.0021263606783560583,
+        0.003631062778076391,
+        0.0055732181601003674,
+        0.0067885803465136925,
+        0.006549832779616476,
+        0.005339390317758842,
+        0.003320792248433772,
+        2.000000000000012e-05
+      ],
+      "surrogate_range_mae_km": 2.1441278568474833,
+      "tail_regularized": false,
+      "fof2_anchor_mhz": null,
+      "spacecraft_density_observation_cm3": 23567.04268256293,
+      "spacecraft_plasma_frequency_mhz": 1.378570182739692
+    },
+    "local_x_low": {
+      "fof2_mhz": 5.501905732141448,
+      "hmf2_km": 240.6446884670376,
+      "bottomside_scale_km": 55.0,
+      "log_slope_per_km": [
+        0.002054868514175384,
+        0.0035349233673216598,
+        0.0054715943940485245,
+        0.006698229934666443,
+        0.006460741293806514,
+        0.005256931764898245,
+        0.0034180900237249442,
+        0.0020000001627162797
+      ],
+      "surrogate_range_mae_km": 2.254292823537282,
+      "tail_regularized": true,
+      "fof2_anchor_mhz": 5.550000000000003,
+      "spacecraft_density_observation_cm3": 23567.04268256293,
+      "spacecraft_plasma_frequency_mhz": 1.378570182739692
+    },
+    "local_x_mid": {
+      "fof2_mhz": 5.652172320287087,
+      "hmf2_km": 225.95263148527897,
+      "bottomside_scale_km": 55.0,
+      "log_slope_per_km": [
+        0.002803750188773581,
+        0.0028179097870623753,
+        0.004843169139948404,
+        0.006552920496883799,
+        0.00655234167057783,
+        0.0054031346387795045,
+        0.003675841985841874,
+        0.0020000000000000005
+      ],
+      "surrogate_range_mae_km": 3.1617636431579057,
+      "tail_regularized": true,
+      "fof2_anchor_mhz": 5.650000000000003,
+      "spacecraft_density_observation_cm3": 23567.04268256293,
+      "spacecraft_plasma_frequency_mhz": 1.378570182739692
+    },
+    "local_x_high": {
+      "fof2_mhz": 5.7486153877064625,
+      "hmf2_km": 226.5616003722221,
+      "bottomside_scale_km": 55.0,
+      "log_slope_per_km": [
+        0.004359862449912628,
+        0.002971242046454736,
+        0.004875254543926397,
+        0.006562800719113048,
+        0.006548493796016505,
+        0.005396910412438519,
+        0.0036659364659082302,
+        0.0020000000004748333
+      ],
+      "surrogate_range_mae_km": 3.1465225349478554,
+      "tail_regularized": true,
+      "fof2_anchor_mhz": 5.7500000000000036,
+      "spacecraft_density_observation_cm3": 23567.04268256293,
+      "spacecraft_plasma_frequency_mhz": 1.378570182739692
+    },
+    "height_half": {
+      "fof2_mhz": 5.501905732141448,
+      "hmf2_km": 243.6270573819921,
+      "bottomside_scale_km": 55.0,
+      "log_slope_per_km": [
+        0.002054868514175384,
+        0.0035349233673216598,
+        0.0054715943940485245,
+        0.006698229934666443,
+        0.006460741293806514,
+        0.005256931764898245,
+        0.0034570090342650383,
+        0.0020000001627162797
+      ],
+      "surrogate_range_mae_km": 2.254292823537282,
+      "tail_regularized": true,
+      "fof2_anchor_mhz": 5.550000000000003,
+      "spacecraft_density_observation_cm3": 23567.04268256293,
+      "spacecraft_plasma_frequency_mhz": 1.378570182739692,
+      "source_candidate": "local_x_low",
+      "height_step_from_full_ray_km": 2.982368914954492
+    },
+    "height_full": {
+      "fof2_mhz": 5.501905732141448,
+      "hmf2_km": 246.6094262969466,
+      "bottomside_scale_km": 55.0,
+      "log_slope_per_km": [
+        0.002054868514175384,
+        0.0035349233673216598,
+        0.0054715943940485245,
+        0.006698229934666443,
+        0.006460741293806514,
+        0.005256931764898245,
+        0.003506641365685078,
+        0.0020000001627162797
+      ],
+      "surrogate_range_mae_km": 2.254292823537282,
+      "tail_regularized": true,
+      "fof2_anchor_mhz": 5.550000000000003,
+      "spacecraft_density_observation_cm3": 23567.04268256293,
+      "spacecraft_plasma_frequency_mhz": 1.378570182739692,
+      "source_candidate": "local_x_low",
+      "height_step_from_full_ray_km": 5.964737829908984
+    },
+    "height_onehalf": {
+      "fof2_mhz": 5.501905732141448,
+      "hmf2_km": 249.5917952119011,
+      "bottomside_scale_km": 55.0,
+      "log_slope_per_km": [
+        0.002054868514175384,
+        0.0035349233673216598,
+        0.0054715943940485245,
+        0.006698229934666443,
+        0.006460741293806514,
+        0.005256931764898245,
+        0.003557076143580985,
+        0.0020000001627162797
+      ],
+      "surrogate_range_mae_km": 2.254292823537282,
+      "tail_regularized": true,
+      "fof2_anchor_mhz": 5.550000000000003,
+      "spacecraft_density_observation_cm3": 23567.04268256293,
+      "spacecraft_plasma_frequency_mhz": 1.378570182739692,
+      "source_candidate": "local_x_low",
+      "height_step_from_full_ray_km": 8.947106744863476
+    }
+  },
+  "height_refinement": {
+    "source_candidate": "local_x_low",
+    "median_2_to_5_mhz_full_ray_range_residual_km": 11.929475659817967,
+    "full_height_step_km": 5.964737829908984,
+    "measurement_used": "local_density_observation.json",
+    "truth_profile_or_peak_parameters_read": false
+  }
+}
