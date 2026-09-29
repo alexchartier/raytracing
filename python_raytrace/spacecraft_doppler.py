@@ -51,10 +51,10 @@ def spacecraft_doppler(ray: object, tx: GeoPoint, rx: GeoPoint,
                        track_bearing_deg: float = 0.0) -> SpacecraftDoppler:
     """Predict Doppler for an Earth-fixed static medium and moving endpoints.
 
-    ``track_bearing_deg`` is clockwise from north. For the monostatic pass the
-    transmitter and receiver share this velocity; the echo's light-time motion
-    is negligible at the current 1 km homing gate. The returned arrival angles
-    describe propagation toward the receiver, not antenna pointing.
+    ``track_bearing_deg`` is clockwise from north at each spacecraft. The
+    transmitter and receiver use separate local tangent velocities, which
+    coincide for a monostatic link. The returned arrival angles describe
+    propagation toward the receiver, not antenna pointing.
     """
     if speed_mps < 0 or not math.isfinite(speed_mps):
         raise ValueError("speed_mps must be finite and nonnegative")
@@ -92,13 +92,15 @@ def spacecraft_doppler(ray: object, tx: GeoPoint, rx: GeoPoint,
     fraction = float(fractions[local_index])
     departure = momentum[0]
     arrival = (1.0 - fraction) * momentum[index] + fraction * momentum[index + 1]
-    east, north, _ = _enu_basis(tx)
+    tx_east, tx_north, _ = _enu_basis(tx)
+    rx_east, rx_north, _ = _enu_basis(rx)
     bearing = math.radians(track_bearing_deg)
-    velocity = speed_mps * (math.sin(bearing) * east + math.cos(bearing) * north)
+    tx_velocity = speed_mps * (math.sin(bearing) * tx_east + math.cos(bearing) * tx_north)
+    rx_velocity = speed_mps * (math.sin(bearing) * rx_east + math.cos(bearing) * rx_north)
     # The two endpoint derivatives of optical phase path are -p_launch and
     # +p_arrival. Doppler is minus the time derivative of that phase path.
     doppler = frequency_mhz * 1e6 / C_M_PER_S * float(
-        np.dot(velocity, departure - arrival))
+        np.dot(tx_velocity, departure) - np.dot(rx_velocity, arrival))
     launch_elev, launch_bear = _angles(departure, tx)
     arrival_elev, arrival_bear = _angles(arrival, rx)
     return SpacecraftDoppler(

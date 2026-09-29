@@ -1,0 +1,184 @@
+{
+  "grid": "reports/data/oblique_wave_600km/gain0_sigma100_height1_spline/grid.nc",
+  "output_dir": "reports/data/oblique_wave_600km/gain0_sigma100_height1_spline/ionograms",
+  "workers": 4,
+  "elapsed_seconds": 196.66331462500239,
+  "profiles": [
+    {
+      "profile": 1,
+      "accepted_returns": 71,
+      "runtime_seconds": 44.683586999999534,
+      "nose_mhz_by_mode": [
+        5.4,
+        5.9
+      ],
+      "reused": false
+    },
+    {
+      "profile": 2,
+      "accepted_returns": 69,
+      "runtime_seconds": 45.43795795800179,
+      "reused": true
+    },
+    {
+      "profile": 3,
+      "accepted_returns": 66,
+      "runtime_seconds": 46.843852791000245,
+      "nose_mhz_by_mode": [
+        5.1,
+        5.7
+      ],
+      "reused": false
+    },
+    {
+      "profile": 4,
+      "accepted_returns": 71,
+      "runtime_seconds": 60.571159541999805,
+      "reused": true
+    },
+    {
+      "profile": 5,
+      "accepted_returns": 76,
+      "runtime_seconds": 57.355588791997434,
+      "nose_mhz_by_mode": [
+        5.6,
+        6.0
+      ],
+      "reused": false
+    },
+    {
+      "profile": 6,
+      "accepted_returns": 79,
+      "runtime_seconds": 51.36636600000202,
+      "nose_mhz_by_mode": [
+        5.7,
+        6.1
+      ],
+      "reused": false
+    },
+    {
+      "profile": 7,
+      "accepted_returns": 80,
+      "runtime_seconds": 49.89183512499949,
+      "nose_mhz_by_mode": [
+        5.8,
+        6.2
+      ],
+      "reused": false
+    },
+    {
+      "profile": 8,
+      "accepted_returns": 84,
+      "runtime_seconds": 48.98204624999926,
+      "nose_mhz_by_mode": [
+        5.9,
+        6.3
+      ],
+      "reused": false
+    },
+    {
+      "profile": 9,
+      "accepted_returns": 80,
+      "runtime_seconds": 46.96831904099963,
+      "nose_mhz_by_mode": [
+        5.8,
+        6.3
+      ],
+      "reused": false
+    },
+    {
+      "profile": 10,
+      "accepted_returns": 75,
+      "runtime_seconds": 48.7252104170002,
+      "reused": true
+    },
+    {
+      "profile": 11,
+      "accepted_returns": 73,
+      "runtime_seconds": 47.65486791600051,
+      "nose_mhz_by_mode": [
+        5.5,
+        5.9
+      ],
+      "reused": false
+    },
+    {
+      "profile": 12,
+      "accepted_returns": 71,
+      "runtime_seconds": 51.518298125,
+      "reused": true
+    },
+    {
+      "profile": 13,
+      "accepted_returns": 84,
+      "runtime_seconds": 53.8251798329984,
+      "nose_mhz_by_mode": [
+        5.9,
+        6.2
+      ],
+      "reused": false
+    },
+    {
+      "profile": 14,
+      "accepted_returns": 87,
+      "runtime_seconds": 48.976852583000436,
+      "nose_mhz_by_mode": [
+        6.0,
+        6.4
+      ],
+      "reused": false
+    },
+    {
+      "profile": 15,
+      "accepted_returns": 85,
+      "runtime_seconds": 53.0105463339969,
+      "nose_mhz_by_mode": [
+        6.2,
+        6.5
+      ],
+      "reused": false
+    },
+    {
+      "profile": 16,
+      "accepted_returns": 86,
+      "runtime_seconds": 51.42041374999826,
+      "nose_mhz_by_mode": [
+        6.2,
+        6.6
+      ],
+      "reused": false
+    },
+    {
+      "profile": 17,
+      "accepted_returns": 82,
+      "runtime_seconds": 44.8416854169991,
+      "nose_mhz_by_mode": [
+        6.1,
+        6.5
+      ],
+      "reused": false
+    },
+    {
+      "profile": 18,
+      "accepted_returns": 78,
+      "runtime_seconds": 41.761833374999696,
+      "nose_mhz_by_mode": [
+        5.9,
+        6.3
+      ],
+      "reused": false
+    },
+    {
+      "profile": 19,
+      "accepted_returns": 73,
+      "runtime_seconds": 45.14454024999941,
+      "reused": true
+    },
+    {
+      "profile": 20,
+      "accepted_returns": 76,
+      "runtime_seconds": 47.526472500001546,
+      "reused": true
+    }
+  ]
+}

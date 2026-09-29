@@ -556,10 +556,14 @@ def _return_leg_distance(ray_path: dict, tx: GeoPoint, rx: GeoPoint) -> tuple[fl
 
     start_index = 1
     if tx.alt_km > 400.0 and rx.alt_km > 400.0:
-        threshold_alt_km = min(tx.alt_km, rx.alt_km) - 20.0
+        # A space-to-space link also admits a nearly direct ray. It can pass
+        # close to the receiver without sampling the ionosphere at all. Only
+        # search the return leg after a substantial downward excursion.
+        threshold_alt_km = min(tx.alt_km, rx.alt_km) - 100.0
         below = np.flatnonzero(heights < threshold_alt_km)
-        if below.size > 0:
-            start_index = int(below[0])
+        if below.size == 0:
+            return math.inf, None, None
+        start_index = int(below[0])
     if start_index >= len(heights) - 1:
         return math.inf, None, None
 
@@ -1279,7 +1283,7 @@ def _follow_neighbor_return(
 
     def objective(params: np.ndarray) -> float:
         _ray, miss_local_m, _group, _absorption, _doppler = evaluate(float(params[0]), float(params[1]))
-        return miss_local_m
+        return miss_local_m if math.isfinite(miss_local_m) else 1e9
 
     result = minimize(
         objective,
@@ -1377,7 +1381,7 @@ def _home_frequency_returns(
         los_bearing_deg, los_elevation_deg, _ = _line_of_sight_angles(tx, rx)
         seed_points.insert(0, (float(los_elevation_deg), float(los_bearing_deg)))
 
-    vertical_fan = bool(np.all(elevs < 0.0))
+    vertical_fan = vertical_link
     near_nadir_limit = float(unique_elevs[min(1, unique_elevs.size - 1)])
 
     def home_seed(start_elev: float, start_bear: float, seed_method: str) -> HomedRayReturn | None:
@@ -1394,7 +1398,7 @@ def _home_frequency_returns(
                 return 1e9
             elevation, bearing = angles_from_params(params)
             _ray, miss_m, _group, _absorption, _doppler = evaluate(elevation, bearing)
-            return miss_m
+            return miss_m if math.isfinite(miss_m) else 1e9
 
         if seed_method == "Powell":
             options = {"ftol": 0.01, "xtol": 0.01, "maxfev": 80, "disp": False}
@@ -1404,8 +1408,14 @@ def _home_frequency_returns(
                                       nadir_offset * math.cos(bearing_rad)]) if use_nadir_coordinates
                             else np.array([start_elev, start_bear], dtype=float))
         else:
-            options = {"fatol": config.homing_tolerance_m, "xatol": 0.01, "maxfev": 80, "disp": False}
+            options = {"fatol": config.homing_tolerance_m, "xatol": 0.01,
+                       "maxfev": 80 if vertical_fan else 160, "disp": False}
             start_params = np.array([start_elev, start_bear], dtype=float)
+            if not vertical_fan:
+                options["initial_simplex"] = np.array([
+                    start_params, start_params + [0.2, 0.0],
+                    start_params + [0.0, 1.0],
+                ])
         result = minimize(
             objective,
             start_params,

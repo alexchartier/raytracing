@@ -40,3 +40,25 @@ def test_projected_off_nadir_return_matches_two_way_doppler() -> None:
     np.testing.assert_allclose(result.doppler_hz, expected, rtol=1e-12)
     np.testing.assert_allclose(result.launch_elevation_deg, -80.0, atol=1e-10)
     np.testing.assert_allclose(result.arrival_elevation_deg, 80.0, atol=1e-10)
+
+
+def test_oblique_link_uses_each_satellites_local_velocity() -> None:
+    tx = GeoPoint(-54.0, 7.7, 800.0)
+    rx = GeoPoint(-49.2, 7.7, 800.0)
+
+    def north(point: GeoPoint) -> np.ndarray:
+        latitude = np.deg2rad(point.lat_deg)
+        longitude = np.deg2rad(point.lon_deg)
+        return np.array([-np.sin(latitude) * np.cos(longitude),
+                         -np.sin(latitude) * np.sin(longitude), np.cos(latitude)])
+
+    momentum = np.stack((north(tx), north(tx), north(rx)))
+    ray = SimpleNamespace(
+        path={"lat": np.array([tx.lat_deg, (tx.lat_deg + rx.lat_deg) / 2, rx.lat_deg]),
+              "lon": np.full(3, tx.lon_deg),
+              "height": np.array([800.0, 350.0, 800.0])},
+        state={key: momentum[:, i] for i, key in
+               enumerate(("dir_x", "dir_y", "dir_z"))},
+    )
+    result = spacecraft_doppler(ray, tx, rx, 5.0)
+    assert abs(result.doppler_hz) < 1e-10

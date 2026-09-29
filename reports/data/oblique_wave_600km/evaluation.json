@@ -1,0 +1,104 @@
+{
+  "selection_uses_truth_density": false,
+  "evaluation_uses_truth_density_after_selection": true,
+  "prior_vertical_retrieval_used_same_synthetic_truth_case": true,
+  "truth_density_source": "Fortran IRI-2016 with imposed 900 km wave",
+  "retrieval_start": "reports/data/lat_wave_doppler_peak_round3/wide_density.npz",
+  "selected_candidate": "gain0_sigma100_height1_spline",
+  "satellite_spacing_km": 600.0,
+  "modeled_spacecraft_speed_mps": 8000.0,
+  "homing_tolerance_m": 1000.0,
+  "frequency_range_mhz": [
+    2.0,
+    10.0
+  ],
+  "frequency_step_mhz": 0.1,
+  "truth_doppler_range_hz": [
+    -39.699199859465985,
+    123.75730885260661
+  ],
+  "truth_launch_elevation_range_deg": [
+    -81.59708053264349,
+    -31.34427093647883
+  ],
+  "truth_arrival_elevation_range_deg": [
+    29.37375930472221,
+    89.50918072588291
+  ],
+  "truth_accepted_returns": 1569,
+  "retrieved_accepted_returns": 1546,
+  "baseline_ionogram_score": 0.1958293980818171,
+  "retrieved_ionogram_score": 0.18383633467400343,
+  "baseline_doppler_score": 0.23740597129926164,
+  "retrieved_doppler_score": 0.1976387754552505,
+  "baseline_combined_score": 0.20414471272530602,
+  "retrieved_combined_score": 0.18659682283025286,
+  "other_candidates_after_selection": [
+    {
+      "name": "gain0.25_sigma100_height1_spline",
+      "combined_observable_score": 0.18802910340673418,
+      "link_midpoint_peak_density_mae_percent": 1.8154698950916326,
+      "link_midpoint_profile_mean_nrmse_150_to_600_km": 0.059153135175860225
+    }
+  ],
+  "density_metrics": {
+    "link_midpoint": {
+      "baseline_peak_density_mae_percent": 1.7749770702213081,
+      "retrieved_peak_density_mae_percent": 2.325595515983305,
+      "retrieved_peak_density_max_absolute_error_percent": 5.364203007558032,
+      "baseline_profile_mean_nrmse_150_to_600_km": 0.07335072618073091,
+      "retrieved_profile_mean_nrmse_150_to_600_km": 0.062122663223349674,
+      "retrieved_peak_error_percent_by_profile": [
+        -4.53239467108395,
+        -5.364203007558032,
+        -3.457825191550268,
+        -1.916517252193406,
+        0.2984143601260758,
+        1.6282477499832915,
+        -0.48129941130736764,
+        -2.163467661134899,
+        -3.3203050147406654,
+        -4.156953711688027,
+        -2.5095805042777974,
+        -1.03671196710583,
+        -0.3428543096332448,
+        -0.47940515496319724,
+        -1.3425972314067613,
+        -1.7987472472529409,
+        -1.9764129336999225,
+        -2.398208436066296,
+        -3.098440062334473,
+        -4.2093244415596365
+      ]
+    },
+    "transmitter": {
+      "baseline_peak_density_mae_percent": 1.7297391113166616,
+      "retrieved_peak_density_mae_percent": 2.167071432669122,
+      "retrieved_peak_density_max_absolute_error_percent": 5.128452768280878,
+      "baseline_profile_mean_nrmse_150_to_600_km": 0.07028891451383253,
+      "retrieved_profile_mean_nrmse_150_to_600_km": 0.058922839280713145,
+      "retrieved_peak_error_percent_by_profile": [
+        -1.1538065165672684,
+        -3.0591945892255668,
+        -4.318512561363019,
+        -5.128452768280878,
+        -4.231009712925859,
+        -2.3126826359195274,
+        -0.30637497492208565,
+        1.443932806448056,
+        0.06434529336856176,
+        -1.7627162972420618,
+        -2.991049179899097,
+        -4.2216871110426935,
+        -3.0480574087039414,
+        -1.6065903666217296,
+        -0.46477134649903773,
+        -0.20031378567071378,
+        -1.1220309357577896,
+        -1.7517721835286548,
+        -1.9253464937170506,
+        -2.228781685678838
+      ]
+    }
+  }
+}

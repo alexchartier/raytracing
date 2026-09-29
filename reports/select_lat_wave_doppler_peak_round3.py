@@ -9,7 +9,7 @@ from pathlib import Path
 
 import numpy as np
 
-from fit_d_ionogram import Ionogram, score
+from ionogram_metrics import Ionogram, score
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "reports/data"

@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 
 from python_raytrace.grid import load_ionosphere_grid_netcdf
-from reports.fit_d_ionogram import Ionogram
+from reports.ionogram_metrics import Ionogram
 
 
 ROOT = Path(__file__).resolve().parents[2]

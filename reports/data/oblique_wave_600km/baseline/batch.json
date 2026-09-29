@@ -1,0 +1,208 @@
+{
+  "grid": "reports/data/lat_wave_doppler_peak_round3/wide_grid.nc",
+  "output_dir": "reports/data/oblique_wave_600km/baseline",
+  "workers": 4,
+  "elapsed_seconds": 270.5009334999995,
+  "profiles": [
+    {
+      "profile": 1,
+      "accepted_returns": 72,
+      "runtime_seconds": 46.406610209000064,
+      "nose_mhz_by_mode": [
+        5.4,
+        6.0
+      ],
+      "reused": false
+    },
+    {
+      "profile": 2,
+      "accepted_returns": 69,
+      "runtime_seconds": 44.79771699999765,
+      "nose_mhz_by_mode": [
+        5.3,
+        5.8
+      ],
+      "reused": false
+    },
+    {
+      "profile": 3,
+      "accepted_returns": 67,
+      "runtime_seconds": 47.95187304100182,
+      "nose_mhz_by_mode": [
+        5.1,
+        5.7
+      ],
+      "reused": false
+    },
+    {
+      "profile": 4,
+      "accepted_returns": 70,
+      "runtime_seconds": 57.670066874998156,
+      "nose_mhz_by_mode": [
+        5.5,
+        5.6
+      ],
+      "reused": false
+    },
+    {
+      "profile": 5,
+      "accepted_returns": 72,
+      "runtime_seconds": 52.36344404099873,
+      "nose_mhz_by_mode": [
+        5.6,
+        5.9
+      ],
+      "reused": false
+    },
+    {
+      "profile": 6,
+      "accepted_returns": 75,
+      "runtime_seconds": 50.91265445799945,
+      "nose_mhz_by_mode": [
+        5.8,
+        6.1
+      ],
+      "reused": false
+    },
+    {
+      "profile": 7,
+      "accepted_returns": 82,
+      "runtime_seconds": 48.1075090000013,
+      "nose_mhz_by_mode": [
+        5.8,
+        6.3
+      ],
+      "reused": false
+    },
+    {
+      "profile": 8,
+      "accepted_returns": 81,
+      "runtime_seconds": 47.788505208998686,
+      "nose_mhz_by_mode": [
+        5.9,
+        6.3
+      ],
+      "reused": false
+    },
+    {
+      "profile": 9,
+      "accepted_returns": 79,
+      "runtime_seconds": 46.260876749998715,
+      "nose_mhz_by_mode": [
+        5.9,
+        6.3
+      ],
+      "reused": false
+    },
+    {
+      "profile": 10,
+      "accepted_returns": 77,
+      "runtime_seconds": 49.43570745800025,
+      "nose_mhz_by_mode": [
+        5.7,
+        6.2
+      ],
+      "reused": false
+    },
+    {
+      "profile": 11,
+      "accepted_returns": 73,
+      "runtime_seconds": 48.23405450000064,
+      "nose_mhz_by_mode": [
+        5.5,
+        6.0
+      ],
+      "reused": false
+    },
+    {
+      "profile": 12,
+      "accepted_returns": 71,
+      "runtime_seconds": 54.66170350000175,
+      "nose_mhz_by_mode": [
+        5.5,
+        5.9
+      ],
+      "reused": false
+    },
+    {
+      "profile": 13,
+      "accepted_returns": 86,
+      "runtime_seconds": 53.73450229200171,
+      "nose_mhz_by_mode": [
+        5.9,
+        6.2
+      ],
+      "reused": false
+    },
+    {
+      "profile": 14,
+      "accepted_returns": 87,
+      "runtime_seconds": 49.11398545799966,
+      "nose_mhz_by_mode": [
+        6.0,
+        6.4
+      ],
+      "reused": false
+    },
+    {
+      "profile": 15,
+      "accepted_returns": 85,
+      "runtime_seconds": 53.76757808399998,
+      "nose_mhz_by_mode": [
+        6.2,
+        6.6
+      ],
+      "reused": false
+    },
+    {
+      "profile": 16,
+      "accepted_returns": 85,
+      "runtime_seconds": 53.1847456659998,
+      "nose_mhz_by_mode": [
+        6.2,
+        6.6
+      ],
+      "reused": false
+    },
+    {
+      "profile": 17,
+      "accepted_returns": 84,
+      "runtime_seconds": 50.71559512500244,
+      "nose_mhz_by_mode": [
+        6.2,
+        6.5
+      ],
+      "reused": false
+    },
+    {
+      "profile": 18,
+      "accepted_returns": 80,
+      "runtime_seconds": 49.100557958001446,
+      "nose_mhz_by_mode": [
+        6.0,
+        6.3
+      ],
+      "reused": false
+    },
+    {
+      "profile": 19,
+      "accepted_returns": 75,
+      "runtime_seconds": 48.24894820899863,
+      "nose_mhz_by_mode": [
+        5.7,
+        6.1
+      ],
+      "reused": false
+    },
+    {
+      "profile": 20,
+      "accepted_returns": 76,
+      "runtime_seconds": 51.7078831660001,
+      "nose_mhz_by_mode": [
+        5.8,
+        6.0
+      ],
+      "reused": false
+    }
+  ]
+}

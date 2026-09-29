@@ -1,0 +1,68 @@
+{
+  "grid": "reports/data/oblique_wave_600km/gain0.5_sigma100_height1/grid.nc",
+  "output_dir": "reports/data/oblique_wave_600km/gain0.5_sigma100_height1/ionograms",
+  "workers": 4,
+  "elapsed_seconds": 96.98641695900005,
+  "profiles": [
+    {
+      "profile": 2,
+      "accepted_returns": 69,
+      "runtime_seconds": 45.81341749999774,
+      "nose_mhz_by_mode": [
+        5.3,
+        5.8
+      ],
+      "reused": false
+    },
+    {
+      "profile": 4,
+      "accepted_returns": 67,
+      "runtime_seconds": 53.778251874999114,
+      "nose_mhz_by_mode": [
+        5.3,
+        5.6
+      ],
+      "reused": false
+    },
+    {
+      "profile": 10,
+      "accepted_returns": 78,
+      "runtime_seconds": 48.02509908299908,
+      "nose_mhz_by_mode": [
+        5.7,
+        6.2
+      ],
+      "reused": false
+    },
+    {
+      "profile": 12,
+      "accepted_returns": 71,
+      "runtime_seconds": 49.66387124999892,
+      "nose_mhz_by_mode": [
+        5.5,
+        5.8
+      ],
+      "reused": false
+    },
+    {
+      "profile": 19,
+      "accepted_returns": 78,
+      "runtime_seconds": 42.447208749999845,
+      "nose_mhz_by_mode": [
+        5.8,
+        6.2
+      ],
+      "reused": false
+    },
+    {
+      "profile": 20,
+      "accepted_returns": 73,
+      "runtime_seconds": 46.204738083997654,
+      "nose_mhz_by_mode": [
+        5.7,
+        6.0
+      ],
+      "reused": false
+    }
+  ]
+}

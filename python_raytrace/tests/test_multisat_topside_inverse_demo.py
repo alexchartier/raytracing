@@ -29,6 +29,7 @@ from python_raytrace.multisat_topside_inverse_demo import (
     _observed_support_extents,
     _plot_case_score,
     _profile_returns_in_window,
+    _return_leg_distance,
     _resample_vertical_display,
     build_inverse_problem,
     dataset_cost,
@@ -36,10 +37,28 @@ from python_raytrace.multisat_topside_inverse_demo import (
     simulate_dataset,
     solve_inverse_problem,
 )
+from python_raytrace.geometry import GeoPoint
 from python_raytrace.grid import IonosphereGrid, load_ionosphere_grid_netcdf, save_ionosphere_grid_netcdf
 
 
 class MultisatTopsideInverseDemoTests(unittest.TestCase):
+    def test_space_to_space_return_requires_ionospheric_descent(self) -> None:
+        tx = GeoPoint(-54.0, 8.0, 800.0)
+        rx = GeoPoint(-49.2, 8.0, 800.0)
+        direct = {"lat": np.array([-54.0, -51.6, -49.2]),
+                  "lon": np.full(3, 8.0),
+                  "height": np.array([800.0, 790.0, 800.0]),
+                  "group_range": np.array([0.0, 300.0, 600.0])}
+        miss, group_range, _ = _return_leg_distance(direct, tx, rx)
+        self.assertTrue(math.isinf(miss))
+        self.assertIsNone(group_range)
+
+        reflected = {**direct, "height": np.array([800.0, 350.0, 800.0]),
+                     "group_range": np.array([0.0, 700.0, 1400.0])}
+        miss, group_range, _ = _return_leg_distance(reflected, tx, rx)
+        self.assertLess(miss, 1.0)
+        self.assertAlmostEqual(group_range, 1400.0)
+
     def test_guarded_equal_area_fan_and_polar_seed(self) -> None:
         config = TopsideInverseConfig()
         elevations, bearings = _equal_area_vertical_fan(config, guard_nadir_rows=3)

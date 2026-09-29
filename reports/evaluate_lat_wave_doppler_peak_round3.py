@@ -11,11 +11,11 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.interpolate import RegularGridInterpolator
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / "reports") not in sys.path:
     sys.path.insert(0, str(ROOT / "reports"))
-from evaluate_lat_wave_retrieval import density_at_positions, draw_ionogram  # noqa: E402
 from select_lat_wave_doppler_peak_round3 import gated_nose  # noqa: E402
 
 DATA = ROOT / "reports/data"
@@ -26,6 +26,29 @@ TRUTH_DENSITY = DATA / "lat_wave_pass_truth_density.npz"
 BASE_DENSITY = DATA / "lat_wave_joint_round2/peak_full_density.npz"
 TRUTH_IONOGRAMS = DATA / "lat_wave_final_truth_ionograms"
 BASE_IONOGRAMS = DATA / "lat_wave_joint_round2/peak_full/final"
+
+
+def density_at_positions(path: Path, points: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    with np.load(path, allow_pickle=False) as source:
+        altitudes = np.asarray(source["altitudes_km"], dtype=float)
+        interpolator = RegularGridInterpolator(
+            (source["latitudes_deg"], source["longitudes_deg"]),
+            source["electron_density_cm3"], bounds_error=True)
+        return altitudes, np.asarray(interpolator(points), dtype=float)
+
+
+def draw_ionogram(ax, path: Path, title: str) -> None:
+    with np.load(path, allow_pickle=False) as source:
+        records = np.asarray(source["records"], dtype=float)
+        frequencies = np.asarray(source["frequencies_mhz"], dtype=float)
+    for mode, label, color in ((1, "O", "#135b9a"), (-1, "X", "#b63836")):
+        selected = records[records[:, 1] == mode]
+        if len(selected):
+            ax.scatter(frequencies[selected[:, 0].astype(int)],
+                       np.round(selected[:, 2]), s=7, marker="s",
+                       linewidths=0, color=color, alpha=0.78, label=label)
+    ax.set(xlim=(2, 10), ylim=(150, 2100), title=title)
+    ax.grid(alpha=.12)
 
 
 def quantized_gated_nose(path: Path, mode: int) -> float:
