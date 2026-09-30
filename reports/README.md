@@ -92,8 +92,14 @@ evidence that the method generalizes to another ionosphere model.
 
 The selected [density comparison](data/general_field_iri_wave_structured/density_comparison_minus_wave.png)
 and [paired ionograms](data/general_field_iri_wave_structured/ionogram_comparison_minus_wave.png)
-show representative positions. Additional rounds can use a denser basis with
-a selected subset of active spatial centers per round.
+show representative positions. The [latitude–altitude cut](data/general_field_iri_wave_structured/latitude_altitude_density_minus_wave.png)
+also isolates the selected change from the anchored baseline. Although its
+direction came from a 902 km sinusoid fitted to observed cutoffs, the four
+spatial Gaussian kernels are 890 km wide. The actual `minus_wave` update is a
+smooth F2-layer density increase, about 3.0% at the south end and 0.3% at the
+north end; the retrieved field's repeating crests are mostly inherited from
+the previous prior. Additional rounds need a denser spatial basis to fit the
+wave itself.
 
 `check_general_field_capacity.py` is an **oracle capacity diagnostic**, not a
 retrieval: it fits coefficients directly to full density truth. With a denser

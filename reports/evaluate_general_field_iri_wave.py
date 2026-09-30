@@ -95,8 +95,10 @@ def evaluate(selection_path: Path, score_path: Path, name: str | None) -> None:
     latitude = locations[:, 0]
     altitude, truth = _profiles(TRUTH, locations)
     previous_altitude, previous = _profiles(PREVIOUS, locations)
+    baseline_altitude, baseline = _profiles(RUN / "baseline/grid.nc", locations)
     fit_altitude, retrieved = _profiles(grid_path, locations)
     if not (np.array_equal(altitude, previous_altitude)
+            and np.array_equal(altitude, baseline_altitude)
             and np.array_equal(altitude, fit_altitude)):
         raise ValueError("Density altitude grids differ")
     true_peak = np.max(truth, axis=1)
@@ -176,6 +178,41 @@ def evaluate(selection_path: Path, score_path: Path, name: str | None) -> None:
         ax.set(title=title, xlabel="Latitude (degrees)", ylabel=ylabel)
         ax.grid(alpha=.2)
     fig.savefig(RUN / f"density_comparison_{name}.png", dpi=190)
+    plt.close(fig)
+
+    fig, axes = plt.subplots(2, 2, figsize=(12.5, 8.5), sharex=True,
+                             sharey=True, constrained_layout=True)
+    density_levels = np.linspace(0.0, 4.6, 24)
+    for ax, field, title in (
+            (axes[0, 0], truth, "Independent IRI wave truth"),
+            (axes[0, 1], retrieved, f"Retrieved: {name}")):
+        density_image = ax.contourf(latitude, altitude, (field / 1e5).T,
+                                    levels=density_levels, cmap="viridis",
+                                    extend="max")
+        ax.set_title(title)
+    fig.colorbar(density_image, ax=axes[0, :],
+                 label="Electron density ($10^5$ cm$^{-3}$)")
+    residual = (retrieved - truth) / 1e5
+    residual_image = axes[1, 0].contourf(
+        latitude, altitude, residual.T, levels=np.linspace(-0.8, 0.8, 25),
+        cmap="RdBu_r", extend="both")
+    axes[1, 0].set_title("Retrieved − truth")
+    fig.colorbar(residual_image, ax=axes[1, 0],
+                 label="Density difference ($10^5$ cm$^{-3}$)")
+    increment = 100 * (retrieved / baseline - 1)
+    increment_image = axes[1, 1].contourf(
+        latitude, altitude, increment.T, levels=np.linspace(0, 3, 21),
+        cmap="magma", extend="both")
+    axes[1, 1].set_title(f"{name} − anchored baseline")
+    fig.colorbar(increment_image, ax=axes[1, 1],
+                 label="Density change (%)")
+    for ax in axes.flat:
+        ax.set(xlim=(latitude.min(), latitude.max()), ylim=(150, 800))
+    for ax in axes[:, 0]:
+        ax.set_ylabel("Altitude (km)")
+    for ax in axes[1, :]:
+        ax.set_xlabel("Latitude (degrees)")
+    fig.savefig(RUN / f"latitude_altitude_density_{name}.png", dpi=220)
     plt.close(fig)
 
     fig, axes = plt.subplots(4, 2, figsize=(12, 12), sharex=True, sharey=True,
