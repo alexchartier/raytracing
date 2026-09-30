@@ -1,0 +1,17 @@
+{
+  "vertical_observation": "reports/data/oblique_model_families/sources/nequick_vertical.npz",
+  "uses_full_truth_density": false,
+  "uses_800km_track_observation": true,
+  "prior_support": "reports/data/oblique_model_families/support_grid.nc",
+  "density_start": "model-agnostic monotone spline from vertical O returns",
+  "fof2_mhz": 5.500181346643243,
+  "hmf2_km": 229.34344873517182,
+  "vertical_surrogate_range_mae_km": 1.8248412650906858,
+  "q1_at_quarter": 0.776784319499411,
+  "q2_at_three_fifths": 0.3588650360496554,
+  "latitude_controls_deg": [
+    -53.67859907285381,
+    -48.885488118390526
+  ],
+  "800km_observation_count": 601
+}

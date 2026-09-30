@@ -1,0 +1,10 @@
+{
+  "case": "nequick",
+  "chosen_candidate": "q1p04",
+  "uses_full_truth_density": false,
+  "uses_synthetic_800km_track_density": true,
+  "scores_sha256": "28e27881be2aebba7c2e8fda1406bb15c398609980c60bc2d4be68334400b4c1",
+  "selected_grid_sha256": "7b549b2244adf3eccc983397b68fab35f75b4e6c5cba3164241ea31a6c3006a4",
+  "selected_grid": "reports/data/oblique_model_families/nequick/q1p04/grid.nc",
+  "selection_rule": "minimum combined O/X plus 1 Hz Doppler score among fields within 0.5% of all 800 km observations"
+}

@@ -52,10 +52,10 @@ def monotone_topside_grid(
         raise ValueError("Expected a dense, ordered along-track in-situ pass")
     alt = np.asarray(grid.altitudes_km, dtype=float)
     lon = np.asarray(grid.longitudes_deg, dtype=float)
-    if local.altitude_km not in alt or points[0, 1] not in lon:
-        raise ValueError("The spacecraft altitude and track longitude must be grid nodes")
+    if (local.altitude_km not in alt or
+            not lon[0] <= points[0, 1] <= lon[-1]):
+        raise ValueError("The spacecraft altitude must be a grid node and the track longitude must be inside the grid")
     sc_index = int(np.where(alt == local.altitude_km)[0][0])
-    lon_index = int(np.where(lon == points[0, 1])[0][0])
     original = np.asarray(grid.iono_en_grid, dtype=float)
     base_at_sc = original[:, :, sc_index]
     track_lat = points[:, 0]
@@ -68,7 +68,25 @@ def monotone_topside_grid(
     # same latitude nodes; interpolation then honors every 1 km sample.
     target_at_nodes = np.interp(np.clip(grid.latitudes_deg, track_lat[0], track_lat[-1]),
                                 track_lat, track_density)
-    correction = target_at_nodes / base_at_sc[:, lon_index]
+    # If a spacecraft track starts or ends between latitude grid nodes, its
+    # first/last observed interval needs the enclosing node as well. Extend
+    # the measured local slope to that one node only, preserving the linear
+    # interpolation of every measurement inside the track.
+    below = np.flatnonzero(grid.latitudes_deg < track_lat[0])
+    above = np.flatnonzero(grid.latitudes_deg > track_lat[-1])
+    if len(below):
+        edge = below[-1]
+        slope = (track_density[1] - track_density[0]) / (track_lat[1] - track_lat[0])
+        target_at_nodes[edge] = track_density[0] + slope * (grid.latitudes_deg[edge] - track_lat[0])
+    if len(above):
+        edge = above[0]
+        slope = (track_density[-1] - track_density[-2]) / (track_lat[-1] - track_lat[-2])
+        target_at_nodes[edge] = track_density[-1] + slope * (grid.latitudes_deg[edge] - track_lat[-1])
+    if np.any(target_at_nodes <= 0):
+        raise ValueError("Track-edge extrapolation produced nonpositive spacecraft density")
+    base_at_track = np.array([np.interp(points[0, 1], lon, row)
+                              for row in base_at_sc])
+    correction = target_at_nodes / base_at_track
     target_at_sc = base_at_sc * correction[:, None]
     sample_lat = np.clip(np.asarray(grid.latitudes_deg, dtype=float),
                          latitudes[0], latitudes[-1])

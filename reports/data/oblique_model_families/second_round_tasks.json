@@ -1,0 +1,34 @@
+[
+  {
+    "case": "nequick",
+    "candidate": "q1p04_hp10"
+  },
+  {
+    "case": "nequick",
+    "candidate": "q1p08"
+  },
+  {
+    "case": "chapman",
+    "candidate": "q1p04_hp10"
+  },
+  {
+    "case": "chapman",
+    "candidate": "hp20"
+  },
+  {
+    "case": "iri2016",
+    "candidate": "q2m06_hp10"
+  },
+  {
+    "case": "iri2016",
+    "candidate": "q2m12"
+  },
+  {
+    "case": "iri2016",
+    "candidate": "q2m06_gq2p08"
+  },
+  {
+    "case": "iri2016",
+    "candidate": "q2m06_gq2m08"
+  }
+]

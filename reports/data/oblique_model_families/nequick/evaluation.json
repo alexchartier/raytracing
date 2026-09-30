@@ -1,0 +1,92 @@
+{
+  "case": "nequick",
+  "truth_model": "NeQuick-G; tpl2go implementation",
+  "selected": "q1p04",
+  "truth_density_read_after_selection": true,
+  "positions": [
+    "transmitter",
+    "link_midpoint"
+  ],
+  "starting_density_metrics": {
+    "peak_density_mae_percent": 1.330951072306391,
+    "peak_density_bias_percent": -1.330951072306391,
+    "fof2_mae_mhz": 0.03683084247217468,
+    "hmf2_mae_km": 20.0,
+    "hmf2_bias_km": -20.0,
+    "profile_nrmse_150_to_800_percent": 13.777315506761425,
+    "topside_nrmse_350_to_800_percent": 2.074967166979458,
+    "peak_density_error_percent_by_profile": [
+      -1.33095107230643,
+      -1.3309510723063522
+    ],
+    "hmf2_error_km_by_profile": [
+      -20.0,
+      -20.0
+    ]
+  },
+  "selected_density_metrics": {
+    "peak_density_mae_percent": 1.330951072306391,
+    "peak_density_bias_percent": -1.330951072306391,
+    "fof2_mae_mhz": 0.03683084247217468,
+    "hmf2_mae_km": 20.0,
+    "hmf2_bias_km": -20.0,
+    "profile_nrmse_150_to_800_percent": 13.00004464129203,
+    "topside_nrmse_350_to_800_percent": 0.8689344727913255,
+    "peak_density_error_percent_by_profile": [
+      -1.33095107230643,
+      -1.3309510723063522
+    ],
+    "hmf2_error_km_by_profile": [
+      -20.0,
+      -20.0
+    ]
+  },
+  "starting_ionogram_score": {
+    "name": "start",
+    "ionogram_equivalent_km": 103.62191924371628,
+    "group_range_error_km": 93.62191924371626,
+    "low_band_2p5_to_4p5_error_km": 40.773948419466834,
+    "nose_error_mhz": 0.10000000000000009,
+    "by_mode": {
+      "O": {
+        "group_range_error_km": 93.44686800843738,
+        "missing_frequency_fraction": 0.027777777777777776,
+        "nose_error_mhz": 0.10000000000000053,
+        "frequencies_with_any_return": 36
+      },
+      "X": {
+        "group_range_error_km": 93.79697047899514,
+        "missing_frequency_fraction": 0.027777777777777776,
+        "nose_error_mhz": 0.09999999999999964,
+        "frequencies_with_any_return": 36
+      }
+    },
+    "doppler_1hz_mismatch": 0.5555555555555556,
+    "insitu_max_absolute_error_percent": 2.220446049250313e-13,
+    "combined_equivalent_km": 114.73303035482739
+  },
+  "selected_ionogram_score": {
+    "name": "q1p04",
+    "ionogram_equivalent_km": 94.90702845743932,
+    "group_range_error_km": 84.90702845743931,
+    "low_band_2p5_to_4p5_error_km": 29.135286416113175,
+    "nose_error_mhz": 0.10000000000000009,
+    "by_mode": {
+      "O": {
+        "group_range_error_km": 86.64232365849517,
+        "missing_frequency_fraction": 0.027777777777777776,
+        "nose_error_mhz": 0.10000000000000053,
+        "frequencies_with_any_return": 36
+      },
+      "X": {
+        "group_range_error_km": 83.17173325638343,
+        "missing_frequency_fraction": 0.027777777777777776,
+        "nose_error_mhz": 0.09999999999999964,
+        "frequencies_with_any_return": 36
+      }
+    },
+    "doppler_1hz_mismatch": 0.5138888888888888,
+    "insitu_max_absolute_error_percent": 1.0880185641326534e-12,
+    "combined_equivalent_km": 105.1848062352171
+  }
+}

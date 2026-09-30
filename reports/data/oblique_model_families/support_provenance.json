@@ -1,0 +1,15 @@
+{
+  "support_epoch_utc": "2010-01-01T12:00:00+00:00",
+  "support_f107": 120.0,
+  "support_ap_daily": 8.0,
+  "density_prior_source_lat_lon_deg": [
+    -68.0,
+    -12.0
+  ],
+  "truth_iri2016_f107": 72.6999969,
+  "truth_iri2016_sounder_lat_lon_deg": [
+    -53.67859907285381,
+    7.7400542554165135
+  ],
+  "shared_support_fields": "PyIRI magnetic/collision fields shared by truth and candidates"
+}

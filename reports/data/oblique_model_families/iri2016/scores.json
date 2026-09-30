@@ -1,0 +1,276 @@
+{
+  "case": "iri2016",
+  "uses_full_truth_density": false,
+  "uses_synthetic_800km_track_density": true,
+  "ionogram_truth": "reports/data/oblique_model_families/iri2016/forward/truth/ionogram_01.npz",
+  "score": "uncapped symmetric nearest O/X group range, 150 km missing-frequency cost, 100 km/MHz mean nose cost; plus 20 km times 1 Hz Doppler mismatch",
+  "doppler_weight_equivalent_km": 20.0,
+  "insitu_tolerance_percent": 0.5,
+  "candidates": [
+    {
+      "name": "start",
+      "ionogram_equivalent_km": 91.51265751557636,
+      "group_range_error_km": 91.51265751557636,
+      "low_band_2p5_to_4p5_error_km": 50.48507114385876,
+      "nose_error_mhz": 0.0,
+      "by_mode": {
+        "O": {
+          "group_range_error_km": 84.20612314495082,
+          "missing_frequency_fraction": 0.05405405405405406,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 37
+        },
+        "X": {
+          "group_range_error_km": 98.81919188620189,
+          "missing_frequency_fraction": 0.07692307692307693,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 39
+        }
+      },
+      "doppler_1hz_mismatch": 0.6767605633802817,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 105.047868783182
+    },
+    {
+      "name": "q1p04",
+      "ionogram_equivalent_km": 98.95156319674246,
+      "group_range_error_km": 88.95156319674248,
+      "low_band_2p5_to_4p5_error_km": 49.429465701143684,
+      "nose_error_mhz": 0.09999999999999964,
+      "by_mode": {
+        "O": {
+          "group_range_error_km": 85.41105059441212,
+          "missing_frequency_fraction": 0.08108108108108109,
+          "nose_error_mhz": 0.09999999999999964,
+          "frequencies_with_any_return": 37
+        },
+        "X": {
+          "group_range_error_km": 92.49207579907284,
+          "missing_frequency_fraction": 0.10256410256410256,
+          "nose_error_mhz": 0.09999999999999964,
+          "frequencies_with_any_return": 39
+        }
+      },
+      "doppler_1hz_mismatch": 0.7323943661971831,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 113.59945052068612
+    },
+    {
+      "name": "q1m04",
+      "ionogram_equivalent_km": 116.45781244902524,
+      "group_range_error_km": 116.45781244902524,
+      "low_band_2p5_to_4p5_error_km": 101.53934141085455,
+      "nose_error_mhz": 0.0,
+      "by_mode": {
+        "O": {
+          "group_range_error_km": 107.24002062864857,
+          "missing_frequency_fraction": 0.05405405405405406,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 37
+        },
+        "X": {
+          "group_range_error_km": 125.67560426940192,
+          "missing_frequency_fraction": 0.07692307692307693,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 39
+        }
+      },
+      "doppler_1hz_mismatch": 0.9908450704225351,
+      "insitu_max_absolute_error_percent": 0.00019520925432781056,
+      "combined_equivalent_km": 136.27471385747594
+    },
+    {
+      "name": "q2p06",
+      "ionogram_equivalent_km": 106.44775388414607,
+      "group_range_error_km": 106.44775388414607,
+      "low_band_2p5_to_4p5_error_km": 70.32592522891173,
+      "nose_error_mhz": 0.0,
+      "by_mode": {
+        "O": {
+          "group_range_error_km": 102.49984741648997,
+          "missing_frequency_fraction": 0.05405405405405406,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 37
+        },
+        "X": {
+          "group_range_error_km": 110.39566035180215,
+          "missing_frequency_fraction": 0.02702702702702703,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 37
+        }
+      },
+      "doppler_1hz_mismatch": 0.8690140845070422,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 123.82803557428691
+    },
+    {
+      "name": "q2m06",
+      "ionogram_equivalent_km": 82.60184751847879,
+      "group_range_error_km": 82.60184751847879,
+      "low_band_2p5_to_4p5_error_km": 44.231013256231954,
+      "nose_error_mhz": 0.0,
+      "by_mode": {
+        "O": {
+          "group_range_error_km": 74.63456055690213,
+          "missing_frequency_fraction": 0.05405405405405406,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 37
+        },
+        "X": {
+          "group_range_error_km": 90.56913448005545,
+          "missing_frequency_fraction": 0.1,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 40
+        }
+      },
+      "doppler_1hz_mismatch": 0.6070422535211267,
+      "insitu_max_absolute_error_percent": 0.00019520925432781056,
+      "combined_equivalent_km": 94.74269258890132
+    },
+    {
+      "name": "hp10",
+      "ionogram_equivalent_km": 86.11182865349716,
+      "group_range_error_km": 76.11182865349718,
+      "low_band_2p5_to_4p5_error_km": 39.623651669295654,
+      "nose_error_mhz": 0.09999999999999964,
+      "by_mode": {
+        "O": {
+          "group_range_error_km": 71.77668313743037,
+          "missing_frequency_fraction": 0.08108108108108109,
+          "nose_error_mhz": 0.09999999999999964,
+          "frequencies_with_any_return": 37
+        },
+        "X": {
+          "group_range_error_km": 80.44697416956402,
+          "missing_frequency_fraction": 0.10256410256410256,
+          "nose_error_mhz": 0.09999999999999964,
+          "frequencies_with_any_return": 39
+        }
+      },
+      "doppler_1hz_mismatch": 0.6274647887323943,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 98.66112442814504
+    },
+    {
+      "name": "hm10",
+      "ionogram_equivalent_km": 122.56113689175078,
+      "group_range_error_km": 112.5611368917508,
+      "low_band_2p5_to_4p5_error_km": 70.45090935510419,
+      "nose_error_mhz": 0.09999999999999964,
+      "by_mode": {
+        "O": {
+          "group_range_error_km": 107.95387628103671,
+          "missing_frequency_fraction": 0.08108108108108109,
+          "nose_error_mhz": 0.09999999999999964,
+          "frequencies_with_any_return": 37
+        },
+        "X": {
+          "group_range_error_km": 117.1683975024649,
+          "missing_frequency_fraction": 0.10256410256410256,
+          "nose_error_mhz": 0.09999999999999964,
+          "frequencies_with_any_return": 39
+        }
+      },
+      "doppler_1hz_mismatch": 0.7802816901408449,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 138.16677069456767
+    },
+    {
+      "name": "q2m06_hp10",
+      "ionogram_equivalent_km": 84.21366807530546,
+      "group_range_error_km": 74.21366807530549,
+      "low_band_2p5_to_4p5_error_km": 46.342336185789954,
+      "nose_error_mhz": 0.09999999999999964,
+      "by_mode": {
+        "O": {
+          "group_range_error_km": 68.63897396637917,
+          "missing_frequency_fraction": 0.08108108108108109,
+          "nose_error_mhz": 0.09999999999999964,
+          "frequencies_with_any_return": 37
+        },
+        "X": {
+          "group_range_error_km": 79.78836218423183,
+          "missing_frequency_fraction": 0.125,
+          "nose_error_mhz": 0.09999999999999964,
+          "frequencies_with_any_return": 40
+        }
+      },
+      "doppler_1hz_mismatch": 0.6584507042253521,
+      "insitu_max_absolute_error_percent": 0.00019520925432781056,
+      "combined_equivalent_km": 97.3826821598125
+    },
+    {
+      "name": "q2m12",
+      "ionogram_equivalent_km": 80.45412298699641,
+      "group_range_error_km": 80.45412298699641,
+      "low_band_2p5_to_4p5_error_km": 49.49726435357472,
+      "nose_error_mhz": 0.0,
+      "by_mode": {
+        "O": {
+          "group_range_error_km": 72.11726341125849,
+          "missing_frequency_fraction": 0.05405405405405406,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 37
+        },
+        "X": {
+          "group_range_error_km": 88.79098256273433,
+          "missing_frequency_fraction": 0.12195121951219512,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 41
+        }
+      },
+      "doppler_1hz_mismatch": 0.7232394366197182,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 94.91891171939078
+    },
+    {
+      "name": "q2m06_gq2p08",
+      "ionogram_equivalent_km": 80.63334563271523,
+      "group_range_error_km": 80.63334563271523,
+      "low_band_2p5_to_4p5_error_km": 44.109113420350525,
+      "nose_error_mhz": 0.0,
+      "by_mode": {
+        "O": {
+          "group_range_error_km": 75.02771812573182,
+          "missing_frequency_fraction": 0.05405405405405406,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 37
+        },
+        "X": {
+          "group_range_error_km": 86.23897313969864,
+          "missing_frequency_fraction": 0.1,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 40
+        }
+      },
+      "doppler_1hz_mismatch": 0.6154929577464788,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 92.94320478764482
+    },
+    {
+      "name": "q2m06_gq2m08",
+      "ionogram_equivalent_km": 82.77736855192471,
+      "group_range_error_km": 82.77736855192471,
+      "low_band_2p5_to_4p5_error_km": 44.58466392252254,
+      "nose_error_mhz": 0.0,
+      "by_mode": {
+        "O": {
+          "group_range_error_km": 74.54580635266598,
+          "missing_frequency_fraction": 0.05405405405405406,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 37
+        },
+        "X": {
+          "group_range_error_km": 91.00893075118344,
+          "missing_frequency_fraction": 0.1,
+          "nose_error_mhz": 0.0,
+          "frequencies_with_any_return": 40
+        }
+      },
+      "doppler_1hz_mismatch": 0.6929577464788733,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 96.63652348150218
+    }
+  ],
+  "lowest_combined_candidate": "q2m06_gq2p08"
+}

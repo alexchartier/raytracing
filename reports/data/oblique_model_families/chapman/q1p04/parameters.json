@@ -1,0 +1,17 @@
+{
+  "source": "oblique candidate from vertical spline and 800 km track samples",
+  "uses_full_truth_density": false,
+  "dq1": 0.04,
+  "dq2": 0.0,
+  "dh_km": 0.0,
+  "q1_gradient": 0.0,
+  "q2_gradient": 0.0,
+  "q1_controls": [
+    0.8716160116995876,
+    0.8716160116995876
+  ],
+  "q2_controls": [
+    0.4564997446307198,
+    0.4564997446307198
+  ]
+}

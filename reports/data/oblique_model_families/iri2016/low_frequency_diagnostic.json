@@ -1,0 +1,20 @@
+{
+  "case": "iri2016",
+  "selection_frozen": true,
+  "uses_full_truth_density": false,
+  "method": "mean symmetric nearest O/X group range, 150 km for a missing frequency; only modes with occupied bins contribute",
+  "bands": {
+    "2.0_to_2.4_mhz": {
+      "start": 146.57643805352666,
+      "q2m06_gq2p08": 145.99434734914678
+    },
+    "2.0_to_4.5_mhz": {
+      "start": 65.98259093419504,
+      "q2m06_gq2p08": 62.21163650705374
+    },
+    "2.5_to_4.5_mhz": {
+      "start": 50.48507114385876,
+      "q2m06_gq2p08": 44.109113420350525
+    }
+  }
+}

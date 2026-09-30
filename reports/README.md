@@ -235,3 +235,21 @@ ionograms, density cuts, peak metrics, method, and validation limits; its
 [Markdown source](sami3_wave_retrieval_report.md) is kept beside the PDF.
 Rebuild it from the repository root with
 `pandoc reports/sami3_wave_retrieval_report.md --pdf-engine=tectonic --resource-path=reports -o reports/sami3_wave_retrieval_report.pdf`.
+
+## Independent-profile oblique shape check
+
+`oblique_model_family_cases.py` prepares NeQuick-G, generalized Chapman, and
+independent Fortran IRI-2016 density truths for the same 600 km oblique link.
+The candidate start is a monotone spline fitted to each saved vertical O-mode
+ionogram and anchored by synthetic 800 km density every 1 km. The truth
+density remains withheld while
+`build_oblique_model_family_candidates.py`,
+`build_oblique_model_family_refinements.py`, and
+`score_oblique_model_families.py` construct, trace, and select the shape
+candidates. `plot_oblique_model_family_results.py` makes paired O/X ionograms
+and midpoint density profiles after selection. The private Cartman setup and
+ray jobs are `oblique_model_family_setup_job.sh` and
+`oblique_model_family_trace_job.sh`. Results and provenance are saved in
+`data/oblique_model_families`; section 6 of the report above describes the
+method and validation limits. These ray jobs must run on private Cartman
+compute nodes, with at most two active, not on the 16 GB laptop.

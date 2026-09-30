@@ -1,0 +1,23 @@
+{
+  "description": "Independent model-profile oblique test",
+  "density_model": "NeQuick-G; tpl2go implementation",
+  "source_time": "month 04, 13 UT",
+  "source_density": "reports/data/oblique_model_families/sources/nequick_density.npz",
+  "horizontal_structure": "IRI-2016 retains spatial variation; NeQuick and Chapman profiles are replicated horizontally",
+  "profiles": [
+    {
+      "index": 1,
+      "latitude_deg": -53.67859907285381,
+      "longitude_deg": 7.7400542554165135,
+      "altitude_km": 800.0
+    }
+  ],
+  "satellite_separation_km": 600.0,
+  "frequency_sweep_mhz": [
+    2.0,
+    10.0,
+    0.1
+  ],
+  "homing_tolerance_m": 1000.0,
+  "vertical_ionogram_observation": "reports/data/oblique_model_families/sources/nequick_vertical.npz"
+}

@@ -1,0 +1,10 @@
+{
+  "case": "chapman",
+  "chosen_candidate": "hp20",
+  "uses_full_truth_density": false,
+  "uses_synthetic_800km_track_density": true,
+  "scores_sha256": "9552b779b3108064bcb789d0a56cc95d1a59750bf9d309565d6eb0794ddb5f34",
+  "selected_grid_sha256": "80e5d1ddb8517ef1a2f31513a78d5afb2b38979a7a6c1a0d85b6c5c4f1e98d6d",
+  "selected_grid": "reports/data/oblique_model_families/chapman/hp20/grid.nc",
+  "selection_rule": "minimum combined O/X plus 1 Hz Doppler score among fields within 0.5% of all 800 km observations"
+}

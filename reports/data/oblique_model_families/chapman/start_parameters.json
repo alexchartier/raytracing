@@ -1,0 +1,17 @@
+{
+  "vertical_observation": "reports/data/oblique_model_families/sources/chapman_vertical.npz",
+  "uses_full_truth_density": false,
+  "uses_800km_track_observation": true,
+  "prior_support": "reports/data/oblique_model_families/support_grid.nc",
+  "density_start": "model-agnostic monotone spline from vertical O returns",
+  "fof2_mhz": 5.74944874505411,
+  "hmf2_km": 278.2198540073939,
+  "vertical_surrogate_range_mae_km": 2.0082226852703684,
+  "q1_at_quarter": 0.8316160116995875,
+  "q2_at_three_fifths": 0.4564997446307198,
+  "latitude_controls_deg": [
+    -53.67859907285381,
+    -48.885488118390526
+  ],
+  "800km_observation_count": 601
+}

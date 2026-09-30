@@ -1,0 +1,74 @@
+[
+  {
+    "case": "nequick",
+    "candidate": "q1p04"
+  },
+  {
+    "case": "nequick",
+    "candidate": "q1m04"
+  },
+  {
+    "case": "nequick",
+    "candidate": "q2p06"
+  },
+  {
+    "case": "nequick",
+    "candidate": "q2m06"
+  },
+  {
+    "case": "nequick",
+    "candidate": "hp10"
+  },
+  {
+    "case": "nequick",
+    "candidate": "hm10"
+  },
+  {
+    "case": "chapman",
+    "candidate": "q1p04"
+  },
+  {
+    "case": "chapman",
+    "candidate": "q1m04"
+  },
+  {
+    "case": "chapman",
+    "candidate": "q2p06"
+  },
+  {
+    "case": "chapman",
+    "candidate": "q2m06"
+  },
+  {
+    "case": "chapman",
+    "candidate": "hp10"
+  },
+  {
+    "case": "chapman",
+    "candidate": "hm10"
+  },
+  {
+    "case": "iri2016",
+    "candidate": "q1p04"
+  },
+  {
+    "case": "iri2016",
+    "candidate": "q1m04"
+  },
+  {
+    "case": "iri2016",
+    "candidate": "q2p06"
+  },
+  {
+    "case": "iri2016",
+    "candidate": "q2m06"
+  },
+  {
+    "case": "iri2016",
+    "candidate": "hp10"
+  },
+  {
+    "case": "iri2016",
+    "candidate": "hm10"
+  }
+]

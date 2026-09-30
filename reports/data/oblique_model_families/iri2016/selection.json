@@ -1,0 +1,10 @@
+{
+  "case": "iri2016",
+  "chosen_candidate": "q2m06_gq2p08",
+  "uses_full_truth_density": false,
+  "uses_synthetic_800km_track_density": true,
+  "scores_sha256": "f160c7cb3cf4190d4e5c346be36f922791eff26d23ad518484b5c24376d91f67",
+  "selected_grid_sha256": "952a1404ccd1dca6fbcaca26242c9d1b18b2c2d076186313b332bdab9da9c12a",
+  "selected_grid": "reports/data/oblique_model_families/iri2016/q2m06_gq2p08/grid.nc",
+  "selection_rule": "minimum combined O/X plus 1 Hz Doppler score among fields within 0.5% of all 800 km observations"
+}
