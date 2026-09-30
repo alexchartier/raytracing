@@ -1,0 +1,280 @@
+{
+  "selection_uses_truth_density": false,
+  "source_prior_grid": "reports/data/general_field_sami3_wave/nose_init/grid.nc",
+  "source_ionograms": "reports/data/general_field_sami3_wave/forward/nose_init/ionograms",
+  "observed_ionograms": "reports/data/sami3_wave_20170111_0600/vertical_truth",
+  "in_situ_observations": "reports/data/sami3_monotone_topside/insitu_1km.json",
+  "manifest": "reports/data/sami3_wave_20170111_0600/manifest.json",
+  "observed_profile_indices": [
+    1,
+    5,
+    9,
+    12,
+    14,
+    17,
+    20
+  ],
+  "pilot_profile_indices": [
+    9,
+    14,
+    17
+  ],
+  "ridge_need_by_profile": [
+    {
+      "index": 1,
+      "modes": {
+        "O": {
+          "points": 16,
+          "median_observed_minus_modeled_km": 208.27350879832875
+        },
+        "X": {
+          "points": 20,
+          "median_observed_minus_modeled_km": 204.97264959203744
+        }
+      },
+      "mean_mode_ridge_need_km": 206.6230791951831
+    },
+    {
+      "index": 5,
+      "modes": {
+        "O": {
+          "points": 15,
+          "median_observed_minus_modeled_km": 133.03774044383067
+        },
+        "X": {
+          "points": 20,
+          "median_observed_minus_modeled_km": 209.82010619936432
+        }
+      },
+      "mean_mode_ridge_need_km": 171.4289233215975
+    },
+    {
+      "index": 9,
+      "modes": {
+        "O": {
+          "points": 13,
+          "median_observed_minus_modeled_km": 195.3135850323854
+        },
+        "X": {
+          "points": 20,
+          "median_observed_minus_modeled_km": 225.43556497858856
+        }
+      },
+      "mean_mode_ridge_need_km": 210.37457500548697
+    },
+    {
+      "index": 12,
+      "modes": {
+        "O": {
+          "points": 19,
+          "median_observed_minus_modeled_km": 147.98614804670615
+        },
+        "X": {
+          "points": 20,
+          "median_observed_minus_modeled_km": 116.24135998713894
+        }
+      },
+      "mean_mode_ridge_need_km": 132.11375401692254
+    },
+    {
+      "index": 14,
+      "modes": {
+        "O": {
+          "points": 20,
+          "median_observed_minus_modeled_km": 195.6940575954884
+        },
+        "X": {
+          "points": 20,
+          "median_observed_minus_modeled_km": 106.81782872627878
+        }
+      },
+      "mean_mode_ridge_need_km": 151.2559431608836
+    },
+    {
+      "index": 17,
+      "modes": {
+        "O": {
+          "points": 20,
+          "median_observed_minus_modeled_km": 271.9959253898103
+        },
+        "X": {
+          "points": 20,
+          "median_observed_minus_modeled_km": 182.162133001263
+        }
+      },
+      "mean_mode_ridge_need_km": 227.07902919553663
+    },
+    {
+      "index": 20,
+      "modes": {
+        "O": {
+          "points": 20,
+          "median_observed_minus_modeled_km": 212.00632180221567
+        },
+        "X": {
+          "points": 20,
+          "median_observed_minus_modeled_km": 220.57141750175288
+        }
+      },
+      "mean_mode_ridge_need_km": 216.28886965198427
+    }
+  ],
+  "candidates": [
+    {
+      "name": "varying_g04",
+      "grid": "reports/data/sami3_monotone_topside/varying_g04/grid.nc",
+      "fraction_at_quarter_by_profile": [
+        0.7078544621746513,
+        0.6980000985300473,
+        0.7089048810015364,
+        0.6869918511247384,
+        0.6923516640850474,
+        0.7135821281747503,
+        0.7105608835025556
+      ],
+      "fraction_at_three_fifths_by_profile": [
+        0.23264923167807322,
+        0.218571569328639,
+        0.2341498300021948,
+        0.202845501606769,
+        0.21050237726435345,
+        0.24083161167821465,
+        0.2365155478607937
+      ],
+      "peak_height_shift_km_by_profile": [
+        -20.92984633561465,
+        -18.114313865727798,
+        -21.229966000438957,
+        -14.969100321353803,
+        -16.50047545287069,
+        -22.56632233564293,
+        -21.70310957215874
+      ]
+    },
+    {
+      "name": "varying_g07",
+      "grid": "reports/data/sami3_monotone_topside/varying_g07/grid.nc",
+      "fraction_at_quarter_by_profile": [
+        0.7512453088056398,
+        0.7340001724275828,
+        0.7530835417526887,
+        0.714735739468292,
+        0.724115412148833,
+        0.7612687243058129,
+        0.7559815461294723
+      ],
+      "fraction_at_three_fifths_by_profile": [
+        0.29463615543662813,
+        0.2700002463251182,
+        0.2972622025038409,
+        0.2424796278118458,
+        0.2558791602126185,
+        0.3089553204368756,
+        0.301402208756389
+      ],
+      "peak_height_shift_km_by_profile": [
+        -20.92984633561465,
+        -18.114313865727798,
+        -21.229966000438957,
+        -14.969100321353803,
+        -16.50047545287069,
+        -22.56632233564293,
+        -21.70310957215874
+      ]
+    },
+    {
+      "name": "varying_g10",
+      "grid": "reports/data/sami3_monotone_topside/varying_g10/grid.nc",
+      "fraction_at_quarter_by_profile": [
+        0.7946361554366281,
+        0.7700002463251183,
+        0.7972622025038409,
+        0.7424796278118458,
+        0.7558791602126185,
+        0.8089553204368757,
+        0.801402208756389
+      ],
+      "fraction_at_three_fifths_by_profile": [
+        0.3566230791951831,
+        0.3214289233215975,
+        0.360374575005487,
+        0.2821137540169225,
+        0.30125594316088355,
+        0.3770790291955366,
+        0.36628886965198426
+      ],
+      "peak_height_shift_km_by_profile": [
+        -20.92984633561465,
+        -18.114313865727798,
+        -21.229966000438957,
+        -14.969100321353803,
+        -16.50047545287069,
+        -22.56632233564293,
+        -21.70310957215874
+      ]
+    },
+    {
+      "name": "varying_g13",
+      "grid": "reports/data/sami3_monotone_topside/varying_g13/grid.nc",
+      "fraction_at_quarter_by_profile": [
+        0.8380270020676166,
+        0.8060003202226538,
+        0.8414408632549932,
+        0.7702235161553995,
+        0.787642908276404,
+        0.8566419165679384,
+        0.8468228713833057
+      ],
+      "fraction_at_three_fifths_by_profile": [
+        0.41861000295373807,
+        0.3728576003180768,
+        0.4234869475071331,
+        0.3217478802219993,
+        0.3466327261091487,
+        0.4452027379541976,
+        0.4311755305475796
+      ],
+      "peak_height_shift_km_by_profile": [
+        -20.92984633561465,
+        -18.114313865727798,
+        -21.229966000438957,
+        -14.969100321353803,
+        -16.50047545287069,
+        -22.56632233564293,
+        -21.70310957215874
+      ]
+    },
+    {
+      "name": "varying_g10_h0",
+      "grid": "reports/data/sami3_monotone_topside/varying_g10_h0/grid.nc",
+      "fraction_at_quarter_by_profile": [
+        0.7946361554366281,
+        0.7700002463251183,
+        0.7972622025038409,
+        0.7424796278118458,
+        0.7558791602126185,
+        0.8089553204368757,
+        0.801402208756389
+      ],
+      "fraction_at_three_fifths_by_profile": [
+        0.3566230791951831,
+        0.3214289233215975,
+        0.360374575005487,
+        0.2821137540169225,
+        0.30125594316088355,
+        0.3770790291955366,
+        0.36628886965198426
+      ],
+      "peak_height_shift_km_by_profile": [
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ]
+    }
+  ],
+  "ionogram_method": "raw adaptive O/X, option D, 2\u201310 MHz at 100 kHz"
+}

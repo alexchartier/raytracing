@@ -1,0 +1,245 @@
+{
+  "selection_uses_truth_density": false,
+  "selected_candidate": "varying_g04",
+  "observed_profile_indices": [
+    1,
+    5,
+    9,
+    12,
+    14,
+    17,
+    20
+  ],
+  "model_truth": "SAMI3/HIAMCM electron density remapped onto PyIRI magnetic/collision grid",
+  "synthetic_insitu_samples": 2225,
+  "maximum_insitu_absolute_error_percent": 0.01561965939020915,
+  "topside_upward_steps_at_twenty_profile_locations": 0,
+  "topside_upward_steps_at_2225_insitu_locations": 0,
+  "observed_positions": {
+    "peak_density_mae_percent": 2.2168867997115274,
+    "peak_density_bias_percent": 0.20674820454751502,
+    "fof2_mae_mhz": 0.0539310262829983,
+    "hmf2_mae_km": 4.285714285714286,
+    "hmf2_bias_km": -1.4285714285714286,
+    "profile_nrmse_150_to_800_percent": 8.416492423106055,
+    "topside_nrmse_350_to_800_percent": 2.96353263932185,
+    "peak_density_error_percent_by_profile": [
+      -1.1163243469368367,
+      0.9997292328940866,
+      6.053836855097328,
+      1.4291564269152346,
+      -2.965335082930143,
+      -1.1845558495066855,
+      -1.7692698037003796
+    ],
+    "hmf2_error_km_by_profile": [
+      -5.0,
+      0.0,
+      0.0,
+      -5.0,
+      -10.0,
+      0.0,
+      10.0
+    ]
+  },
+  "twenty_position_track": {
+    "peak_density_mae_percent": 2.247746199396965,
+    "peak_density_bias_percent": 0.7774108582752381,
+    "fof2_mae_mhz": 0.053634942225000294,
+    "hmf2_mae_km": 4.75,
+    "hmf2_bias_km": -1.25,
+    "profile_nrmse_150_to_800_percent": 8.589307130623867,
+    "topside_nrmse_350_to_800_percent": 2.768567602856339,
+    "peak_density_error_percent_by_profile": [
+      -1.1163243469368367,
+      -0.5453011014520115,
+      0.03246115900679136,
+      0.47449225143529894,
+      0.9997292328940866,
+      1.9476316678584071,
+      3.53837248408424,
+      4.979577251055911,
+      6.053836855097328,
+      6.064533626367252,
+      4.7317796220074815,
+      1.4291564269152346,
+      -0.9542478692176726,
+      -2.965335082930143,
+      -2.822331013663737,
+      -2.0695591754226084,
+      -1.1845558495066855,
+      -0.36537750896001864,
+      -0.9110516594271756,
+      -1.7692698037003796
+    ],
+    "hmf2_error_km_by_profile": [
+      -5.0,
+      -5.0,
+      -5.0,
+      0.0,
+      0.0,
+      0.0,
+      5.0,
+      5.0,
+      0.0,
+      0.0,
+      -5.0,
+      -5.0,
+      -10.0,
+      -10.0,
+      -10.0,
+      -5.0,
+      0.0,
+      5.0,
+      10.0,
+      10.0
+    ]
+  },
+  "ionogram_score": {
+    "name": "varying_g04",
+    "mean_total_equivalent_km": 78.67328576992493,
+    "mean_group_range_error_km": 72.95900005563921,
+    "by_profile": [
+      {
+        "index": 1,
+        "total_equivalent_km": 70.8662575125314,
+        "mean_group_range_error_km": 70.8662575125314,
+        "mean_nose_error_mhz": 0.0,
+        "by_mode": {
+          "O": {
+            "group_range_error_km": 67.22580316764598,
+            "missing_frequency_fraction": 0.0,
+            "nose_error_mhz": 0.0,
+            "frequencies_with_any_return": 28
+          },
+          "X": {
+            "group_range_error_km": 74.50671185741683,
+            "missing_frequency_fraction": 0.030303030303030304,
+            "nose_error_mhz": 0.0,
+            "frequencies_with_any_return": 33
+          }
+        }
+      },
+      {
+        "index": 5,
+        "total_equivalent_km": 67.97085357911365,
+        "mean_group_range_error_km": 62.97085357911362,
+        "mean_nose_error_mhz": 0.050000000000000266,
+        "by_mode": {
+          "O": {
+            "group_range_error_km": 50.96624597854565,
+            "missing_frequency_fraction": 0.037037037037037035,
+            "nose_error_mhz": 0.10000000000000053,
+            "frequencies_with_any_return": 27
+          },
+          "X": {
+            "group_range_error_km": 74.9754611796816,
+            "missing_frequency_fraction": 0.03125,
+            "nose_error_mhz": 0.0,
+            "frequencies_with_any_return": 32
+          }
+        }
+      },
+      {
+        "index": 9,
+        "total_equivalent_km": 101.26055126003087,
+        "mean_group_range_error_km": 81.26055126003081,
+        "mean_nose_error_mhz": 0.20000000000000062,
+        "by_mode": {
+          "O": {
+            "group_range_error_km": 79.54031386633433,
+            "missing_frequency_fraction": 0.07142857142857142,
+            "nose_error_mhz": 0.20000000000000107,
+            "frequencies_with_any_return": 28
+          },
+          "X": {
+            "group_range_error_km": 82.9807886537273,
+            "missing_frequency_fraction": 0.09090909090909091,
+            "nose_error_mhz": 0.20000000000000018,
+            "frequencies_with_any_return": 33
+          }
+        }
+      },
+      {
+        "index": 12,
+        "total_equivalent_km": 72.48612105171428,
+        "mean_group_range_error_km": 67.48612105171429,
+        "mean_nose_error_mhz": 0.04999999999999982,
+        "by_mode": {
+          "O": {
+            "group_range_error_km": 61.81867873953864,
+            "missing_frequency_fraction": 0.09090909090909091,
+            "nose_error_mhz": 0.09999999999999964,
+            "frequencies_with_any_return": 33
+          },
+          "X": {
+            "group_range_error_km": 73.15356336388993,
+            "missing_frequency_fraction": 0.02857142857142857,
+            "nose_error_mhz": 0.0,
+            "frequencies_with_any_return": 35
+          }
+        }
+      },
+      {
+        "index": 14,
+        "total_equivalent_km": 84.82006584540396,
+        "mean_group_range_error_km": 79.82006584540397,
+        "mean_nose_error_mhz": 0.04999999999999982,
+        "by_mode": {
+          "O": {
+            "group_range_error_km": 75.98357135418188,
+            "missing_frequency_fraction": 0.029411764705882353,
+            "nose_error_mhz": 0.0,
+            "frequencies_with_any_return": 34
+          },
+          "X": {
+            "group_range_error_km": 83.65656033662607,
+            "missing_frequency_fraction": 0.05555555555555555,
+            "nose_error_mhz": 0.09999999999999964,
+            "frequencies_with_any_return": 36
+          }
+        }
+      },
+      {
+        "index": 17,
+        "total_equivalent_km": 80.85995650769485,
+        "mean_group_range_error_km": 80.85995650769485,
+        "mean_nose_error_mhz": 0.0,
+        "by_mode": {
+          "O": {
+            "group_range_error_km": 91.31808191492853,
+            "missing_frequency_fraction": 0.029411764705882353,
+            "nose_error_mhz": 0.0,
+            "frequencies_with_any_return": 34
+          },
+          "X": {
+            "group_range_error_km": 70.40183110046117,
+            "missing_frequency_fraction": 0.027777777777777776,
+            "nose_error_mhz": 0.0,
+            "frequencies_with_any_return": 36
+          }
+        }
+      },
+      {
+        "index": 20,
+        "total_equivalent_km": 72.44919463298548,
+        "mean_group_range_error_km": 67.4491946329855,
+        "mean_nose_error_mhz": 0.04999999999999982,
+        "by_mode": {
+          "O": {
+            "group_range_error_km": 66.33455788795747,
+            "missing_frequency_fraction": 0.029411764705882353,
+            "nose_error_mhz": 0.09999999999999964,
+            "frequencies_with_any_return": 34
+          },
+          "X": {
+            "group_range_error_km": 68.56383137801352,
+            "missing_frequency_fraction": 0.027777777777777776,
+            "nose_error_mhz": 0.0,
+            "frequencies_with_any_return": 36
+          }
+        }
+      }
+    ]
+  }
+}

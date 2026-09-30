@@ -1,0 +1,18 @@
+{
+  "chosen_candidate": "varying_g04",
+  "chosen_mean_total_equivalent_km": 78.67328576992493,
+  "profile_indices": [
+    1,
+    5,
+    9,
+    12,
+    14,
+    17,
+    20
+  ],
+  "selection_uses_truth_density": false,
+  "frozen_at_utc": "2026-09-30T18:22:32.084207+00:00",
+  "score_file_sha256": "f2a6684ae77a393a3d363425ad9dd29cdad155d6bfac4e1bd0ceef17d4dd24ca",
+  "plan_file_sha256": "e0b32d54dc4ad933d30acbc47b103e28efb0ff337a033f0b816e27238bb738a2",
+  "selected_grid_sha256": "e22c395b87bdb86952c8cf3fa4e05ef62514c6a46594d3148c220176162a1913"
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "candidate": "varying_g04",
+    "profile_index": 1
+  },
+  {
+    "candidate": "varying_g04",
+    "profile_index": 5
+  },
+  {
+    "candidate": "varying_g04",
+    "profile_index": 12
+  },
+  {
+    "candidate": "varying_g04",
+    "profile_index": 20
+  },
+  {
+    "candidate": "varying_g07",
+    "profile_index": 1
+  },
+  {
+    "candidate": "varying_g07",
+    "profile_index": 5
+  },
+  {
+    "candidate": "varying_g07",
+    "profile_index": 12
+  },
+  {
+    "candidate": "varying_g07",
+    "profile_index": 20
+  }
+]

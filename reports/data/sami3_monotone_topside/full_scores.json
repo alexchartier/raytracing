@@ -1,0 +1,457 @@
+{
+  "selection_uses_truth_density": false,
+  "profile_indices": [
+    1,
+    5,
+    9,
+    12,
+    14,
+    17,
+    20
+  ],
+  "score_definition": "mean symmetric nearest group-range error across every accepted O/X return at each occupied frequency, 150 km missing-frequency cost, plus 100 km per MHz mean O/X nose error; no range-error clipping",
+  "candidates": [
+    {
+      "name": "nose_init_previous",
+      "mean_total_equivalent_km": 178.2477616916595,
+      "mean_group_range_error_km": 172.53347597737383,
+      "by_profile": [
+        {
+          "index": 1,
+          "total_equivalent_km": 183.30530369411733,
+          "mean_group_range_error_km": 178.30530369411736,
+          "mean_nose_error_mhz": 0.04999999999999982,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 161.7685538918532,
+              "missing_frequency_fraction": 0.034482758620689655,
+              "nose_error_mhz": 0.09999999999999964,
+              "frequencies_with_any_return": 29
+            },
+            "X": {
+              "group_range_error_km": 194.8420534963815,
+              "missing_frequency_fraction": 0.058823529411764705,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 34
+            }
+          }
+        },
+        {
+          "index": 5,
+          "total_equivalent_km": 149.60411726932975,
+          "mean_group_range_error_km": 149.60411726932975,
+          "mean_nose_error_mhz": 0.0,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 113.4415243353788,
+              "missing_frequency_fraction": 0.0,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 27
+            },
+            "X": {
+              "group_range_error_km": 185.7667102032807,
+              "missing_frequency_fraction": 0.06060606060606061,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 33
+            }
+          }
+        },
+        {
+          "index": 9,
+          "total_equivalent_km": 200.0180231092106,
+          "mean_group_range_error_km": 180.01802310921053,
+          "mean_nose_error_mhz": 0.20000000000000062,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 168.5407152165716,
+              "missing_frequency_fraction": 0.07142857142857142,
+              "nose_error_mhz": 0.20000000000000107,
+              "frequencies_with_any_return": 28
+            },
+            "X": {
+              "group_range_error_km": 191.49533100184945,
+              "missing_frequency_fraction": 0.11764705882352941,
+              "nose_error_mhz": 0.20000000000000018,
+              "frequencies_with_any_return": 34
+            }
+          }
+        },
+        {
+          "index": 12,
+          "total_equivalent_km": 138.48812027593112,
+          "mean_group_range_error_km": 133.48812027593115,
+          "mean_nose_error_mhz": 0.04999999999999982,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 115.5089076276336,
+              "missing_frequency_fraction": 0.09090909090909091,
+              "nose_error_mhz": 0.09999999999999964,
+              "frequencies_with_any_return": 33
+            },
+            "X": {
+              "group_range_error_km": 151.46733292422869,
+              "missing_frequency_fraction": 0.05555555555555555,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 36
+            }
+          }
+        },
+        {
+          "index": 14,
+          "total_equivalent_km": 160.28206178082937,
+          "mean_group_range_error_km": 155.2820617808294,
+          "mean_nose_error_mhz": 0.04999999999999982,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 152.09988647643416,
+              "missing_frequency_fraction": 0.029411764705882353,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 34
+            },
+            "X": {
+              "group_range_error_km": 158.4642370852246,
+              "missing_frequency_fraction": 0.08108108108108109,
+              "nose_error_mhz": 0.09999999999999964,
+              "frequencies_with_any_return": 37
+            }
+          }
+        },
+        {
+          "index": 17,
+          "total_equivalent_km": 228.94388768861046,
+          "mean_group_range_error_km": 228.94388768861046,
+          "mean_nose_error_mhz": 0.0,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 268.00682845470925,
+              "missing_frequency_fraction": 0.029411764705882353,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 34
+            },
+            "X": {
+              "group_range_error_km": 189.88094692251164,
+              "missing_frequency_fraction": 0.05405405405405406,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 37
+            }
+          }
+        },
+        {
+          "index": 20,
+          "total_equivalent_km": 187.09281802358794,
+          "mean_group_range_error_km": 182.09281802358797,
+          "mean_nose_error_mhz": 0.04999999999999982,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 174.75901813875464,
+              "missing_frequency_fraction": 0.029411764705882353,
+              "nose_error_mhz": 0.09999999999999964,
+              "frequencies_with_any_return": 34
+            },
+            "X": {
+              "group_range_error_km": 189.4266179084213,
+              "missing_frequency_fraction": 0.05405405405405406,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 37
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "varying_g04",
+      "mean_total_equivalent_km": 78.67328576992493,
+      "mean_group_range_error_km": 72.95900005563921,
+      "by_profile": [
+        {
+          "index": 1,
+          "total_equivalent_km": 70.8662575125314,
+          "mean_group_range_error_km": 70.8662575125314,
+          "mean_nose_error_mhz": 0.0,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 67.22580316764598,
+              "missing_frequency_fraction": 0.0,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 28
+            },
+            "X": {
+              "group_range_error_km": 74.50671185741683,
+              "missing_frequency_fraction": 0.030303030303030304,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 33
+            }
+          }
+        },
+        {
+          "index": 5,
+          "total_equivalent_km": 67.97085357911365,
+          "mean_group_range_error_km": 62.97085357911362,
+          "mean_nose_error_mhz": 0.050000000000000266,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 50.96624597854565,
+              "missing_frequency_fraction": 0.037037037037037035,
+              "nose_error_mhz": 0.10000000000000053,
+              "frequencies_with_any_return": 27
+            },
+            "X": {
+              "group_range_error_km": 74.9754611796816,
+              "missing_frequency_fraction": 0.03125,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 32
+            }
+          }
+        },
+        {
+          "index": 9,
+          "total_equivalent_km": 101.26055126003087,
+          "mean_group_range_error_km": 81.26055126003081,
+          "mean_nose_error_mhz": 0.20000000000000062,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 79.54031386633433,
+              "missing_frequency_fraction": 0.07142857142857142,
+              "nose_error_mhz": 0.20000000000000107,
+              "frequencies_with_any_return": 28
+            },
+            "X": {
+              "group_range_error_km": 82.9807886537273,
+              "missing_frequency_fraction": 0.09090909090909091,
+              "nose_error_mhz": 0.20000000000000018,
+              "frequencies_with_any_return": 33
+            }
+          }
+        },
+        {
+          "index": 12,
+          "total_equivalent_km": 72.48612105171428,
+          "mean_group_range_error_km": 67.48612105171429,
+          "mean_nose_error_mhz": 0.04999999999999982,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 61.81867873953864,
+              "missing_frequency_fraction": 0.09090909090909091,
+              "nose_error_mhz": 0.09999999999999964,
+              "frequencies_with_any_return": 33
+            },
+            "X": {
+              "group_range_error_km": 73.15356336388993,
+              "missing_frequency_fraction": 0.02857142857142857,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 35
+            }
+          }
+        },
+        {
+          "index": 14,
+          "total_equivalent_km": 84.82006584540396,
+          "mean_group_range_error_km": 79.82006584540397,
+          "mean_nose_error_mhz": 0.04999999999999982,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 75.98357135418188,
+              "missing_frequency_fraction": 0.029411764705882353,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 34
+            },
+            "X": {
+              "group_range_error_km": 83.65656033662607,
+              "missing_frequency_fraction": 0.05555555555555555,
+              "nose_error_mhz": 0.09999999999999964,
+              "frequencies_with_any_return": 36
+            }
+          }
+        },
+        {
+          "index": 17,
+          "total_equivalent_km": 80.85995650769485,
+          "mean_group_range_error_km": 80.85995650769485,
+          "mean_nose_error_mhz": 0.0,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 91.31808191492853,
+              "missing_frequency_fraction": 0.029411764705882353,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 34
+            },
+            "X": {
+              "group_range_error_km": 70.40183110046117,
+              "missing_frequency_fraction": 0.027777777777777776,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 36
+            }
+          }
+        },
+        {
+          "index": 20,
+          "total_equivalent_km": 72.44919463298548,
+          "mean_group_range_error_km": 67.4491946329855,
+          "mean_nose_error_mhz": 0.04999999999999982,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 66.33455788795747,
+              "missing_frequency_fraction": 0.029411764705882353,
+              "nose_error_mhz": 0.09999999999999964,
+              "frequencies_with_any_return": 34
+            },
+            "X": {
+              "group_range_error_km": 68.56383137801352,
+              "missing_frequency_fraction": 0.027777777777777776,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 36
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "varying_g07",
+      "mean_total_equivalent_km": 90.16108637744837,
+      "mean_group_range_error_km": 84.44680066316265,
+      "by_profile": [
+        {
+          "index": 1,
+          "total_equivalent_km": 83.34927892569978,
+          "mean_group_range_error_km": 83.34927892569978,
+          "mean_nose_error_mhz": 0.0,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 93.13090498212776,
+              "missing_frequency_fraction": 0.0,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 28
+            },
+            "X": {
+              "group_range_error_km": 73.5676528692718,
+              "missing_frequency_fraction": 0.0,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 32
+            }
+          }
+        },
+        {
+          "index": 5,
+          "total_equivalent_km": 75.02039305951936,
+          "mean_group_range_error_km": 70.02039305951934,
+          "mean_nose_error_mhz": 0.050000000000000266,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 66.59311354259306,
+              "missing_frequency_fraction": 0.037037037037037035,
+              "nose_error_mhz": 0.10000000000000053,
+              "frequencies_with_any_return": 27
+            },
+            "X": {
+              "group_range_error_km": 73.44767257644563,
+              "missing_frequency_fraction": 0.03125,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 32
+            }
+          }
+        },
+        {
+          "index": 9,
+          "total_equivalent_km": 114.23842381589677,
+          "mean_group_range_error_km": 94.23842381589671,
+          "mean_nose_error_mhz": 0.20000000000000062,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 100.60002140876146,
+              "missing_frequency_fraction": 0.07142857142857142,
+              "nose_error_mhz": 0.20000000000000107,
+              "frequencies_with_any_return": 28
+            },
+            "X": {
+              "group_range_error_km": 87.87682622303196,
+              "missing_frequency_fraction": 0.0625,
+              "nose_error_mhz": 0.20000000000000018,
+              "frequencies_with_any_return": 32
+            }
+          }
+        },
+        {
+          "index": 12,
+          "total_equivalent_km": 75.23914138780474,
+          "mean_group_range_error_km": 70.23914138780475,
+          "mean_nose_error_mhz": 0.04999999999999982,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 70.51918588330548,
+              "missing_frequency_fraction": 0.09090909090909091,
+              "nose_error_mhz": 0.09999999999999964,
+              "frequencies_with_any_return": 33
+            },
+            "X": {
+              "group_range_error_km": 69.95909689230403,
+              "missing_frequency_fraction": 0.02857142857142857,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 35
+            }
+          }
+        },
+        {
+          "index": 14,
+          "total_equivalent_km": 90.54390090767548,
+          "mean_group_range_error_km": 85.54390090767549,
+          "mean_nose_error_mhz": 0.04999999999999982,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 88.97366720107672,
+              "missing_frequency_fraction": 0.029411764705882353,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 34
+            },
+            "X": {
+              "group_range_error_km": 82.11413461427426,
+              "missing_frequency_fraction": 0.05555555555555555,
+              "nose_error_mhz": 0.09999999999999964,
+              "frequencies_with_any_return": 36
+            }
+          }
+        },
+        {
+          "index": 17,
+          "total_equivalent_km": 93.24837008092855,
+          "mean_group_range_error_km": 93.24837008092855,
+          "mean_nose_error_mhz": 0.0,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 113.30590906129527,
+              "missing_frequency_fraction": 0.029411764705882353,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 34
+            },
+            "X": {
+              "group_range_error_km": 73.19083110056184,
+              "missing_frequency_fraction": 0.0,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 35
+            }
+          }
+        },
+        {
+          "index": 20,
+          "total_equivalent_km": 99.48809646461397,
+          "mean_group_range_error_km": 94.48809646461399,
+          "mean_nose_error_mhz": 0.04999999999999982,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 96.6563491430538,
+              "missing_frequency_fraction": 0.029411764705882353,
+              "nose_error_mhz": 0.09999999999999964,
+              "frequencies_with_any_return": 34
+            },
+            "X": {
+              "group_range_error_km": 92.31984378617419,
+              "missing_frequency_fraction": 0.0,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 35
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "winner": "varying_g04"
+}

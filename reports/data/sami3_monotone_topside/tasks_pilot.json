@@ -1,0 +1,50 @@
+[
+  {
+    "candidate": "varying_g07",
+    "profile_index": 9
+  },
+  {
+    "candidate": "varying_g07",
+    "profile_index": 14
+  },
+  {
+    "candidate": "varying_g07",
+    "profile_index": 17
+  },
+  {
+    "candidate": "varying_g10",
+    "profile_index": 9
+  },
+  {
+    "candidate": "varying_g10",
+    "profile_index": 14
+  },
+  {
+    "candidate": "varying_g10",
+    "profile_index": 17
+  },
+  {
+    "candidate": "varying_g13",
+    "profile_index": 9
+  },
+  {
+    "candidate": "varying_g13",
+    "profile_index": 14
+  },
+  {
+    "candidate": "varying_g13",
+    "profile_index": 17
+  },
+  {
+    "candidate": "varying_g10_h0",
+    "profile_index": 9
+  },
+  {
+    "candidate": "varying_g10_h0",
+    "profile_index": 14
+  },
+  {
+    "candidate": "varying_g10_h0",
+    "profile_index": 17
+  }
+]
