@@ -1,0 +1,23 @@
+{
+  "altitude_km": 800.0,
+  "profile_indices": [
+    1,
+    5,
+    9,
+    12,
+    14,
+    17,
+    20
+  ],
+  "density_cm3_by_profile": [
+    28012.627058482627,
+    24004.314545041085,
+    21451.60335460211,
+    27001.955198899563,
+    35730.65199403459,
+    37895.84144474976,
+    32714.392700762583
+  ],
+  "relative_uncertainty": 0.005,
+  "provenance": "synthetic in-situ samples of SAMI truth; full density withheld from candidate selection"
+}

@@ -1,0 +1,87 @@
+{
+  "description": "Frozen remapped SAMI3/HIAMCM wave-rich latitude cut; PyIRI is an independent density prior",
+  "source_mat": "/Users/chartat1/data/sami3/2017_tid/sami_mat/2017-01-11_0600.mat",
+  "epoch_utc": "2017-01-11T06:00:00+00:00",
+  "latitude_center_deg": -60.0,
+  "longitude_deg": 190.0,
+  "latitude_span_deg": 20.0,
+  "profile_count": 7,
+  "sounder_altitude_km": 800.0,
+  "satellite_separation_km": 600.0,
+  "density_units": "cm^-3, as in source iono_en_grid raytracing field",
+  "source_altitude_km": [
+    92,
+    800
+  ],
+  "working_altitude_km": [
+    80,
+    820,
+    5
+  ],
+  "pyiri_f107": 75.0,
+  "pyiri_ap_daily": 5.0,
+  "frequency_sweep_mhz": [
+    2.0,
+    10.0,
+    0.1
+  ],
+  "homing_tolerance_m": 1000.0,
+  "vertical_fan_option": "D",
+  "provenance": "Repository remap_sami.m identifies 2017_tid/sami_mat as its HIAMCM-version output; original source NetCDF is not present locally",
+  "source_sha256": "bde22ecab1dbc21606b7ae74b8daa0ccc6d8fe1b3ac48423b0e5d2781c6614bc",
+  "profiles": [
+    {
+      "index": 1,
+      "latitude_deg": -70.0,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 5,
+      "latitude_deg": -65.78947368421052,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 9,
+      "latitude_deg": -61.578947368421055,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 12,
+      "latitude_deg": -58.421052631578945,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 14,
+      "latitude_deg": -56.31578947368421,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 17,
+      "latitude_deg": -53.15789473684211,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    },
+    {
+      "index": 20,
+      "latitude_deg": -50.0,
+      "longitude_deg": 190.0,
+      "altitude_km": 800.0,
+      "time_utc": "2017-01-11T06:00:00+00:00"
+    }
+  ],
+  "selection_observables": [
+    "seven raw adaptive O/X ionograms",
+    "seven local densities at 800 km"
+  ]
+}

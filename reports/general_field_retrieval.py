@@ -101,7 +101,9 @@ def _structured_directions(basis: TrackLogDensityBasis,
     directions = [direction("peak", peak), direction("height", height),
                   direction("width", width)]
     sample_distance = basis.frame.sample_distance_km
-    if len(rows) < 8 or np.ptp(sample_distance) < 300:
+    # Seven well-spaced samples still resolve wavelengths above twice the
+    # largest along-track gap. The SAMI pass has seven observed positions.
+    if len(rows) < 7 or np.ptp(sample_distance) < 300:
         tail = np.zeros_like(peak)
         tail[:, tail_index] = 1.0
         return directions + [direction("tail", tail)], {"wave_inferred": False}
@@ -110,18 +112,19 @@ def _structured_directions(basis: TrackLogDensityBasis,
     for row in rows:
         path = observed_dir / f"ionogram_{int(row['index']):02d}.npz"
         ionogram = Ionogram.read(path)
-        gated = [_gated_nose(path, mode, 15.0) for mode in (1, -1)]
-        valid = [value for value in gated if value is not None]
-        cutoff.append(float(np.mean(valid)) if valid else
-                      float(np.mean([ionogram.nose(mode) for mode in (1, -1)
-                                     if ionogram.nose(mode) is not None])))
+        # A Doppler gate selects near-vertical returns and can truncate the
+        # observed nose severely on an irregular ray fan. Wave inference uses
+        # the full accepted O/X cutoffs instead.
+        valid = [ionogram.nose(mode) for mode in (1, -1)
+                 if ionogram.nose(mode) is not None]
+        cutoff.append(float(np.mean(valid)))
     cutoff = np.asarray(cutoff)
     s = sample_distance
     span = float(np.ptp(s))
     linear = np.column_stack((np.ones(len(s)), (s - np.mean(s)) / 1000.0))
     linear_fit = np.linalg.lstsq(linear, cutoff, rcond=None)[0]
     baseline_sse = float(np.mean((linear @ linear_fit - cutoff) ** 2))
-    low = max(300.0, span / 7.0)
+    low = max(300.0, 2.0 * float(np.max(np.diff(np.sort(s)))), span / 7.0)
     high = min(2200.0, span * 1.5)
     candidates = []
     for wavelength in np.linspace(low, high, 220):
