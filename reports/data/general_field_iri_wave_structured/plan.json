@@ -1,0 +1,552 @@
+{
+  "selection_uses_truth_density": false,
+  "prior_grid": "reports/data/lat_wave_doppler_peak_round3/wide_grid.nc",
+  "manifest": "reports/data/lat_wave_pass_manifest.json",
+  "observed_ionograms": "reports/data/lat_wave_final_truth_ionograms",
+  "local_density_observations": "reports/data/iri_wave_spline_local_density/local_density_observations.json",
+  "profile_indices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "pilot_profile_indices": [
+    3,
+    8,
+    14,
+    18
+  ],
+  "spatial_centers": 4,
+  "active_spatial_centers": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "active_vertical_modes": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "spatial_center_distance_km": [
+    -1111.95080233533,
+    -370.65026744511067,
+    370.65026744510874,
+    1111.9508023353285
+  ],
+  "spatial_width_km": 889.5606418682632,
+  "vertical_offsets_km": [
+    -50.0,
+    0.0,
+    80.0,
+    210.0,
+    420.0
+  ],
+  "vertical_widths_km": [
+    55.0,
+    55.0,
+    75.0,
+    120.0,
+    190.0
+  ],
+  "perturbation": 0.05,
+  "pilot_design": "structured",
+  "directions": [
+    {
+      "name": "peak",
+      "coefficients": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "name": "height",
+      "coefficients": [
+        [
+          -1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "name": "width",
+      "coefficients": [
+        [
+          0.0,
+          0.0,
+          -1.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "name": "wave",
+      "coefficients": [
+        [
+          0.0,
+          -0.3422998402315682,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.5284994467702983,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.5397830585715416,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    }
+  ],
+  "wave_diagnostic": {
+    "wave_inferred": true,
+    "wavelength_km": 902.1586055481209,
+    "harmonic_amplitude_mhz": 0.7074325336776567,
+    "variance_reduction_over_linear": 0.8749191816468175,
+    "cutoff_mhz_by_profile": [
+      4.450000000000003,
+      5.200000000000003,
+      5.650000000000004,
+      5.350000000000003,
+      5.000000000000003,
+      4.850000000000002,
+      4.450000000000003,
+      4.600000000000002,
+      4.8000000000000025,
+      5.950000000000003,
+      5.950000000000003,
+      5.600000000000003,
+      5.0500000000000025,
+      5.100000000000003,
+      4.400000000000002,
+      4.750000000000003,
+      5.3000000000000025,
+      6.2500000000000036,
+      6.100000000000004,
+      5.7500000000000036
+    ]
+  },
+  "maximum_log_correction": 0.5,
+  "candidate_ionogram_requirement": "complete 2-10 MHz O/X sweep, same 100 kHz grid and gap-recovery settings as observations",
+  "candidates": [
+    {
+      "name": "baseline",
+      "grid": "reports/data/general_field_iri_wave_structured/baseline/grid.nc",
+      "coefficients": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "maximum_local_density_error_percent": 0.2830437264017216
+    },
+    {
+      "name": "plus_peak",
+      "grid": "reports/data/general_field_iri_wave_structured/plus_peak/grid.nc",
+      "coefficients": [
+        [
+          0.0,
+          0.05,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.05,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.05,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.05,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "maximum_local_density_error_percent": 0.2830437264017216
+    },
+    {
+      "name": "minus_peak",
+      "grid": "reports/data/general_field_iri_wave_structured/minus_peak/grid.nc",
+      "coefficients": [
+        [
+          -0.0,
+          -0.05,
+          -0.0,
+          -0.0,
+          -0.0
+        ],
+        [
+          -0.0,
+          -0.05,
+          -0.0,
+          -0.0,
+          -0.0
+        ],
+        [
+          -0.0,
+          -0.05,
+          -0.0,
+          -0.0,
+          -0.0
+        ],
+        [
+          -0.0,
+          -0.05,
+          -0.0,
+          -0.0,
+          -0.0
+        ]
+      ],
+      "maximum_local_density_error_percent": 0.2830437264017216
+    },
+    {
+      "name": "plus_height",
+      "grid": "reports/data/general_field_iri_wave_structured/plus_height/grid.nc",
+      "coefficients": [
+        [
+          -0.05,
+          0.0,
+          0.05,
+          0.0,
+          0.0
+        ],
+        [
+          -0.05,
+          0.0,
+          0.05,
+          0.0,
+          0.0
+        ],
+        [
+          -0.05,
+          0.0,
+          0.05,
+          0.0,
+          0.0
+        ],
+        [
+          -0.05,
+          0.0,
+          0.05,
+          0.0,
+          0.0
+        ]
+      ],
+      "maximum_local_density_error_percent": 0.2830437264017438
+    },
+    {
+      "name": "minus_height",
+      "grid": "reports/data/general_field_iri_wave_structured/minus_height/grid.nc",
+      "coefficients": [
+        [
+          0.05,
+          -0.0,
+          -0.05,
+          -0.0,
+          -0.0
+        ],
+        [
+          0.05,
+          -0.0,
+          -0.05,
+          -0.0,
+          -0.0
+        ],
+        [
+          0.05,
+          -0.0,
+          -0.05,
+          -0.0,
+          -0.0
+        ],
+        [
+          0.05,
+          -0.0,
+          -0.05,
+          -0.0,
+          -0.0
+        ]
+      ],
+      "maximum_local_density_error_percent": 0.2830437264017549
+    },
+    {
+      "name": "plus_width",
+      "grid": "reports/data/general_field_iri_wave_structured/plus_width/grid.nc",
+      "coefficients": [
+        [
+          0.0,
+          0.0,
+          -0.05,
+          0.05,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.05,
+          0.05,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.05,
+          0.05,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.05,
+          0.05,
+          0.0
+        ]
+      ],
+      "maximum_local_density_error_percent": 0.2830437264017438
+    },
+    {
+      "name": "minus_width",
+      "grid": "reports/data/general_field_iri_wave_structured/minus_width/grid.nc",
+      "coefficients": [
+        [
+          -0.0,
+          -0.0,
+          0.05,
+          -0.05,
+          -0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.05,
+          -0.05,
+          -0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.05,
+          -0.05,
+          -0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.05,
+          -0.05,
+          -0.0
+        ]
+      ],
+      "maximum_local_density_error_percent": 0.2830437264017549
+    },
+    {
+      "name": "plus_wave",
+      "grid": "reports/data/general_field_iri_wave_structured/plus_wave/grid.nc",
+      "coefficients": [
+        [
+          0.0,
+          -0.01711499201157841,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.05,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.026424972338514915,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.026989152928577082,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "maximum_local_density_error_percent": 0.2830437264017216
+    },
+    {
+      "name": "minus_wave",
+      "grid": "reports/data/general_field_iri_wave_structured/minus_wave/grid.nc",
+      "coefficients": [
+        [
+          -0.0,
+          0.01711499201157841,
+          -0.0,
+          -0.0,
+          -0.0
+        ],
+        [
+          -0.0,
+          0.05,
+          -0.0,
+          -0.0,
+          -0.0
+        ],
+        [
+          -0.0,
+          0.026424972338514915,
+          -0.0,
+          -0.0,
+          -0.0
+        ],
+        [
+          -0.0,
+          -0.026989152928577082,
+          -0.0,
+          -0.0,
+          -0.0
+        ]
+      ],
+      "maximum_local_density_error_percent": 0.2830437264017216
+    }
+  ]
+}

@@ -23,8 +23,85 @@ The older Markdown reports and saved results remain as records.
 
 The current vertical report is
 [`lat_wave_doppler_peak_round3_2026-09-28.md`](lat_wave_doppler_peak_round3_2026-09-28.md).
+`iri_wave_spline_check.py` is a later, profile-level regression screen using
+the saved IRI-wave ionograms and a synthetic 800 km in-situ density scalar at
+each of the 20 positions. Run its `prepare`, `fit`, `tail`, and `evaluate`
+stages in that order. The eight-slope O-mode spline is **rejected** on this
+three-dimensional wave: peak-density MAE rises from 1.73% to 3.17%, and four
+fits miss the local density by over 40%. A conservative 600–800 km tail anchor
+preserves the previous peak result and lowers 300–800 km peak-normalized RMS
+from 1.291% to 1.261%, but has not received full 3-D ray selection.
+Replaying the frozen 20-position ionogram selector still chooses `wide` with
+the original 0.211682 combined score. The saved final ionograms retain 29
+truth and 34 retrieved interior empty mode/frequency bins after the earlier
+recovery passes; the newer inline gap repair has not been ray-checked on this
+wave case.
+The [screen data and figure](data/iri_wave_spline_local_density/) are separate
+from the frozen report result.
 The oblique experiment and its commands are documented in
 [`oblique_wave_600km.md`](oblique_wave_600km.md).
+
+## General density-field retrieval in development
+
+`python_raytrace/general_field_inverse.py` applies a smooth, bounded correction
+to **log electron density** on any supplied forward grid. It uses Gaussian
+functions across the pass and at heights relative to each prior F2 peak, so
+the same parameterization can change peak density, peak height, and topside
+shape. `reports/general_field_retrieval.py` prepares paired pilot grids,
+compares every accepted O/X return after complete ray tracing, and proposes a
+regularized trust-region step. At each candidate, an observed in-situ density
+at the spacecraft is imposed with a 600–800 km taper (for the current 800 km
+pass). The fit reads no truth density beyond those explicit local scalars.
+
+The first IRI-wave development plan has **9 grids** (one anchored baseline
+and paired 5% log-density changes along peak, height, width, and an
+ionogram-inferred wave direction) and four pilot positions: **36 ionograms**.
+The measured low-Doppler O/X cutoff pattern inferred a **902 km** wavelength
+without reading the wave truth parameters. The plan is saved at
+`data/general_field_iri_wave_structured/plan.json`. All 36 pilot ionograms
+and both 20-position finalist passes were traced on Cartman with the same
+complete O/X, gap-recovery, and 20 kHz nose-continuation pipeline as the
+observations. The private Cartman scripts are `general_field_cartman_job.sh`
+and `general_field_cartman_batch_job.sh`. The run tree passed ownership and
+permission checks; peak resident memory was 8.9 GiB per ray job.
+
+The [pilot scores](data/general_field_iri_wave_structured/pilot_scores.json)
+chose `minus_wave`; the paired scores proposed a combined step. The
+[20-position scores](data/general_field_iri_wave_structured/full_scores.json)
+and [frozen ionogram-only selection](data/general_field_iri_wave_structured/selection.json)
+chose `minus_wave` before opening full truth density. Lower scores are better.
+The density results are in the two evaluation JSON files in that directory.
+
+| Grid | Pilot score | Full score | Peak-density MAE | 220–600 km NRMSE | 220–800 km NRMSE | hmF2 MAE |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Previous `wide` | 0.22908 | 0.21168 | 1.73% | 4.19% | 3.44% | 12 km |
+| Selected `minus_wave` | 0.19326 | 0.21074 | 1.58% | 3.83% | 3.14% | 12 km |
+| Rejected combined step | 0.20671 | 0.22379 | 2.88% | 3.33% | 2.73% | 12 km |
+
+The selected score gain is **0.00094**, with a paired-position bootstrap 95%
+interval of **−0.0245 to +0.0227**; its peak-density MAE gain is also small.
+The mean hmF2 bias remains **+12 km**, reaching **+40 km** at one position.
+The combined step improves broad profile RMS but worsens the peak and the
+ionogram score, so it was rejected. The 800 km density is an assimilated
+synthetic in-situ observation; its 0.056% error in the new grids is constraint
+consistency, not independent validation. Full density truth is separately
+generated Fortran IRI-2016 with an imposed wave, while candidates use a
+PyIRI-derived prior and shared PyLap ray physics. Earlier development examined
+this same truth case, so these are exploratory regression results, not blind
+evidence that the method generalizes to another ionosphere model.
+
+The selected [density comparison](data/general_field_iri_wave_structured/density_comparison_minus_wave.png)
+and [paired ionograms](data/general_field_iri_wave_structured/ionogram_comparison_minus_wave.png)
+show representative positions. Additional rounds can use a denser basis with
+a selected subset of active spatial centers per round.
+
+`check_general_field_capacity.py` is an **oracle capacity diagnostic**, not a
+retrieval: it fits coefficients directly to full density truth. With a denser
+12 × 8 basis, peak-normalized 220–800 km RMS falls from 3.44% to 0.32% for
+the IRI wave and from 13.24% to 1.28% for an independent analytic Chapman
+wave. The corresponding [capacity data](data/general_field_iri_wave_structured/capacity.json)
+show that the representation can fit both shapes. These oracle fits use full
+truth density, so their numbers do not establish observable retrieval accuracy.
 
 The combined [vertical and oblique report](vertical_oblique_retrieval_report.pdf)
 documents the density prior, fitting stages, scoring rules, and provenance,

@@ -1,0 +1,39 @@
+{
+  "selection_uses_truth_density": false,
+  "full_ray_ionogram_selection_complete": false,
+  "source_plan": "reports/data/general_field_iri_wave_structured/plan.json",
+  "pilot_scores": "reports/data/general_field_iri_wave_structured/pilot_scores.json",
+  "coefficients": [
+    [
+      0.029550463151252683,
+      0.03115481411323935,
+      -0.028437204331596515,
+      -0.0011132588196561678,
+      0.0
+    ],
+    [
+      0.029550463151252683,
+      0.0747586287954509,
+      -0.028437204331596515,
+      -0.0011132588196561678,
+      0.0
+    ],
+    [
+      0.029550463151252683,
+      0.04349936507134478,
+      -0.028437204331596515,
+      -0.0011132588196561678,
+      0.0
+    ],
+    [
+      0.029550463151252683,
+      -0.02732499417402154,
+      -0.028437204331596515,
+      -0.0011132588196561678,
+      0.0
+    ]
+  ],
+  "grid": "reports/data/general_field_iri_wave_structured/combined/grid.nc",
+  "pilot_best_single_candidate": "minus_wave",
+  "decision": "trace combined grid on all profiles, then compare with baseline and best pilot"
+}

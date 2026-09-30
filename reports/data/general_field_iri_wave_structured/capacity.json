@@ -1,0 +1,45 @@
+{
+  "purpose": "oracle basis capacity only; truth density used to fit coefficients",
+  "not_an_ionogram_retrieval": true,
+  "spatial_centers": 12,
+  "vertical_offsets_km": [
+    -80.0,
+    -30.0,
+    0.0,
+    45.0,
+    100.0,
+    180.0,
+    300.0,
+    500.0
+  ],
+  "cases": {
+    "independent_iri_wave": {
+      "prior": {
+        "peak_density_mae_percent": 1.7297391113166616,
+        "hmf2_mae_km": 12.0,
+        "density_nrmse_220_to_800_percent": 3.43657937637917
+      },
+      "oracle_basis": {
+        "peak_density_mae_percent": 0.70975339911307,
+        "hmf2_mae_km": 6.0,
+        "density_nrmse_220_to_800_percent": 0.32073808410067245
+      },
+      "maximum_log_density_correction": 0.32779657585142974,
+      "maximum_local_density_error_percent": 0.06961053832181818
+    },
+    "analytic_chapman_wave": {
+      "prior": {
+        "peak_density_mae_percent": 13.761919784281002,
+        "hmf2_mae_km": 12.0,
+        "density_nrmse_220_to_800_percent": 13.2358856782811
+      },
+      "oracle_basis": {
+        "peak_density_mae_percent": 1.3796271331416377,
+        "hmf2_mae_km": 3.0,
+        "density_nrmse_220_to_800_percent": 1.278941241004621
+      },
+      "maximum_log_density_correction": 1.2724743414969637,
+      "maximum_local_density_error_percent": 4.440892098500626e-14
+    }
+  }
+}
