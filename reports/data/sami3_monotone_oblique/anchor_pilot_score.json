@@ -1,0 +1,124 @@
+{
+  "profile_indices": [
+    14
+  ],
+  "satellite_separation_km": 600.0,
+  "selection_uses_truth_density": false,
+  "ionogram_score": "uncapped symmetric nearest O/X group-range distance across all accepted returns, 150 km missing-frequency penalty, 100 km/MHz mean O/X nose penalty",
+  "doppler_score": "1 Hz quantization, nearest O/X return within 40 km, 20 Hz saturated error; reported separately",
+  "candidates": [
+    {
+      "name": "old_baseline",
+      "mean_total_equivalent_km": 129.13127353619907,
+      "mean_doppler_1hz_score": 1.0,
+      "by_profile": [
+        {
+          "index": 14,
+          "total_equivalent_km": 129.13127353619907,
+          "mean_group_range_error_km": 124.1312735361991,
+          "mean_nose_error_mhz": 0.04999999999999982,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 118.90983610746636,
+              "missing_frequency_fraction": 0.15625,
+              "nose_error_mhz": 0.09999999999999964,
+              "frequencies_with_any_return": 32
+            },
+            "X": {
+              "group_range_error_km": 129.35271096493184,
+              "missing_frequency_fraction": 0.12903225806451613,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 31
+            }
+          },
+          "doppler_1hz_score": 1.0
+        }
+      ]
+    },
+    {
+      "name": "old_fit",
+      "mean_total_equivalent_km": 103.74438511320737,
+      "mean_doppler_1hz_score": 1.0,
+      "by_profile": [
+        {
+          "index": 14,
+          "total_equivalent_km": 103.74438511320737,
+          "mean_group_range_error_km": 98.74438511320739,
+          "mean_nose_error_mhz": 0.04999999999999982,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 97.284243807594,
+              "missing_frequency_fraction": 0.125,
+              "nose_error_mhz": 0.09999999999999964,
+              "frequencies_with_any_return": 32
+            },
+            "X": {
+              "group_range_error_km": 100.20452641882079,
+              "missing_frequency_fraction": 0.0967741935483871,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 31
+            }
+          },
+          "doppler_1hz_score": 1.0
+        }
+      ]
+    },
+    {
+      "name": "varying_g04",
+      "mean_total_equivalent_km": 66.0538122853506,
+      "mean_doppler_1hz_score": 0.8640625,
+      "by_profile": [
+        {
+          "index": 14,
+          "total_equivalent_km": 66.0538122853506,
+          "mean_group_range_error_km": 66.0538122853506,
+          "mean_nose_error_mhz": 0.0,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 66.91367208380707,
+              "missing_frequency_fraction": 0.058823529411764705,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 34
+            },
+            "X": {
+              "group_range_error_km": 65.19395248689412,
+              "missing_frequency_fraction": 0.06060606060606061,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 33
+            }
+          },
+          "doppler_1hz_score": 0.8640625
+        }
+      ]
+    },
+    {
+      "name": "extended_anchor",
+      "mean_total_equivalent_km": 69.75491077355329,
+      "mean_doppler_1hz_score": 0.83828125,
+      "by_profile": [
+        {
+          "index": 14,
+          "total_equivalent_km": 69.75491077355329,
+          "mean_group_range_error_km": 69.75491077355329,
+          "mean_nose_error_mhz": 0.0,
+          "by_mode": {
+            "O": {
+              "group_range_error_km": 69.83642987151569,
+              "missing_frequency_fraction": 0.058823529411764705,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 34
+            },
+            "X": {
+              "group_range_error_km": 69.6733916755909,
+              "missing_frequency_fraction": 0.06060606060606061,
+              "nose_error_mhz": 0.0,
+              "frequencies_with_any_return": 33
+            }
+          },
+          "doppler_1hz_score": 0.83828125
+        }
+      ]
+    }
+  ],
+  "lowest_ionogram_score": "varying_g04"
+}

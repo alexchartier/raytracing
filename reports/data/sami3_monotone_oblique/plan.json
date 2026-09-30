@@ -1,0 +1,18 @@
+{
+  "source_grid": "reports/data/sami3_monotone_topside/varying_g04/grid.nc",
+  "candidate_grid": "reports/data/sami3_monotone_oblique/extended_anchor/grid.nc",
+  "dense_insitu": "reports/data/sami3_monotone_oblique/insitu_1km.json",
+  "source_vertical_selection": "reports/data/sami3_monotone_topside/selection.json",
+  "oblique_truth_ionograms": "reports/data/sami3_wave_20170111_0600/oblique_wave_600km/truth",
+  "oblique_geometry": "600 km along-track, both spacecraft at 800 km",
+  "observed_indices": [
+    1,
+    5,
+    9,
+    12,
+    14,
+    17,
+    20
+  ],
+  "density_truth_used_in_selection": false
+}

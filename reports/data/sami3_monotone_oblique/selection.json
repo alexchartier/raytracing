@@ -1,0 +1,28 @@
+{
+  "selection_uses_truth_density": false,
+  "selection_uses_synthetic_insitu_density_samples": true,
+  "selection_uses_full_3d_sami_density": false,
+  "profile_indices": [
+    1,
+    5,
+    9,
+    12,
+    14,
+    17,
+    20
+  ],
+  "chosen_candidate": "extended_anchor",
+  "chosen_mean_ionogram_score_km": 74.17706315382706,
+  "grid": "reports/data/sami3_monotone_oblique/extended_anchor/grid.nc",
+  "grid_sha256": "9b06d4a9fa4b4331fcacb6fcbcf2b9a2b3cb82ef136e48b40bac0d33a033f428",
+  "score_file_sha256": "38da52a81a117e13ed5561d67834d7e9ca7876d48cdf6b4bb07d598a5ef6f498",
+  "plan_file_sha256": "b15706183ccfb471da0a0db48ab3f84a8c4b20997578e748a8d1d4373532ee59",
+  "insitu_max_absolute_error_percent_by_candidate": {
+    "old_baseline": 78.79659666556013,
+    "old_fit": 54.727688207588145,
+    "varying_g04": 1.6199195714608372,
+    "extended_anchor": 0.2832924922755664
+  },
+  "insitu_hard_tolerance_percent": 0.5,
+  "choice_rule": "lowest mean uncapped O/X ionogram score among candidates matching all 1 km track samples within 0.5%; Doppler is a separately reported diagnostic"
+}
