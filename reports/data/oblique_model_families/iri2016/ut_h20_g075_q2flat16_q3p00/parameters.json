@@ -1,0 +1,27 @@
+{
+  "source": "frozen IRI oblique selection plus observable-based upper-tail proposal",
+  "uses_full_truth_density": false,
+  "source_candidate": "q2m06_gq2p08",
+  "source_selection_sha256": "f160c7cb3cf4190d4e5c346be36f922791eff26d23ad518484b5c24376d91f67",
+  "height_shift_km": 20.0,
+  "peak_gradient_exponent_from_800km_density": 0.75,
+  "peak_density_scale_controls": [
+    1.0,
+    1.0615155701114383
+  ],
+  "q1_controls": [
+    0.7451129241257238,
+    0.7451129241257238
+  ],
+  "q2_controls": [
+    0.3520230628560078,
+    0.3520230628560078
+  ],
+  "q3_fractional_height": 0.82,
+  "q3_controls": [
+    0.14647600660951088,
+    0.14647600660951088
+  ],
+  "800km_track_density_source": "reports/data/oblique_model_families/iri2016/insitu_1km.json",
+  "q2_gradient_scale_from_source": 0.0
+}

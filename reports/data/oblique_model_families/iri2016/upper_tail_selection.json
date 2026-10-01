@@ -1,0 +1,9 @@
+{
+  "case": "iri2016",
+  "selected": "ut_h20_g075_q2flat16_q3p00",
+  "uses_full_truth_density": false,
+  "design_informed_by_prior_truth_diagnostics": true,
+  "scores_sha256": "c00fc4f4f56b73407842c41b3dec59aa8402b5b2e14904e035c8a3369f71476f",
+  "selected_grid_sha256": "a349133a5d5935d412a9ba98abf448c3aeb46586d3d765f2d26a9dded741831a",
+  "selected_ray_sha256": "d8807a75764d6dd7aacbc88a1e6d774a60bf60a23f54e7575f5335269186b369"
+}

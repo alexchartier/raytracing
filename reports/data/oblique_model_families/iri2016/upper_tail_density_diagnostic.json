@@ -1,0 +1,384 @@
+{
+  "case": "iri2016",
+  "note": "Post hoc density representation only; candidates lack new oblique ray traces and no retrieval improvement is established",
+  "rows": [
+    {
+      "name": "start",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 5.335002511806198,
+      "link_21_position_topside_nrmse_350_to_800_percent": 5.328405963918137,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        3.632944238034655,
+        3.8836319848355205,
+        4.15790528728655
+      ],
+      "hmf2_mae_km": 20.0,
+      "fof2_mae_mhz": 0.07914007692776319
+    },
+    {
+      "name": "q2m06_gq2p08",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 6.421223900081429,
+      "link_21_position_topside_nrmse_350_to_800_percent": 6.387278499556162,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        6.1893736127577155,
+        5.535846595390642,
+        4.962721154112349
+      ],
+      "hmf2_mae_km": 20.0,
+      "fof2_mae_mhz": 0.07914007692776319
+    },
+    {
+      "name": "ut_h20",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 4.531361794778367,
+      "link_21_position_topside_nrmse_350_to_800_percent": 4.486154154167937,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        5.570938982023788,
+        4.890534636979837,
+        4.29371986070259
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.07914007692776319
+    },
+    {
+      "name": "ut_h20_g075",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 4.174367720979644,
+      "link_21_position_topside_nrmse_350_to_800_percent": 4.136960640542668,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        5.561579973156907,
+        4.800072806978815,
+        4.107679812822794
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q3p03",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 4.115797693678968,
+      "link_21_position_topside_nrmse_350_to_800_percent": 4.075807800759319,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        5.490242737163103,
+        4.707309910521883,
+        4.00605366501903
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q3p06",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 4.200875002290416,
+      "link_21_position_topside_nrmse_350_to_800_percent": 4.160807297157803,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        5.553585645385723,
+        4.766263897613743,
+        4.062838775233223
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q3p09",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 4.3332001616085485,
+      "link_21_position_topside_nrmse_350_to_800_percent": 4.293334974176028,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        5.663595317734072,
+        4.878657442932257,
+        4.181948203278604
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q2p04_q3p06",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 3.4177306166223382,
+      "link_21_position_topside_nrmse_350_to_800_percent": 3.3704913201507,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        4.4883549610988025,
+        3.6315018178682554,
+        2.8721507108704833
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q2p08_q3p06",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 2.6977902067449175,
+      "link_21_position_topside_nrmse_350_to_800_percent": 2.6390290288228333,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        3.345144734907123,
+        2.424598562374584,
+        1.6650411922002206
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q2p12_q3p06",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 2.1926935061902655,
+      "link_21_position_topside_nrmse_350_to_800_percent": 2.12581707837959,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        2.14404782551079,
+        1.278054077629003,
+        1.0543539951048193
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q2p16_q3p06",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 2.1466483107324072,
+      "link_21_position_topside_nrmse_350_to_800_percent": 2.102209819486425,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        1.0646793273947865,
+        1.217241179866149,
+        2.136247100134802
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q2flat08_q3p06",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 2.6184189711450965,
+      "link_21_position_topside_nrmse_350_to_800_percent": 2.6000959863344435,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        2.286928929741345,
+        2.4379492489161705,
+        2.622735593712744
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q2flat12_q3p06",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 2.073233664316176,
+      "link_21_position_topside_nrmse_350_to_800_percent": 2.05447793711574,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        1.1583508013982613,
+        1.2843653427641226,
+        1.4452295287442487
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q2flat16_q3p06",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 2.0625823852309897,
+      "link_21_position_topside_nrmse_350_to_800_percent": 2.041722601301516,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        1.2509737125031855,
+        1.1962406086226147,
+        1.1574387475582946
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q2flat12_q3p00",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 1.9185225159030743,
+      "link_21_position_topside_nrmse_350_to_800_percent": 1.8998399676135564,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        0.845807336921159,
+        0.9908394573757834,
+        1.1700848176297216
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q2flat12_q3p03",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 1.9529835165587919,
+      "link_21_position_topside_nrmse_350_to_800_percent": 1.9344704405433097,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        0.8916394097112399,
+        1.0386154178902551,
+        1.219628628494002
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q2flat16_q3p00",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 1.8534013155344955,
+      "link_21_position_topside_nrmse_350_to_800_percent": 1.8318329249986687,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        0.656713398728483,
+        0.506635672070297,
+        0.3387005131029355
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h20_g075_q2flat16_q3p03",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 1.9138241705804526,
+      "link_21_position_topside_nrmse_350_to_800_percent": 1.892542422581228,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        0.868335743874411,
+        0.7723094578681917,
+        0.6895483156772262
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.008523588045630892
+    },
+    {
+      "name": "ut_h10_g075_q2p04_q3p06",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 4.388872502837983,
+      "link_21_position_topside_nrmse_350_to_800_percent": 4.345141232440428,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        4.820764286882145,
+        3.980910022014112,
+        3.236622708756025
+      ],
+      "hmf2_mae_km": 20.0,
+      "fof2_mae_mhz": 0.04739919380780047
+    },
+    {
+      "name": "ut_h30_g075_q2p04_q3p06",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 2.579935583724387,
+      "link_21_position_topside_nrmse_350_to_800_percent": 2.5328617055722122,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        4.125273579104345,
+        3.2528382371933824,
+        2.4795252908128944
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.04739919380780047
+    },
+    {
+      "name": "ut_h20_g100_q2p04_q3p06",
+      "density_truth_read_after_design": true,
+      "evaluation_positions": [
+        "transmitter",
+        "midpoint",
+        "receiver"
+      ],
+      "topside_nrmse_350_to_800_percent": 3.2838570631870794,
+      "link_21_position_topside_nrmse_350_to_800_percent": 3.238879427710996,
+      "upper_500_to_700_nrmse_percent_by_position": [
+        4.484282516411487,
+        3.5927040801754364,
+        2.7945411365589807
+      ],
+      "hmf2_mae_km": 0.0,
+      "fof2_mae_mhz": 0.032521490415644234
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
@@ -46,13 +47,22 @@ def draw(ax, path: Path, title: str, limits: tuple[int, int]) -> None:
 
 def main() -> None:
     os.umask(0o077)
-    for case, label in LABELS.items():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--upper-tail-iri", action="store_true",
+                        help="Plot the new observable-selected IRI upper-tail result")
+    args = parser.parse_args()
+    cases = (("iri2016", LABELS["iri2016"]),) if args.upper_tail_iri else LABELS.items()
+    for case, label in cases:
         root = RUN / case
-        choice = json.loads((root / "selection.json").read_text())["chosen_candidate"]
+        selection = json.loads((root / ("upper_tail_selection.json" if args.upper_tail_iri
+                                         else "selection.json")).read_text())
+        choice = selection["selected" if args.upper_tail_iri else "chosen_candidate"]
         paths = [root / "forward" / name / "ionogram_01.npz"
                  for name in ("truth", choice)]
         ranges = []
         with np.load(paths[0], allow_pickle=False) as ray:
+            transmitter = float(ray["tx_lat_deg"])
+            receiver = float(ray["rx_lat_deg"])
             midpoint = (float(ray["tx_lat_deg"]) + float(ray["rx_lat_deg"])) / 2
             longitude = float(ray["tx_lon_deg"])
         for path in paths:
@@ -67,6 +77,32 @@ def main() -> None:
         draw(axes[1], paths[1], "Retrieved", (low, high))
         axes[0].legend(handles=[Patch(color="#2166ac", label="O"),
                                 Patch(color="#b2182b", label="X")])
+        if args.upper_tail_iri:
+            latitude = np.linspace(transmitter, receiver, 41)
+            locations = np.column_stack((latitude, np.full(len(latitude), longitude)))
+            altitude, truth = profiles(root / "truth_grid.nc", locations)
+            _, selected = profiles(root / choice / "grid.nc", locations)
+            lower = np.searchsorted(altitude, 350)
+            upper = np.searchsorted(altitude, 800, side="right")
+            values = np.log10(np.maximum(np.stack((truth, selected))[:, :, lower:upper], 1))
+            levels = np.linspace(float(values.min()), float(values.max()), 21)
+            density_axes = [figure.add_subplot(panel[1, 0]),
+                            figure.add_subplot(panel[1, 1])]
+            for ax, field, title in zip(density_axes, (truth, selected),
+                                        ("Truth density", "Retrieved density")):
+                image = ax.contourf(latitude, altitude[lower:upper],
+                                    np.log10(np.maximum(field[:, lower:upper].T, 1)),
+                                    levels=levels, cmap="viridis", extend="both")
+                ax.set(xlabel="Latitude (degrees)", ylabel="Altitude (km)",
+                       title=title)
+            figure.colorbar(image, ax=density_axes, format="%.1f",
+                            label="log$_{10}$ electron density (cm$^{-3}$)")
+            target = root / "upper_tail_comparison.png"
+            figure.savefig(target, dpi=300)
+            target.chmod(0o600)
+            plt.close(figure)
+            print(target)
+            continue
         locations = np.array([[midpoint, longitude]])
         altitude, truth = profiles(root / "truth_grid.nc", locations)
         _, start = profiles(root / "start/grid.nc", locations)

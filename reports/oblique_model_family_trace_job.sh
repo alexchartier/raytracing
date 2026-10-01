@@ -24,7 +24,20 @@ grid="$case_root/$candidate/grid.nc"
 [[ "$candidate" == truth ]] && grid="$case_root/truth_grid.nc"
 output="$case_root/forward/$candidate/ionogram_01.npz"
 if [[ -s "$run/status/$label.exit" && -s "$output" ]]; then
-    [[ $(cat "$run/status/$label.exit") == 0 ]] && exit 0
+    if [[ $(cat "$run/status/$label.exit") == 0 ]] && \
+        /homes/chartat1/rt_superdarn_cartman/.venv/bin/python - "$grid" "$output" <<'PY'
+import hashlib, numpy as np, sys
+digest = hashlib.sha256()
+with open(sys.argv[1], 'rb') as source:
+    for block in iter(lambda: source.read(1024 * 1024), b''):
+        digest.update(block)
+with np.load(sys.argv[2], allow_pickle=False) as result:
+    if 'grid_sha256' not in result or str(result['grid_sha256']) != digest.hexdigest():
+        raise SystemExit(1)
+PY
+    then
+        exit 0
+    fi
 fi
 mkdir -p -m 0700 "$run/logs" "$run/status" "$run/tmp/$label" \
     "$run/cache/$label" "$(dirname "$output")"
@@ -55,6 +68,7 @@ output.chmod(0o600)
 with np.load(output, allow_pickle=False) as result:
     if (len(result['frequencies_mhz']) != 81
             or str(result['method']) != 'oblique_adaptive'
+            or 'grid_sha256' not in result
             or abs(float(result['satellite_separation_km']) - 600.0) > .01
             or len(result['records']) != len(result['spacecraft_doppler_hz'])):
         raise ValueError('Incomplete oblique ionogram')

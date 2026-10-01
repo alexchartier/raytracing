@@ -7,6 +7,7 @@ ionograms until selection is frozen; truth density is opened by evaluate.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -82,6 +83,11 @@ def separation_km(tx: GeoPoint, rx: GeoPoint) -> float:
 def trace(grid_path: Path, index: int, output: Path, density_source: str) -> dict:
     started = time.perf_counter()
     require_remote_for_large_grid(grid_path)
+    digest = hashlib.sha256()
+    with grid_path.open("rb") as source_grid:
+        for block in iter(lambda: source_grid.read(1024 * 1024), b""):
+            digest.update(block)
+    grid_sha256 = digest.hexdigest()
     tx, rx = endpoints(index)
     if not math.isclose(separation_km(tx, rx), SEPARATION_KM, abs_tol=0.01):
         raise ValueError("Satellite spacing is not 600 km")
@@ -140,6 +146,7 @@ def trace(grid_path: Path, index: int, output: Path, density_source: str) -> dic
         spacecraft_speed_mps=np.array(SPACECRAFT_SPEED_MPS),
         doppler_model=np.array("local transmitter and receiver tangent velocities"),
         profile_index=np.array(index), density_source=np.array(density_source),
+        grid_sha256=np.array(grid_sha256),
         method=np.array("oblique_adaptive"),
         vertical_fan_layout=np.array("along_track"),
         vertical_outer_ray_fraction=np.array(1.0),

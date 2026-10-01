@@ -1,0 +1,214 @@
+{
+  "case": "iri2016",
+  "uses_full_truth_density": false,
+  "design_informed_by_prior_truth_diagnostics": true,
+  "design_sha256": "da949c0618cceb7cb626d1e980425806977f65a52ce7b30dfcab8a6e3530e5af",
+  "truth_ionogram": "reports/data/oblique_model_families/iri2016/forward/truth/ionogram_01.npz",
+  "score": "whole O/X accepted-return and nose score + 1x symmetric 2.0--3.0 MHz range score + 20 km times Doppler 1 Hz mismatch",
+  "low_band_weight": 1.0,
+  "doppler_weight_km": 20.0,
+  "insitu_tolerance_percent": 0.5,
+  "candidates": [
+    {
+      "name": "q2m06_gq2p08",
+      "grid_sha256": "952a1404ccd1dca6fbcaca26242c9d1b18b2c2d076186313b332bdab9da9c12a",
+      "ray_sha256": "7146fc1f2dcb329415a29d8d3a9086dff9e13c434b783893b2f28adadae73742",
+      "whole_ionogram_equivalent_km": 80.63334563271523,
+      "upper_topside_2_to_3_mhz_range_error_km": 116.18414011133709,
+      "doppler_1hz_mismatch": 0.6154929577464788,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 209.12734489898187
+    },
+    {
+      "name": "ut_h20",
+      "grid_sha256": "0094df5ee57774a38d50dc0b98f07f58866b0f365e008dfc3e417a86aa391e5b",
+      "ray_sha256": "657c94ad3aafedd99aa5eb9cda17dd9e44e751b74a7de0c11a1f196deb19b68c",
+      "whole_ionogram_equivalent_km": 64.93809059824382,
+      "upper_topside_2_to_3_mhz_range_error_km": 102.36954817396631,
+      "doppler_1hz_mismatch": 0.7126760563380281,
+      "insitu_max_absolute_error_percent": 0.0001952092539725392,
+      "combined_equivalent_km": 181.5611598989707
+    },
+    {
+      "name": "ut_h20_g075",
+      "grid_sha256": "5e4b8ace0e8a13fe0a2877e217b1700c81a0759b870043509fcbca798cc3cad9",
+      "ray_sha256": "f52cdc1eef9dad4d879bf2fb0f3125caa114ad8754d7aeff5964373fb3f9fbd2",
+      "whole_ionogram_equivalent_km": 73.87350144432504,
+      "upper_topside_2_to_3_mhz_range_error_km": 101.5990831786489,
+      "doppler_1hz_mismatch": 0.6767605633802817,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 189.0077958905796
+    },
+    {
+      "name": "ut_h20_g075_q3p03",
+      "grid_sha256": "ecc8662ba3ad9b8752e37df7ad5795e7a3f560856f8fe3cf7d9700080a2f1d5b",
+      "ray_sha256": "276232c85f7e4943d2c1551ef46897102bb671b0bbe1433ab62f840d0f93f2f7",
+      "whole_ionogram_equivalent_km": 73.7665772130168,
+      "upper_topside_2_to_3_mhz_range_error_km": 107.89521687731332,
+      "doppler_1hz_mismatch": 0.7028169014084505,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 195.71813211849914
+    },
+    {
+      "name": "ut_h20_g075_q3p06",
+      "grid_sha256": "c3fd8d0d002c9d8e223cf75f07f7236986d7d4962ba1e5899176a1bddb9960da",
+      "ray_sha256": "30dc64d3a1f9717a533eec3bea9586a370c40508b44cee8d1982d238343d6622",
+      "whole_ionogram_equivalent_km": 76.753677487693,
+      "upper_topside_2_to_3_mhz_range_error_km": 121.01003475568305,
+      "doppler_1hz_mismatch": 0.6922535211267605,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 211.60878266591126
+    },
+    {
+      "name": "ut_h20_g075_q3p09",
+      "grid_sha256": "449e18eb2edb1c4390703f0b7d91bfa7fbf0569685fc403ca32493c3e2746567",
+      "ray_sha256": "dc16cc465cf19f00bc7d971378da0ed6587be01b30d0d735956f8e11da9fd238",
+      "whole_ionogram_equivalent_km": 80.1787014043107,
+      "upper_topside_2_to_3_mhz_range_error_km": 135.15620588041403,
+      "doppler_1hz_mismatch": 0.6950704225352112,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 229.23631573542897
+    },
+    {
+      "name": "ut_h20_g075_q2p04_q3p06",
+      "grid_sha256": "0a40c4a7c6afd600a8c4a6f113585c6c6390c3c31723c573beb0017d7cd9595d",
+      "ray_sha256": "dfa223a1e12bdb9ee5643915b83c6c16a30f632d6065b26260e4019e516f754c",
+      "whole_ionogram_equivalent_km": 76.4243150594458,
+      "upper_topside_2_to_3_mhz_range_error_km": 130.01550633340298,
+      "doppler_1hz_mismatch": 0.6697183098591549,
+      "insitu_max_absolute_error_percent": 0.0001952092539725392,
+      "combined_equivalent_km": 219.8341875900319
+    },
+    {
+      "name": "ut_h20_g075_q2p08_q3p06",
+      "grid_sha256": "f885d6a4d394bc67c10ccf47c7ad16db9b76bc4fe7bff001f236f56173810150",
+      "ray_sha256": "fc614dc76ca7d3d6ad2c5ba8ce5d2a300faed71060ba7df17f2c7383742f9cc8",
+      "whole_ionogram_equivalent_km": 73.71100811203723,
+      "upper_topside_2_to_3_mhz_range_error_km": 119.23329764579486,
+      "doppler_1hz_mismatch": 0.6014084507042253,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 204.9724747719166
+    },
+    {
+      "name": "ut_h20_g075_q2p12_q3p06",
+      "grid_sha256": "11d1a234f6f996fe341c4fae8256e2f8b4bbc4c10b1e49c57dd5dae448e3af77",
+      "ray_sha256": "f2c8be3fdce945d883c2438e62f283e3aea5e6fb53f1d4e659d493f9803e206c",
+      "whole_ionogram_equivalent_km": 77.53077209787098,
+      "upper_topside_2_to_3_mhz_range_error_km": 121.54361205655829,
+      "doppler_1hz_mismatch": 0.7000000000000001,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 213.07438415442925
+    },
+    {
+      "name": "ut_h20_g075_q2p16_q3p06",
+      "grid_sha256": "80b96f9f57000089830de5137f5cae5e50e6d0605a30ac536fbfb91004f97df7",
+      "ray_sha256": "3e3494934d9b2212554cabe9e71fddab871101404665f164fb772b08f309c6f9",
+      "whole_ionogram_equivalent_km": 90.3192680314006,
+      "upper_topside_2_to_3_mhz_range_error_km": 100.62887748309004,
+      "doppler_1hz_mismatch": 0.8211267605633802,
+      "insitu_max_absolute_error_percent": 0.0001952092539725392,
+      "combined_equivalent_km": 207.37068072575826
+    },
+    {
+      "name": "ut_h20_g075_q2flat08_q3p06",
+      "grid_sha256": "633004023950704e8d6c9476d07f0a8cb5a72625c0221db5ec64f4a4d78efc89",
+      "ray_sha256": "00cffb2dcc6021b1099f7a5ae1aa7c047d91e5cb301ac50df48aed75146826e5",
+      "whole_ionogram_equivalent_km": 76.97836191860786,
+      "upper_topside_2_to_3_mhz_range_error_km": 137.56889727514644,
+      "doppler_1hz_mismatch": 0.5464788732394366,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 225.47683665854305
+    },
+    {
+      "name": "ut_h20_g075_q2flat12_q3p06",
+      "grid_sha256": "c336f2f257a0a5b67ac443a823438adfe894c8952ffd36a323fee35c7d43e8ca",
+      "ray_sha256": "63579229e3579edf0fc2799a91b87ebcafa436c7d874f208d479949790fe21cf",
+      "whole_ionogram_equivalent_km": 77.6574272599272,
+      "upper_topside_2_to_3_mhz_range_error_km": 123.12574566635459,
+      "doppler_1hz_mismatch": 0.6218309859154929,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 213.21979264459165
+    },
+    {
+      "name": "ut_h20_g075_q2flat16_q3p06",
+      "grid_sha256": "c2067fd2da64c3b903e340cc528505238bedbcaf07f66a416d3f4b72d4851239",
+      "ray_sha256": "3b44515a9ef1b0d53b862b5b3c7719fda6f819ca3402517e71ad51c40dde97fd",
+      "whole_ionogram_equivalent_km": 89.4013673961396,
+      "upper_topside_2_to_3_mhz_range_error_km": 102.04468263901953,
+      "doppler_1hz_mismatch": 0.7429577464788731,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 206.30520496473662
+    },
+    {
+      "name": "ut_h20_g075_q2flat12_q3p00",
+      "grid_sha256": "fa9015a6e7bf180a4e54a8c28a3617bc9551cc8a4207b0031537c41da5caef98",
+      "ray_sha256": "2ce128e58488973b0fc726ae2c8c710101ea389a4ffe2bf735d0f0907b309528",
+      "whole_ionogram_equivalent_km": 62.515674407552346,
+      "upper_topside_2_to_3_mhz_range_error_km": 52.14362060859017,
+      "doppler_1hz_mismatch": 0.5281690140845069,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 125.22267529783267
+    },
+    {
+      "name": "ut_h20_g075_q2flat12_q3p03",
+      "grid_sha256": "b00b1b58ded2d1bc08b572c9112e9ac1810233f1d9614a94ae1db866535656d5",
+      "ray_sha256": "dddf94b1f2d3af39b1b11376f40496e83099bdc58a822589dc6a6485ebb72518",
+      "whole_ionogram_equivalent_km": 67.1858778632145,
+      "upper_topside_2_to_3_mhz_range_error_km": 74.5517466009979,
+      "doppler_1hz_mismatch": 0.5816901408450704,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 153.3714272811138
+    },
+    {
+      "name": "ut_h20_g075_q2flat16_q3p00",
+      "grid_sha256": "a349133a5d5935d412a9ba98abf448c3aeb46586d3d765f2d26a9dded741831a",
+      "ray_sha256": "d8807a75764d6dd7aacbc88a1e6d774a60bf60a23f54e7575f5335269186b369",
+      "whole_ionogram_equivalent_km": 70.18425583560101,
+      "upper_topside_2_to_3_mhz_range_error_km": 28.57179351120524,
+      "doppler_1hz_mismatch": 0.5640845070422534,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 110.03773948765132
+    },
+    {
+      "name": "ut_h20_g075_q2flat16_q3p03",
+      "grid_sha256": "192eca776c009f8e2fe12b81b017bf711cb2d12a90dcf44b8e12b4feb1c0c844",
+      "ray_sha256": "1dc5487071678e19bdd83ecab34015a0652e3de05a2bf039c13a127f015fea9b",
+      "whole_ionogram_equivalent_km": 78.42341680838949,
+      "upper_topside_2_to_3_mhz_range_error_km": 59.84083598867564,
+      "doppler_1hz_mismatch": 0.6183098591549295,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 150.63044998016372
+    },
+    {
+      "name": "ut_h10_g075_q2p04_q3p06",
+      "grid_sha256": "0d40c3e992446706e7e3e1f5eed8bdd22679115746b40a1f0762733efcffdcd9",
+      "ray_sha256": "cc2f991317846777e830135bbb6b10449f886dc314105c3ce4d5ab705db70d93",
+      "whole_ionogram_equivalent_km": 72.16643170797173,
+      "upper_topside_2_to_3_mhz_range_error_km": 140.11052694010078,
+      "doppler_1hz_mismatch": 0.6295774647887324,
+      "insitu_max_absolute_error_percent": 0.0001952092539725392,
+      "combined_equivalent_km": 224.86850794384716
+    },
+    {
+      "name": "ut_h30_g075_q2p04_q3p06",
+      "grid_sha256": "02c291e93cbfb3787d8fcfd9921eed5c50d798938d0e9ace85035a3657b8b267",
+      "ray_sha256": "7dd7aa325135026da31f6b2defbed2bd30c09fe80d79813e219fdff56ce0abe0",
+      "whole_ionogram_equivalent_km": 59.457713199913144,
+      "upper_topside_2_to_3_mhz_range_error_km": 121.65239464239554,
+      "doppler_1hz_mismatch": 0.6239436619718309,
+      "insitu_max_absolute_error_percent": 0.0001952092539725392,
+      "combined_equivalent_km": 193.5889810817453
+    },
+    {
+      "name": "ut_h20_g100_q2p04_q3p06",
+      "grid_sha256": "1cb35a413098c7cfbb4a3f20ff0d4e00841bffea203cffd200146da5255f6400",
+      "ray_sha256": "d2f5e404dd64f0b9a7fb96751b29d6a60a2d5f50b5c30ea65a17f0e556b335d2",
+      "whole_ionogram_equivalent_km": 74.80526895386222,
+      "upper_topside_2_to_3_mhz_range_error_km": 129.66928322431787,
+      "doppler_1hz_mismatch": 0.6598591549295775,
+      "insitu_max_absolute_error_percent": 0.00019520925415017487,
+      "combined_equivalent_km": 217.67173527677164
+    }
+  ],
+  "selected": "ut_h20_g075_q2flat16_q3p00"
+}

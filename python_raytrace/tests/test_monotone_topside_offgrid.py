@@ -38,6 +38,44 @@ class OffGridTrackTests(unittest.TestCase):
         for row in result.iono_en_grid.reshape(-1, len(altitude)):
             self.assertTrue(np.all(np.diff(row[np.argmax(row):]) <= 1e-8 * row.max()))
 
+    def test_upper_tail_and_peak_gradient_preserve_track_anchor(self) -> None:
+        latitude = np.array([-2.0, 0.0, 2.0])
+        longitude = np.array([0.0, 1.0])
+        altitude = np.arange(100.0, 900.1, 20.0)
+        offset = altitude - 300.0
+        profile = np.broadcast_to(200_000 * np.exp(np.where(
+            offset < 0, -.5 * (offset / 80.0) ** 2, -offset / 150.0)),
+            (3, 2, len(altitude))).copy()
+        zero = np.zeros_like(profile)
+        grid = IonosphereGrid(latitude, longitude, altitude, profile, profile.copy(),
+                              zero, [0.0], zero, zero, zero, [0.0])
+        track_lat = np.linspace(-.7, .7, 157)
+        track = np.column_stack((track_lat, np.full(len(track_lat), .3)))
+        observed = 20_000 + 1_500 * track_lat
+        local = LocalDensity(track, 800.0, observed, .005)
+        controls = np.array([-.7, .7])
+        q1, q2 = np.full(2, .75), np.full(2, .35)
+        baseline = monotone_topside_grid(grid, local, controls, q1, q2,
+                                          np.zeros(2))
+        revised = monotone_topside_grid(
+            grid, local, controls, q1, q2, np.zeros(2),
+            fraction_at_eighty_two_percent=np.full(2, .20),
+            peak_density_scale=np.array([1.0, 1.10]))
+        samples = RegularGridInterpolator(
+            (latitude, longitude, altitude), revised.iono_en_grid)(
+                np.column_stack((track, np.full(len(track), 800.0))))
+        np.testing.assert_allclose(samples, observed, rtol=.005)
+        self.assertGreater(revised.iono_en_grid[1, 0].max(),
+                           baseline.iono_en_grid[1, 0].max() * 1.04)
+        self.assertGreater(revised.iono_en_grid[1, 0, 30],
+                           baseline.iono_en_grid[1, 0, 30])
+        for row in revised.iono_en_grid.reshape(-1, len(altitude)):
+            self.assertTrue(np.all(np.diff(row[np.argmax(row):]) <= 1e-8 * row.max()))
+        with self.assertRaises(ValueError):
+            monotone_topside_grid(
+                grid, local, controls, q1, q2, np.zeros(2),
+                fraction_at_eighty_two_percent=np.full(2, .36))
+
 
 if __name__ == "__main__":
     unittest.main()

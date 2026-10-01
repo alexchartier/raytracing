@@ -1,9 +1,10 @@
 """Spatially varying, monotone topside profiles constrained by in-situ density.
 
-The shape at each along-track position is specified by two positive log-density
-fractions between its F2 peak and the spacecraft. PCHIP joins those fractions
-without an overshoot. An in-situ measurement at every kilometre is checked
-against the resulting forward-grid interpolation.
+The shape at each along-track position is specified by positive log-density
+fractions between its F2 peak and the spacecraft. An optional third fraction
+controls the upper tail near 700 km. PCHIP joins the fractions without an
+overshoot. An in-situ measurement at every kilometre is checked against the
+resulting forward-grid interpolation.
 """
 
 from __future__ import annotations
@@ -24,24 +25,36 @@ def monotone_topside_grid(
     fraction_at_quarter: np.ndarray,
     fraction_at_three_fifths: np.ndarray,
     peak_height_shift_km: np.ndarray,
+    fraction_at_eighty_two_percent: np.ndarray | None = None,
+    peak_density_scale: np.ndarray | None = None,
 ) -> IonosphereGrid:
     """Apply latitude-varying height and topside shape, fixing every 800 km sample.
 
     Fractions are of the log-density span from local F2 peak to measured
     spacecraft density: 1 at the peak and 0 at the spacecraft. Hence
     ``1 > fraction_at_quarter > fraction_at_three_fifths > 0`` guarantees a
-    falling topside. A shift moves only the peak and bottomside; the topside
-    is newly constructed from the shifted peak to spacecraft altitude.
+    falling topside. If the optional 82% fraction is given, it must lie
+    strictly between the three-fifths fraction and zero. A height shift moves
+    the peak and bottomside; the topside is newly constructed from the shifted
+    peak to spacecraft altitude. The optional peak-density scale allows a
+    latitude-dependent F2 peak while retaining every spacecraft observation.
     """
     latitudes = np.asarray(sounding_latitudes_deg, dtype=float)
     q1 = np.asarray(fraction_at_quarter, dtype=float)
     q2 = np.asarray(fraction_at_three_fifths, dtype=float)
     shift = np.asarray(peak_height_shift_km, dtype=float)
+    q3 = (None if fraction_at_eighty_two_percent is None else
+          np.asarray(fraction_at_eighty_two_percent, dtype=float))
+    peak_scale = (np.ones_like(q1) if peak_density_scale is None else
+                  np.asarray(peak_density_scale, dtype=float))
+    controls = (q1, q2, shift, peak_scale) + (() if q3 is None else (q3,))
     if (latitudes.ndim != 1 or len(latitudes) < 2
             or not np.all(np.diff(latitudes) > 0)
-            or any(value.shape != latitudes.shape for value in (q1, q2, shift))
-            or not np.all(np.isfinite(np.stack((q1, q2, shift))))
+            or any(value.shape != latitudes.shape for value in controls)
+            or not np.all(np.isfinite(np.stack(controls)))
             or np.any(q2 <= 0) or np.any(q1 >= 1) or np.any(q1 <= q2)
+            or (q3 is not None and (np.any(q3 <= 0) or np.any(q2 <= q3)))
+            or np.any(peak_scale <= 0)
             or np.max(abs(shift)) > 60):
         raise ValueError("Invalid spatial topside parameters")
     points = np.asarray(local.lat_lon_deg, dtype=float)
@@ -92,38 +105,56 @@ def monotone_topside_grid(
                          latitudes[0], latitudes[-1])
     latitude_q1 = PchipInterpolator(latitudes, q1)(sample_lat)
     latitude_q2 = PchipInterpolator(latitudes, q2)(sample_lat)
+    latitude_q3 = (None if q3 is None else
+                   PchipInterpolator(latitudes, q3)(sample_lat))
     latitude_shift = PchipInterpolator(latitudes, shift)(sample_lat)
+    latitude_peak_scale = PchipInterpolator(latitudes, peak_scale)(sample_lat)
+    if (np.any(latitude_q1 <= latitude_q2) or
+            (latitude_q3 is not None and np.any(latitude_q2 <= latitude_q3))):
+        raise ValueError("Interpolated topside fractions are not ordered")
     revised = np.empty_like(original)
     for i in range(len(grid.latitudes_deg)):
         for j in range(len(lon)):
             old = original[i, j]
             old_peak = int(np.argmax(old))
             peak_height = alt[old_peak] + latitude_shift[i]
-            peak_density = float(old[old_peak])
+            peak_density = float(old[old_peak] * latitude_peak_scale[i])
             spacecraft_density = float(target_at_sc[i, j])
             if (peak_height <= alt[0] or peak_height >= local.altitude_km - 100
                     or spacecraft_density <= 0 or spacecraft_density >= peak_density):
                 raise ValueError("Peak and in-situ anchors are incompatible")
             low = alt < peak_height
-            revised[i, j, low] = np.interp(alt[low] - latitude_shift[i], alt, old)
+            revised[i, j, low] = (latitude_peak_scale[i] *
+                                  np.interp(alt[low] - latitude_shift[i], alt, old))
             span = np.log(peak_density / spacecraft_density)
-            knots = peak_height + np.array([0.0, .25, .60, 1.0]) * (
-                local.altitude_km - peak_height)
-            log_values = np.log(spacecraft_density) + span * np.array(
-                [1.0, latitude_q1[i], latitude_q2[i], 0.0])
+            if latitude_q3 is None:
+                fractions = np.array([0.0, .25, .60, 1.0])
+                log_fractions = np.array([1.0, latitude_q1[i], latitude_q2[i], 0.0])
+                last_fraction, last_log_fraction = .60, latitude_q2[i]
+            else:
+                fractions = np.array([0.0, .25, .60, .82, 1.0])
+                log_fractions = np.array([1.0, latitude_q1[i], latitude_q2[i],
+                                          latitude_q3[i], 0.0])
+                last_fraction, last_log_fraction = .82, latitude_q3[i]
+            knots = peak_height + fractions * (local.altitude_km - peak_height)
+            log_values = np.log(spacecraft_density) + span * log_fractions
             middle = (alt >= peak_height) & (alt <= local.altitude_km)
             revised[i, j, middle] = np.exp(PchipInterpolator(knots, log_values)(alt[middle]))
             upper = alt > local.altitude_km
-            tail_slope = -span * latitude_q2[i] / (
-                .4 * (local.altitude_km - peak_height))
+            tail_slope = -span * last_log_fraction / (
+                (1.0 - last_fraction) * (local.altitude_km - peak_height))
             revised[i, j, upper] = spacecraft_density * np.exp(
                 tail_slope * (alt[upper] - local.altitude_km))
             peak = int(np.argmax(revised[i, j]))
             if np.any(np.diff(revised[i, j, peak:]) > 1e-8 * peak_density):
                 raise ValueError("Generated topside is not monotone")
+    metadata = {**grid.metadata, "retrieval": "spatially varying monotone topside"}
+    if q3 is not None:
+        metadata["upper_topside_shape_knot_fraction"] = 0.82
+    if peak_density_scale is not None:
+        metadata["along_track_peak_density_scale"] = "latitude interpolated"
     result = replace(grid, iono_en_grid=revised, iono_en_grid_5=revised.copy(),
-                     metadata={**grid.metadata,
-                               "retrieval": "spatially varying monotone topside"})
+                     metadata=metadata)
     sampled = RegularGridInterpolator(
         (grid.latitudes_deg, grid.longitudes_deg, alt), revised,
         bounds_error=True)(np.column_stack((points,

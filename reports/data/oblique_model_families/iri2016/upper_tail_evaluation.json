@@ -1,0 +1,29 @@
+{
+  "case": "iri2016",
+  "selected": "ut_h20_g075_q2flat16_q3p00",
+  "positions_along_600km_link": 21,
+  "selection_uses_full_truth_density": false,
+  "design_informed_by_prior_truth_diagnostics": true,
+  "full_truth_density_read_for_this_evaluation": true,
+  "selection_sha256": "ca1a2513a592ce408266ed99dd73b24a366f412f5e294e9a712e384fdf070c16",
+  "rows": [
+    {
+      "name": "q2m06_gq2p08",
+      "topside_nrmse_350_to_800_percent": 6.387278499556162,
+      "relative_rms_500_to_700_percent": 33.435940204331644,
+      "fof2_mae_mhz": 0.07701253061828506,
+      "hmf2_mae_km": 20.0,
+      "ionogram_combined_equivalent_km": 209.12734489898187,
+      "ionogram_low_2_to_3_mhz_error_km": 116.18414011133709
+    },
+    {
+      "name": "ut_h20_g075_q2flat16_q3p00",
+      "topside_nrmse_350_to_800_percent": 1.8318329249986687,
+      "relative_rms_500_to_700_percent": 3.4615156902688704,
+      "fof2_mae_mhz": 0.0062889354067740925,
+      "hmf2_mae_km": 0.0,
+      "ionogram_combined_equivalent_km": 110.03773948765132,
+      "ionogram_low_2_to_3_mhz_error_km": 28.57179351120524
+    }
+  ]
+}

@@ -62,7 +62,7 @@ def save_private_grid(path: Path, grid) -> None:
     path.chmod(0o600)
 
 
-def save_json(path: Path, value: dict) -> None:
+def save_json(path: Path, value: dict | list) -> None:
     path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     path.write_text(json.dumps(value, indent=2) + "\n")
     path.chmod(0o600)
