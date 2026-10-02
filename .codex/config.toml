@@ -3,3 +3,7 @@ command = "/bin/sh"
 args = ["/Users/chartat1/raytracing/tools/cartman_mcp/launch.sh"]
 cwd = "/Users/chartat1/raytracing"
 startup_timeout_sec = 60
+default_tools_approval_mode = "auto"
+
+[mcp_servers.cartman.tools.cartman_list_dir]
+approval_mode = "auto"
